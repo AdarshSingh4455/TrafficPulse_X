@@ -1,0 +1,91 @@
+import React from 'react';
+import { Sparkles } from 'lucide-react';
+import SectionCard from '../common/SectionCard';
+import DataTable from '../common/DataTable';
+import Button from '../common/Button';
+import { nextBestDecisionQueries } from '../../data/decision';
+
+export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
+  const candidates = data || nextBestDecisionQueries;
+
+  const columns = [
+    {
+      header: "Sensor",
+      key: "sensor",
+      render: (row) => (
+        <div className="flex flex-col">
+          <span className="font-mono font-bold text-slate-900 dark:text-white text-xs">{row.sensor}</span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400">{row.road}</span>
+        </div>
+      )
+    },
+    {
+      header: "Need Score",
+      key: "needScore",
+      render: (row) => (
+        <span className={`font-mono font-bold text-xs ${
+          row.needScore > 0.7 ? "text-rose-600 dark:text-rose-400" : row.needScore > 0.4 ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400"
+        }`}>
+          {row.needScore}
+        </span>
+      )
+    },
+    {
+      header: "Expected Benefit",
+      key: "expectedBenefit",
+      render: (row) => (
+        <span className="text-emerald-600 dark:text-emerald-400 font-semibold text-xs font-mono">
+          {row.expectedBenefit}
+        </span>
+      )
+    },
+    {
+      header: "Expected Bytes",
+      key: "expectedBytes",
+      render: (row) => (
+        <span className="text-slate-700 dark:text-slate-300 font-mono text-xs">
+          {row.expectedBytes}
+        </span>
+      )
+    },
+    {
+      header: "Reason",
+      key: "reason",
+      className: "text-slate-700 dark:text-slate-300 text-xs"
+    },
+    {
+      header: "Action",
+      key: "action",
+      render: (row) => {
+        const isQuery = row.action === "Query";
+        return (
+          <Button
+            size="xs"
+            variant={isQuery ? "primary" : "secondary"}
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuery && onQuery(row);
+            }}
+          >
+            {row.action || "Query"}
+          </Button>
+        );
+      }
+    }
+  ];
+
+  return (
+    <SectionCard
+      title="Next Best Sensor Queries"
+      subtitle="Ranked candidates based on expected informational gain vs byte cost"
+      icon={Sparkles}
+      className="h-full"
+    >
+      <DataTable
+        columns={columns}
+        data={candidates}
+        onRowClick={onSelectSensor}
+      />
+    </SectionCard>
+  );
+}

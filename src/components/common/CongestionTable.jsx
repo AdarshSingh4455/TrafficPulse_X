@@ -1,0 +1,54 @@
+import React from 'react';
+import { AlertTriangle, ChevronRight } from 'lucide-react';
+import SectionCard from './SectionCard';
+import DataTable from './DataTable';
+import StatusBadge from './StatusBadge';
+import { topCongestionAreas } from '../../data/dashboard';
+
+export default function CongestionTable({ onViewOnMap, data }) {
+  const list = data || topCongestionAreas;
+
+  const columns = [
+    {
+      header: "#",
+      key: "rank",
+      className: "w-8 font-mono text-slate-500 dark:text-slate-400 font-bold"
+    },
+    {
+      header: "Location",
+      key: "location",
+      className: "font-medium text-slate-800 dark:text-slate-200"
+    },
+    {
+      header: "Current Flow (veh/5 min)",
+      key: "currentFlow",
+      className: "font-mono font-semibold text-slate-700 dark:text-slate-300 text-right pr-6"
+    },
+    {
+      header: "Status",
+      key: "status",
+      render: (row) => <StatusBadge status={row.status} />
+    }
+  ];
+
+  const action = onViewOnMap && (
+    <button 
+      onClick={onViewOnMap}
+      className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-medium transition-colors cursor-pointer"
+    >
+      <span>View on Map</span>
+      <ChevronRight className="w-3.5 h-3.5" />
+    </button>
+  );
+
+  return (
+    <SectionCard
+      title="Top Congestion Areas"
+      icon={AlertTriangle}
+      action={action}
+      className="h-full"
+    >
+      <DataTable columns={columns} data={list} />
+    </SectionCard>
+  );
+}
