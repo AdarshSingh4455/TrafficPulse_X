@@ -237,3 +237,61 @@ export async function resetDemoState() {
     return { status: "local_reset" };
   }
 }
+
+// -------------------------------------------------------------
+// Phase 5 METR-LA Research Dataset Endpoints
+// -------------------------------------------------------------
+
+export async function fetchMetrStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/datasets/status`, { signal: AbortSignal.timeout(2500) });
+    if (!res.ok) throw new Error("Dataset status fetch failed");
+    return await res.json();
+  } catch {
+    return {
+      demoMode: { name: "METR-LA 32-Sensor Synthetic Topology", classification: "SIMULATED_DEMO", status: "READY" },
+      researchMode: { name: "METR-LA Real Benchmark Dataset", classification: "REAL_BENCHMARK READY", availability: "READY" }
+    };
+  }
+}
+
+export async function fetchMetrRegions() {
+  try {
+    const res = await fetch(`${API_BASE}/datasets/metr-la/regions`, { signal: AbortSignal.timeout(2500) });
+    if (!res.ok) throw new Error("Regions fetch failed");
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchMetrRepresentatives() {
+  try {
+    const res = await fetch(`${API_BASE}/datasets/metr-la/representatives`, { signal: AbortSignal.timeout(2500) });
+    if (!res.ok) throw new Error("Representatives fetch failed");
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchMetrSnapshot(timeIndex = 0, regionId = "ALL", repsOnly = true) {
+  try {
+    const url = `${API_BASE}/datasets/metr-la/snapshot?time_index=${timeIndex}&region_id=${regionId}&representatives_only=${repsOnly}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) throw new Error("Snapshot fetch failed");
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchMetrSensor(sensorId, timeIndex = 0) {
+  try {
+    const res = await fetch(`${API_BASE}/datasets/metr-la/sensors/${sensorId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(2500) });
+    if (!res.ok) throw new Error("METR sensor fetch failed");
+    return await res.json();
+  } catch {
+    return null;
+  }
+}

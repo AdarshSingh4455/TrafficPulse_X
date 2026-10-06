@@ -1,0 +1,94 @@
+{
+  "datasetName": "METR-LA",
+  "sourceType": "REAL_BENCHMARK",
+  "features": {
+    "speedTelemetry": {
+      "classification": "REAL_DATA_SUPPORTED",
+      "available": true,
+      "source": "metr-la.h5"
+    },
+    "spatialGraphTopology": {
+      "classification": "REAL_DATA_SUPPORTED",
+      "available": true,
+      "source": "adj_mx.pkl"
+    },
+    "sensorCoordinates": {
+      "classification": "REAL_DATA_SUPPORTED",
+      "available": true,
+      "source": "graph_sensor_locations.csv"
+    },
+    "temporalHistory": {
+      "classification": "REAL_DATA_SUPPORTED",
+      "available": true,
+      "source": "metr-la.h5"
+    },
+    "trafficDrift": {
+      "classification": "REAL_DATA_SUPPORTED",
+      "available": true,
+      "description": "Speed delta between consecutive 5-min intervals"
+    },
+    "neighborDisagreement": {
+      "classification": "REAL_DATA_SUPPORTED",
+      "available": true,
+      "description": "Spatial speed variance among graph neighbors"
+    },
+    "speedPredictionTarget": {
+      "classification": "PREDICTION_TARGET_AVAILABLE",
+      "available": true,
+      "description": "Speed time-series target for GNN/LSTM prediction models (Model training NOT_IMPLEMENTED)"
+    },
+    "freshness": {
+      "classification": "STATE_SUPPORTED",
+      "available": true,
+      "freshnessMode": "HISTORICAL_REPLAY",
+      "description": "Historical replay freshness derived relative to replay clock (replayTime - lastQueryTime)"
+    },
+    "coverage": {
+      "classification": "STATE_SUPPORTED",
+      "available": true,
+      "description": "Network coverage calculation across 207 spatial sensors"
+    },
+    "dataQuality": {
+      "classification": "REAL_DATA_SUPPORTED",
+      "available": true,
+      "description": "Observation reliability ratio (valid_observations / total_observations)"
+    },
+    "spatialRegions": {
+      "classification": "REAL_DERIVED",
+      "available": true,
+      "source": "real coordinates + deterministic KMeans (k=4)",
+      "description": "4 spatial region clusters partitioned using real sensor latitude/longitude"
+    },
+    "mapRepresentatives": {
+      "classification": "REAL_DERIVED_SELECTION",
+      "available": true,
+      "source": "real sensors + deterministic selection algorithm",
+      "description": "5 representative real sensors selected per region (20 total) using multi-factor criteria"
+    },
+    "hardwareSensorHealth": {
+      "classification": "NOT_AVAILABLE",
+      "available": false,
+      "source": null,
+      "realModeClassification": "NOT_AVAILABLE",
+      "demoModeClassification": "SIMULATED_DEMO",
+      "reason": "NOT_AVAILABLE in REAL METR-LA mode (Hardware health is SIMULATED_DEMO in Demo Mode only)"
+    },
+    "heartbeatState": {
+      "classification": "STATE_SUPPORTED",
+      "available": true,
+      "description": "Heartbeat and wake-up simulation state logic"
+    },
+    "flowConservation": {
+      "classification": "NOT_AVAILABLE",
+      "available": false,
+      "source": null,
+      "reason": "Traffic flow (vehicles/hr) telemetry does not exist in METR-LA"
+    },
+    "occupancyCongestion": {
+      "classification": "NOT_AVAILABLE",
+      "available": false,
+      "source": null,
+      "reason": "Road occupancy (%) telemetry does not exist in METR-LA"
+    }
+  }
+}

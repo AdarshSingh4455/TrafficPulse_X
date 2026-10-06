@@ -38,3 +38,10 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Data & Large Benchmark Artifacts
+data/raw/metr-la/metr-la.h5
+data/raw/metr-la/*.h5
+data/raw/metr-la/*.npz
+data/processed/metr-la/ml_ready/*.npz
+

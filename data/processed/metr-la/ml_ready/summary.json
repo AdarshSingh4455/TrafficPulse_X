@@ -1,0 +1,154 @@
+{
+  "status": "READY",
+  "datasetName": "METR-LA",
+  "sourceType": "REAL_BENCHMARK",
+  "totalTimeSteps": 34272,
+  "sensorCount": 207,
+  "featureCount": 1,
+  "featureNames": [
+    "speed"
+  ],
+  "inputSteps": 12,
+  "inputDurationMinutes": 60,
+  "targetHorizons": [
+    1,
+    3,
+    6,
+    12
+  ],
+  "targetMinutes": [
+    5,
+    15,
+    30,
+    60
+  ],
+  "samplingIntervalMinutes": 5,
+  "splitRatio": [
+    0.7,
+    0.1,
+    0.2
+  ],
+  "targetContract": {
+    "storedTargetSpace": "RAW_MPH",
+    "trainingTargetNormalization": "SAME_TRAIN_ONLY_SCALER",
+    "evaluationSpace": "INVERSE_TRANSFORMED_MPH"
+  },
+  "graphNormalizationContract": {
+    "method": "SYMMETRIC_NORMALIZED_ADJACENCY",
+    "selfLoops": true,
+    "formula": "A_hat = A + I; D_hat = degree(A_hat); A_norm = D_hat^(-1/2) * A_hat * D_hat^(-1/2)",
+    "rawAdjacencyPreserved": true
+  },
+  "scaler": {
+    "scalerType": "StandardScaler",
+    "mean": 58.584258,
+    "std": 12.822883,
+    "fittedOn": "train_valid_only",
+    "maskedNullValue": 0.0,
+    "numValidTrainObservations": 4611750,
+    "totalTrainObservations": 4965930
+  },
+  "splits": {
+    "train": {
+      "halfOpenInterval": [
+        0,
+        23990
+      ],
+      "inclusiveIndexRange": [
+        0,
+        23989
+      ],
+      "timeStepRange": [
+        0,
+        23990
+      ],
+      "startTime": "2012-03-01T00:00:00",
+      "endTime": "2012-05-23T07:05:00",
+      "totalSteps": 23990,
+      "numWindows": 23967,
+      "xShape": [
+        23967,
+        12,
+        207,
+        1
+      ],
+      "yShape": [
+        23967,
+        4,
+        207,
+        1
+      ]
+    },
+    "val": {
+      "halfOpenInterval": [
+        23990,
+        27417
+      ],
+      "inclusiveIndexRange": [
+        23990,
+        27416
+      ],
+      "timeStepRange": [
+        23990,
+        27417
+      ],
+      "startTime": "2012-05-23T07:10:00",
+      "endTime": "2012-06-04T04:40:00",
+      "totalSteps": 3427,
+      "numWindows": 3404,
+      "xShape": [
+        3404,
+        12,
+        207,
+        1
+      ],
+      "yShape": [
+        3404,
+        4,
+        207,
+        1
+      ]
+    },
+    "test": {
+      "halfOpenInterval": [
+        27417,
+        34272
+      ],
+      "inclusiveIndexRange": [
+        27417,
+        34271
+      ],
+      "timeStepRange": [
+        27417,
+        34272
+      ],
+      "startTime": "2012-06-04T04:45:00",
+      "endTime": "2012-06-27T23:55:00",
+      "totalSteps": 6855,
+      "numWindows": 6832,
+      "xShape": [
+        6832,
+        12,
+        207,
+        1
+      ],
+      "yShape": [
+        6832,
+        4,
+        207,
+        1
+      ]
+    }
+  },
+  "dataQuality": {
+    "trainValidObservationPercentage": 92.87,
+    "valValidObservationPercentage": 93.0,
+    "testValidObservationPercentage": 87.87,
+    "overallValidObservationPercentage": 91.89
+  },
+  "adjacencyMatrixShape": [
+    207,
+    207
+  ],
+  "generatedAt": "2026-10-06T10:14:01.420887+00:00"
+}

@@ -1,5 +1,6 @@
 # TrafficPulse-X FastAPI Backend Server with Real Decision Intelligence
 
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any, List
@@ -13,6 +14,12 @@ import decision.need_score as need_mod
 import decision.query_ranker as ranker_mod
 import decision.evidence as evidence_mod
 from decision.config import WAKE_UP_THRESHOLD, FLOW_MISMATCH_THRESHOLD
+from backend.datasets.metr_la import (
+    inspect_metr_la_dataset,
+    get_real_sensor_canonical,
+    get_metr_la_snapshot,
+    get_metr_la_ml_ready_status
+)
 
 app = FastAPI(
     title="TrafficPulse-X API",
@@ -233,3 +240,125 @@ def receive_sensor_heartbeat(sensor_id: str, payload: HeartbeatPayload):
 def reset_demo_state():
     state_mgr.reset()
     return {"status": "RESET_SUCCESS"}
+
+@app.get("/api/datasets/status")
+def get_datasets_status():
+    metr_la_summary = inspect_metr_la_dataset()
+    avail = metr_la_summary.get("availability", "PARTIAL")
+    mode_label = f"REAL_BENCHMARK {avail}"
+
+    return {
+        "demoMode": {
+            "name": "METR-LA 32-Sensor Synthetic Topology",
+            "classification": "SIMULATED_DEMO",
+            "sourceType": "SYNTHETIC_DEMO",
+            "sensorCount": len(SENSORS_DATA),
+            "status": "READY",
+            "description": "Synthetic 32-sensor traffic network for real-time interactive demo"
+        },
+        "researchMode": {
+            "name": "METR-LA Real Benchmark Dataset",
+            "classification": mode_label,
+            "sourceType": "REAL_BENCHMARK",
+            "availability": avail,
+            "graphStatus": metr_la_summary.get("graphStatus", "MISSING"),
+            "timeSeriesStatus": metr_la_summary.get("timeSeriesStatus", "FILES_REQUIRED"),
+            "locationStatus": metr_la_summary.get("locationStatus", "MISSING"),
+            "sensorCount": metr_la_summary.get("sensorCount", 207),
+            "metadataPath": "data/processed/metr-la/metadata.json"
+        }
+    }
+
+@app.get("/api/datasets/metr-la/summary")
+def get_metr_la_dataset_summary():
+    return inspect_metr_la_dataset()
+
+@app.get("/api/datasets/metr-la/features")
+def get_metr_la_feature_matrix():
+    feat_path = "data/processed/metr-la/feature_support.json"
+    if os.path.exists(feat_path):
+        import json
+        with open(feat_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    inspector = METRLADatasetInspector()
+    return inspector.generate_feature_support_matrix(os.path.exists("data/raw/metr-la/metr-la.h5"))
+
+@app.get("/api/datasets/metr-la/sensors/{sensor_id}")
+def get_real_metr_la_sensor(sensor_id: str, time_index: int = 0):
+    record = get_real_sensor_canonical(sensor_id, time_index=time_index)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Sensor ID '{sensor_id}' not found in METR-LA benchmark dataset")
+    return record
+
+@app.get("/api/datasets/metr-la/regions")
+def get_metr_la_regions():
+    reg_path = "data/processed/metr-la/regions.json"
+    if os.path.exists(reg_path):
+        import json
+        with open(reg_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    inspector = METRLADatasetInspector()
+    regions, _ = inspector.generate_regions_and_representatives()
+    return regions
+
+@app.get("/api/datasets/metr-la/regions/{region_id}")
+def get_metr_la_region_detail(region_id: str):
+    r_code = region_id.upper()
+    if not r_code.startswith("REGION_"):
+        r_code = f"REGION_{r_code}"
+
+    regions = get_metr_la_regions()
+    if r_code not in regions:
+        raise HTTPException(status_code=404, detail=f"Region '{region_id}' not found. Valid regions: REGION_A, REGION_B, REGION_C, REGION_D")
+    return regions[r_code]
+
+@app.get("/api/datasets/metr-la/regions/{region_id}/representatives")
+def get_metr_la_region_representatives(region_id: str):
+    r_code = region_id.upper()
+    if not r_code.startswith("REGION_"):
+        r_code = f"REGION_{r_code}"
+
+    rep_path = "data/processed/metr-la/representative_sensors.json"
+    if os.path.exists(rep_path):
+        import json
+        with open(rep_path, "r", encoding="utf-8") as f:
+            all_reps = json.load(f)
+            if r_code in all_reps:
+                return all_reps[r_code]
+
+    raise HTTPException(status_code=404, detail=f"Representatives for region '{region_id}' not found.")
+
+@app.get("/api/datasets/metr-la/representatives")
+def get_all_metr_la_representatives():
+    rep_path = "data/processed/metr-la/representative_sensors.json"
+    if os.path.exists(rep_path):
+        import json
+        with open(rep_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    inspector = METRLADatasetInspector()
+    _, reps = inspector.generate_regions_and_representatives()
+    return reps
+
+@app.get("/api/datasets/metr-la/snapshot")
+def get_real_metr_la_snapshot(
+    time_index: int = 0,
+    region_id: str | None = None,
+    representatives_only: bool = True
+):
+    try:
+        return get_metr_la_snapshot(
+            time_index=time_index,
+            region_id=region_id,
+            representatives_only=representatives_only
+        )
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except FileNotFoundError as fe:
+        raise HTTPException(status_code=404, detail=str(fe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load snapshot: {str(e)}")
+
+@app.get("/api/datasets/metr-la/ml-ready/status")
+def get_metr_la_ml_ready_dataset_status():
+    return get_metr_la_ml_ready_status()
+

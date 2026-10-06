@@ -1,0 +1,9 @@
+{
+  "scalerType": "StandardScaler",
+  "mean": 58.584258,
+  "std": 12.822883,
+  "fittedOn": "train_valid_only",
+  "maskedNullValue": 0.0,
+  "numValidTrainObservations": 4611750,
+  "totalTrainObservations": 4965930
+}

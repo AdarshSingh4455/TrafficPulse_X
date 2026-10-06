@@ -1,0 +1,181 @@
+{
+  "datasetName": "METR-LA",
+  "classification": "REAL",
+  "sourceType": "REAL_BENCHMARK",
+  "availability": "READY",
+  "graphStatus": "AVAILABLE",
+  "timeSeriesStatus": "AVAILABLE",
+  "locationStatus": "AVAILABLE",
+  "regionCount": 4,
+  "representativeCount": 20,
+  "fileStatus": {
+    "graphTopology": true,
+    "measurementFile": true,
+    "locationFile": true,
+    "missingFiles": []
+  },
+  "sensorCount": 207,
+  "consistencyCheck": {
+    "passed": true,
+    "timeSeriesSensors": 207,
+    "graphSensors": 207,
+    "adjacencyDimension": 207
+  },
+  "graphStats": {
+    "found": true,
+    "graphStatus": "AVAILABLE",
+    "sensorIdCount": 207,
+    "adjacencyMatrixShape": [
+      207,
+      207
+    ],
+    "numEdges": 1722,
+    "sparsity": 0.9598,
+    "weightStats": {
+      "min": 0.1001,
+      "max": 1.0,
+      "mean": 0.473
+    }
+  },
+  "locationStats": {
+    "found": true,
+    "locationStatus": "AVAILABLE",
+    "locationCount": 207,
+    "validCoordinatesCount": 207,
+    "sampleLocations": [
+      {
+        "sensor_id": "773869",
+        "latitude": 34.15497,
+        "longitude": -118.31829
+      },
+      {
+        "sensor_id": "767541",
+        "latitude": 34.11621,
+        "longitude": -118.23799
+      },
+      {
+        "sensor_id": "767542",
+        "latitude": 34.11641,
+        "longitude": -118.23819
+      },
+      {
+        "sensor_id": "717447",
+        "latitude": 34.07248,
+        "longitude": -118.26772
+      },
+      {
+        "sensor_id": "717446",
+        "latitude": 34.07142,
+        "longitude": -118.26572
+      }
+    ]
+  },
+  "timeSeriesStats": {
+    "found": true,
+    "filename": "metr-la.h5",
+    "fileSize": 57038056,
+    "timeSeriesStatus": "AVAILABLE",
+    "corrupt": false,
+    "dataframeShape": [
+      34272,
+      207
+    ],
+    "timeSteps": 34272,
+    "sensorCount": 207,
+    "totalSamples": 7094304,
+    "duplicateTimestamps": 0,
+    "missingness": {
+      "nanCount": 0,
+      "nanPercentage": 0.0,
+      "maskedNullValue": 0.0,
+      "maskedNullCount": 575302,
+      "maskedNullPercentage": 8.1094,
+      "validObservationCount": 6519002,
+      "validObservationPercentage": 91.8906,
+      "topMaskedSensors": [
+        {
+          "sensorId": "718076",
+          "maskedCount": 6890,
+          "maskedPercentage": 20.1039
+        },
+        {
+          "sensorId": "716939",
+          "maskedCount": 6464,
+          "maskedPercentage": 18.8609
+        },
+        {
+          "sensorId": "760987",
+          "maskedCount": 5532,
+          "maskedPercentage": 16.1415
+        },
+        {
+          "sensorId": "716955",
+          "maskedCount": 5374,
+          "maskedPercentage": 15.6804
+        },
+        {
+          "sensorId": "769418",
+          "maskedCount": 5349,
+          "maskedPercentage": 15.6075
+        }
+      ],
+      "maxConsecutiveZeroRun": {
+        "sensorId": "717490",
+        "steps": 1683
+      }
+    },
+    "featuresFound": {
+      "speed": {
+        "available": true,
+        "source": "metr-la.h5"
+      },
+      "flow": {
+        "available": false,
+        "source": null,
+        "reason": "NOT_AVAILABLE_IN_METR_LA"
+      },
+      "occupancy": {
+        "available": false,
+        "source": null,
+        "reason": "NOT_AVAILABLE_IN_METR_LA"
+      }
+    },
+    "sensorIdCrossCheck": {
+      "measurementSensorCount": 207,
+      "graphSensorCount": 207,
+      "matchedSensorCount": 207,
+      "missingIds": [],
+      "extraIds": [],
+      "orderMatch": true,
+      "sensorIdMismatch": false
+    },
+    "rawSpeedStats": {
+      "min": 0.0,
+      "max": 70.0,
+      "mean": 53.72,
+      "std": 20.26
+    },
+    "validSpeedStats": {
+      "min": 0.33,
+      "max": 70.0,
+      "mean": 58.46,
+      "std": 13.02
+    },
+    "startTime": "2012-03-01T00:00:00",
+    "endTime": "2012-06-27T23:55:00",
+    "samplingIntervalMinutes": 5,
+    "timestampValidation": "PASSED"
+  },
+  "validations": {
+    "missingDir": false,
+    "corruptFile": false,
+    "duplicateTimestamps": 0,
+    "nanCount": 0,
+    "nanPercentage": 0.0,
+    "maskedNullCount": 575302,
+    "maskedNullPercentage": 8.1094,
+    "sensorIdMismatch": false,
+    "timestampValidation": "PASSED"
+  },
+  "lastInspected": "2026-10-06T10:13:46.925201+00:00"
+}
