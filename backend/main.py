@@ -1,19 +1,12 @@
-# TrafficPulse-X FastAPI Backend Server with Real Decision Intelligence
+# TrafficPulse-X FastAPI Backend Server with Single-Source Data Architecture
 
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
 
-from data import SENSORS_DATA, EDGES_DATA, SYSTEM_EVENTS
-from graph import SensorGraph
-import decision.state as state_mod
-import decision.coverage as coverage_mod
-import decision.need_score as need_mod
-import decision.query_ranker as ranker_mod
-import decision.evidence as evidence_mod
-from decision.config import WAKE_UP_THRESHOLD, FLOW_MISMATCH_THRESHOLD
+from backend.data_source import DataSourceManager
 from backend.datasets.metr_la import (
     inspect_metr_la_dataset,
     get_real_sensor_canonical,
@@ -35,9 +28,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize network graph and state manager
-graph = SensorGraph(SENSORS_DATA, EDGES_DATA)
-state_mgr = state_mod.SensorStateManager(SENSORS_DATA)
+# Central Backend Data Source Manager Instance (Single Source of Truth)
+data_source_mgr = DataSourceManager()
 
 class HeartbeatPayload(BaseModel):
     flow: float | None = None
@@ -46,123 +38,56 @@ class HeartbeatPayload(BaseModel):
 
 @app.get("/api/health")
 def health_check():
-    return {
-        "status": "online",
-        "system": "TrafficPulse-X",
-        "sensorsTotal": len(graph.sensors),
-        "activeSensors": len(state_mgr.get_active_sensors())
-    }
+    return data_source_mgr.get_health()
 
 @app.get("/api/dashboard")
-def get_dashboard_summary():
-    active_count = len(state_mgr.get_active_sensors())
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    
-    return {
-        "totalSensors": len(graph.sensors),
-        "activeSensors": active_count,
-        "inactiveSensors": len(graph.sensors) - active_count,
-        "highCongestionAreas": len([s for s in SENSORS_DATA if s.get("status") == "high"]),
-        "communicationSavedMb": round(state_mgr.total_bytes_saved / (1024 * 1024), 1),
-        "networkCoveragePercent": cov_info["overallCoveragePercent"]
-    }
+def get_dashboard_summary(source_type: str = "SYNTHETIC_DEMO", time_index: int = 0):
+    return data_source_mgr.get_dashboard_summary(source_type=source_type, time_index=time_index)
 
 @app.get("/api/sensors")
-def get_all_sensors():
-    result = []
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    
-    for s in SENSORS_DATA:
-        sid = s["id"]
-        st = state_mgr.get_state(sid)
-        need_res = need_mod.compute_sensor_need_score(sid, graph, state_mgr, cov_info["sectorCoverageMap"])
-        
-        sensor_item = {
-            **s,
-            "status": st.get("status", s.get("status", "free")),
-            "commState": st.get("commState", "NORMAL"),
-            "flow": st.get("flow", s.get("flow", 0)),
-            "speed": st.get("speed", s.get("speed", 0)),
-            "occupancy": st.get("occupancy", s.get("occupancy", 0)),
-            "health": st.get("health", s.get("health", 0.95)),
-            "lastUpdated": st.get("lastUpdatedStr", "Just now"),
-            "needScore": need_res["needScore"],
-            "uncertainty": f"{int(need_res.get('factors', {}).get('uncertaintyProxy', 0.3) * 100)}%",
-            "expectedBenefit": "48%",
-            "expectedBytes": s.get("expectedBytes", "4.2 KB")
-        }
-        result.append(sensor_item)
-
-    return result
+def get_all_sensors(source_type: str = "SYNTHETIC_DEMO", time_index: int = 0):
+    return data_source_mgr.get_sensors(source_type=source_type, time_index=time_index)
 
 @app.get("/api/sensors/{sensor_id}")
-def get_sensor_by_id(sensor_id: str):
-    if sensor_id not in graph.sensors:
-        raise HTTPException(status_code=404, detail="Sensor not found")
-
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    need_res = need_mod.compute_sensor_need_score(sensor_id, graph, state_mgr, cov_info["sectorCoverageMap"])
-    st = state_mgr.get_state(sensor_id)
-    s = graph.sensors[sensor_id]
-
-    return {
-        **s,
-        "status": st.get("status", s.get("status", "free")),
-        "commState": st.get("commState", "NORMAL"),
-        "flow": st.get("flow", s.get("flow", 0)),
-        "speed": st.get("speed", s.get("speed", 0)),
-        "occupancy": st.get("occupancy", s.get("occupancy", 0)),
-        "health": st.get("health", s.get("health", 0.95)),
-        "lastUpdated": st.get("lastUpdatedStr", "Just now"),
-        "needScore": need_res["needScore"],
-        "reasons": need_res["reasons"],
-        "factors": need_res["factors"],
-        "uncertainty": f"{int(need_res.get('factors', {}).get('uncertaintyProxy', 0.3) * 100)}%",
-        "expectedBenefit": "48%",
-        "expectedBytes": s.get("expectedBytes", "4.2 KB")
-    }
+def get_sensor_by_id(sensor_id: str, time_index: int = 0, source_type: Optional[str] = None):
+    res = data_source_mgr.get_sensor_by_id(sensor_id=sensor_id, time_index=time_index, source_type=source_type)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Sensor '{sensor_id}' not found")
+    return res
 
 @app.get("/api/decision/sensors/{sensor_id}/need-score")
 def get_sensor_need_score(sensor_id: str):
-    if sensor_id not in graph.sensors:
-        raise HTTPException(status_code=404, detail="Sensor not found")
-
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    return need_mod.compute_sensor_need_score(sensor_id, graph, state_mgr, cov_info["sectorCoverageMap"])
+    res = data_source_mgr.get_decision_need_score(sensor_id)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Sensor '{sensor_id}' not found")
+    return res
 
 @app.get("/api/decision/counterfactual/{sensor_id}")
 def get_sensor_counterfactual(sensor_id: str):
-    if sensor_id not in graph.sensors:
-        raise HTTPException(status_code=404, detail="Sensor not found")
-
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    need_res = need_mod.compute_sensor_need_score(sensor_id, graph, state_mgr, cov_info["sectorCoverageMap"])
-    return ranker_mod.compute_counterfactual_estimate(sensor_id, need_res, graph, state_mgr)
+    res = data_source_mgr.get_counterfactual(sensor_id)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Sensor '{sensor_id}' not found")
+    return res
 
 @app.get("/api/decision/blind-spots")
 def get_blind_spots():
-    return coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
+    return data_source_mgr.get_blind_spots()
 
 @app.get("/api/decision/evidence/{sensor_id}")
 def get_evidence_chain(sensor_id: str):
-    if sensor_id not in graph.sensors:
-        raise HTTPException(status_code=404, detail="Sensor not found")
-
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    return evidence_mod.generate_evidence_chain(sensor_id, graph, state_mgr, cov_info["sectorCoverageMap"])
+    return data_source_mgr.get_evidence_chain(sensor_id)
 
 @app.get("/api/decision/query-candidates")
 def get_query_candidates():
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    return ranker_mod.rank_query_candidates(SENSORS_DATA, graph, state_mgr, cov_info["sectorCoverageMap"])
+    return data_source_mgr.get_query_candidates()
 
 @app.get("/api/network")
-def get_network_topology():
-    return graph.get_topology_summary()
+def get_network_topology(source_type: str = "SYNTHETIC_DEMO"):
+    return data_source_mgr.get_network_topology(source_type=source_type)
 
 @app.get("/api/network/conservation")
 def check_flow_conservation(from_id: str = "S01", to_id: str = "S05"):
-    res = graph.get_flow_conservation(from_id, to_id)
+    res = data_source_mgr.demo_graph.get_flow_conservation(from_id, to_id)
     if not res:
         return {
             "fromSensor": from_id,
@@ -180,94 +105,23 @@ def check_flow_conservation(from_id: str = "S01", to_id: str = "S05"):
 
 @app.get("/api/events")
 def get_events():
-    return state_mgr.recent_decisions if state_mgr.recent_decisions else SYSTEM_EVENTS
+    return data_source_mgr.demo_state_mgr.recent_decisions if data_source_mgr.demo_state_mgr.recent_decisions else data_source_mgr.inspector.inspect_and_save()
 
 @app.post("/api/query/{sensor_id}")
 def execute_sensor_query(sensor_id: str):
-    if sensor_id not in graph.sensors:
-        raise HTTPException(status_code=404, detail="Sensor not found")
-
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    need_res = need_mod.compute_sensor_need_score(sensor_id, graph, state_mgr, cov_info["sectorCoverageMap"])
-    cf = ranker_mod.compute_counterfactual_estimate(sensor_id, need_res, graph, state_mgr)
-    
-    sensor_obj = graph.sensors[sensor_id]
-    raw_bytes = cf["withQuery"]["expectedCost"]
-    bytes_cost = int(float(raw_bytes.replace(" KB", "")) * 1024) if "KB" in raw_bytes else 4096
-
-    receipt = state_mgr.record_query(
-        sensor_id=sensor_id,
-        reason=cf["reason"],
-        benefit=cf["benefitRatio"],
-        bytes_used=bytes_cost
-    )
-
-    return {
-        "status": "SUCCESS",
-        "action": "QUERY_EXECUTED",
-        "bytesTransferred": f"{bytes_cost / 1024:.1f} KB",
-        "expectedBenefit": cf["expectedBenefit"],
-        "receipt": receipt,
-        "needScoreBefore": need_res["needScore"],
-        "counterfactual": cf
-    }
+    return data_source_mgr.record_query(sensor_id)
 
 @app.post("/api/sensors/{sensor_id}/heartbeat")
 def receive_sensor_heartbeat(sensor_id: str, payload: HeartbeatPayload):
-    if sensor_id not in graph.sensors:
-        raise HTTPException(status_code=404, detail="Sensor not found")
-
-    st = state_mgr.record_heartbeat(sensor_id, payload.model_dump(exclude_unset=True))
-    cov_info = coverage_mod.calculate_network_coverage(SENSORS_DATA, state_mgr)
-    need_res = need_mod.compute_sensor_need_score(sensor_id, graph, state_mgr, cov_info["sectorCoverageMap"])
-
-    factors = need_res.get("factors", {})
-    if factors.get("trafficDrift", 0) > 0.35 or factors.get("flowMismatch", 0) > 0.35:
-        st["commState"] = "WAKE_UP"
-        st["wakeUpReason"] = need_res["reasons"][0] if need_res["reasons"] else "Sudden traffic shift"
-
-    return {
-        "sensorId": sensor_id,
-        "status": st["commState"],
-        "state": st["commState"],
-        "wakeUp": st["commState"] == "WAKE_UP",
-        "drift": round(factors.get("trafficDrift", 0), 2),
-        "needScore": need_res["needScore"],
-        "wakeUpReason": st.get("wakeUpReason")
-    }
+    return data_source_mgr.record_heartbeat(sensor_id, payload.model_dump(exclude_unset=True))
 
 @app.post("/api/demo/reset")
 def reset_demo_state():
-    state_mgr.reset()
-    return {"status": "RESET_SUCCESS"}
+    return data_source_mgr.reset_demo()
 
 @app.get("/api/datasets/status")
 def get_datasets_status():
-    metr_la_summary = inspect_metr_la_dataset()
-    avail = metr_la_summary.get("availability", "PARTIAL")
-    mode_label = f"REAL_BENCHMARK {avail}"
-
-    return {
-        "demoMode": {
-            "name": "METR-LA 32-Sensor Synthetic Topology",
-            "classification": "SIMULATED_DEMO",
-            "sourceType": "SYNTHETIC_DEMO",
-            "sensorCount": len(SENSORS_DATA),
-            "status": "READY",
-            "description": "Synthetic 32-sensor traffic network for real-time interactive demo"
-        },
-        "researchMode": {
-            "name": "METR-LA Real Benchmark Dataset",
-            "classification": mode_label,
-            "sourceType": "REAL_BENCHMARK",
-            "availability": avail,
-            "graphStatus": metr_la_summary.get("graphStatus", "MISSING"),
-            "timeSeriesStatus": metr_la_summary.get("timeSeriesStatus", "FILES_REQUIRED"),
-            "locationStatus": metr_la_summary.get("locationStatus", "MISSING"),
-            "sensorCount": metr_la_summary.get("sensorCount", 207),
-            "metadataPath": "data/processed/metr-la/metadata.json"
-        }
-    }
+    return data_source_mgr.get_datasets_status()
 
 @app.get("/api/datasets/metr-la/summary")
 def get_metr_la_dataset_summary():
@@ -280,7 +134,7 @@ def get_metr_la_feature_matrix():
         import json
         with open(feat_path, "r", encoding="utf-8") as f:
             return json.load(f)
-    inspector = METRLADatasetInspector()
+    inspector = data_source_mgr.inspector
     return inspector.generate_feature_support_matrix(os.path.exists("data/raw/metr-la/metr-la.h5"))
 
 @app.get("/api/datasets/metr-la/sensors/{sensor_id}")
@@ -297,7 +151,7 @@ def get_metr_la_regions():
         import json
         with open(reg_path, "r", encoding="utf-8") as f:
             return json.load(f)
-    inspector = METRLADatasetInspector()
+    inspector = data_source_mgr.inspector
     regions, _ = inspector.generate_regions_and_representatives()
     return regions
 
@@ -335,7 +189,7 @@ def get_all_metr_la_representatives():
         import json
         with open(rep_path, "r", encoding="utf-8") as f:
             return json.load(f)
-    inspector = METRLADatasetInspector()
+    inspector = data_source_mgr.inspector
     _, reps = inspector.generate_regions_and_representatives()
     return reps
 
@@ -361,4 +215,3 @@ def get_real_metr_la_snapshot(
 @app.get("/api/datasets/metr-la/ml-ready/status")
 def get_metr_la_ml_ready_dataset_status():
     return get_metr_la_ml_ready_status()
-

@@ -3,14 +3,14 @@ import { Plus, Minus, Crosshair, ChevronDown, Network } from 'lucide-react';
 import SensorMarker from './SensorMarker';
 import TrafficLegend from './TrafficLegend';
 import { useTheme } from '../../context/ThemeContext';
-import { mockSensors, roadConnections } from '../../data/sensors';
+import { roadConnections } from '../../data/sensors';
 
 export default function TrafficNetworkMap({ selectedSensor, onSelectSensor, sensors }) {
   const [viewMode] = useState("Traffic Flow");
   const [zoomLevel, setZoomLevel] = useState(1);
   const { isDark } = useTheme();
 
-  const sensorList = sensors || mockSensors;
+  const sensorList = sensors || [];
   const sensorMap = {};
   sensorList.forEach(s => {
     sensorMap[s.id] = s;

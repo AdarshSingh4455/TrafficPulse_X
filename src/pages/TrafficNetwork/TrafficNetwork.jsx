@@ -10,7 +10,6 @@ import NeedScoreBreakdown from '../../components/decision/NeedScoreBreakdown';
 import CounterfactualQueryCard from '../../components/decision/CounterfactualQueryCard';
 import EvidenceChain from '../../components/decision/EvidenceChain';
 import MetricCard from '../../components/common/MetricCard';
-import { mockSensors } from '../../data/sensors';
 import { networkSummaryMetrics } from '../../data/network';
 import { 
   fetchSensors, 
@@ -23,7 +22,7 @@ import {
   fetchMetrSensor,
   fetchMetrRegions
 } from '../../services/api';
-import { Layers, Database, ShieldAlert, Activity } from 'lucide-react';
+import { Layers, Database, ShieldAlert, Activity, AlertTriangle } from 'lucide-react';
 
 export default function TrafficNetwork() {
   const [dataMode, setDataMode] = useState('REAL'); // 'REAL' | 'DEMO'
@@ -33,7 +32,8 @@ export default function TrafficNetwork() {
 
   const [realSnapshot, setRealSnapshot] = useState(null);
   const [realSensors, setRealSensors] = useState([]);
-  const [demoSensors, setDemoSensors] = useState(mockSensors);
+  const [demoSensors, setDemoSensors] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
   
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
@@ -55,13 +55,11 @@ export default function TrafficNetwork() {
           const matched = snap.sensors.find(s => s.sensorId === prev.sensorId || s.id === prev.sensorId);
           return matched || snap.sensors[0];
         });
-      } else {
-        // Fallback to DEMO mode if REAL backend fails
-        setDataMode('DEMO');
+        setFetchError(null);
       }
     } catch (err) {
       console.error("Real snapshot fetch error:", err);
-      setDataMode('DEMO');
+      setFetchError(`Backend API connection failed: ${err.message}. Ensure FastAPI server is running at http://127.0.0.1:8000`);
     }
   }, []);
 
@@ -72,13 +70,20 @@ export default function TrafficNetwork() {
       if (dataMode === 'REAL') {
         await loadRealSnapshot(timeIndex, activeRegion);
       } else {
-        const [sens, cov] = await Promise.all([fetchSensors(), fetchBlindSpots()]);
-        if (isMounted) {
-          if (sens && sens.length > 0) {
-            setDemoSensors(sens);
-            setSelectedSensor(prev => sens.find(s => s.id === prev?.id) || sens[0]);
+        try {
+          const [sens, cov] = await Promise.all([fetchSensors('SYNTHETIC_DEMO'), fetchBlindSpots()]);
+          if (isMounted) {
+            if (sens && sens.length > 0) {
+              setDemoSensors(sens);
+              setSelectedSensor(prev => sens.find(s => s.id === prev?.id) || sens[0]);
+            }
+            if (cov) setCoverageData(cov);
+            setFetchError(null);
           }
-          if (cov) setCoverageData(cov);
+        } catch (err) {
+          if (isMounted) {
+            setFetchError(`Backend API connection failed: ${err.message}. Ensure FastAPI server is running at http://127.0.0.1:8000`);
+          }
         }
       }
     }
@@ -236,6 +241,15 @@ export default function TrafficNetwork() {
           ))}
         </div>
       </div>
+
+      {fetchError && (
+        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 flex items-center gap-3 shadow-xs">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500" />
+          <div className="text-sm font-medium">
+            <span className="font-bold">Backend Connection Error:</span> {fetchError}
+          </div>
+        </div>
+      )}
 
       {/* Historical Replay Clock Bar (REAL mode only) */}
       {dataMode === 'REAL' && realSnapshot && (

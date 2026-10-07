@@ -707,8 +707,170 @@ def test_graph_normalization_contract_defined():
     assert gc["rawAdjacencyPreserved"] is True
 
 
+# ==============================================================================
+# PART R TESTS (BACKEND SINGLE SOURCE OF TRUTH & FE CENTRALIZATION)
+# ==============================================================================
+
+def test_single_fastapi_app_entrypoint():
+    """51. Verify backend/main.py contains the only FastAPI application instance."""
+    from backend.main import app
+    assert app.title == "TrafficPulse-X API"
+    assert app.version == "1.0.0"
+
+
+def test_real_sensors_resolve_through_data_source_manager():
+    """52. Verify REAL_METR_LA sensors resolve through DataSourceManager."""
+    from backend.data_source import DataSourceManager
+    mgr = DataSourceManager()
+    sensors = mgr.get_sensors(source_type="REAL_METR_LA", time_index=0)
+    assert len(sensors) == 207
+    s0 = sensors[0]
+    assert s0["sourceType"] == "REAL_BENCHMARK"
+    assert s0["datasetName"] == "METR-LA"
+    assert s0["mode"] == "HISTORICAL_REPLAY"
+
+
+def test_demo_sensors_resolve_through_data_source_manager():
+    """53. Verify SYNTHETIC_DEMO sensors resolve through DataSourceManager."""
+    from backend.data_source import DataSourceManager
+    mgr = DataSourceManager()
+    sensors = mgr.get_sensors(source_type="SYNTHETIC_DEMO")
+    assert len(sensors) == 32
+    s0 = sensors[0]
+    assert s0["sourceType"] == "SYNTHETIC_DEMO"
+    assert s0["datasetName"] == "TrafficPulse-X Demo"
+    assert s0["mode"] == "LIVE_SIMULATION"
+
+
+def test_api_responses_include_explicit_data_mode_tags():
+    """54. Verify dashboard and sensor API responses include explicit mode tags."""
+    from fastapi.testclient import TestClient
+    from backend.main import app
+    client = TestClient(app)
+
+    r_demo = client.get("/api/dashboard?source_type=SYNTHETIC_DEMO")
+    assert r_demo.status_code == 200
+    d_demo = r_demo.json()
+    assert d_demo["sourceType"] == "SYNTHETIC_DEMO"
+    assert d_demo["mode"] == "LIVE_SIMULATION"
+
+    r_real = client.get("/api/dashboard?source_type=REAL_METR_LA&time_index=0")
+    assert r_real.status_code == 200
+    d_real = r_real.json()
+    assert d_real["sourceType"] == "REAL_BENCHMARK"
+    assert d_real["mode"] == "HISTORICAL_REPLAY"
+
+
+def test_real_replay_speed_consistency_across_endpoints():
+    """55. Verify identical speed for sensor 773869 across snapshot, detail, and get_sensors at time_index=5."""
+    from fastapi.testclient import TestClient
+    from backend.main import app
+    client = TestClient(app)
+
+    snap_r = client.get("/api/datasets/metr-la/snapshot?time_index=5&region_id=ALL&representatives_only=false")
+    snap_data = snap_r.json()
+    s_snap = next(s for s in snap_data["sensors"] if s["sensorId"] == "773869")
+
+    detail_r = client.get("/api/sensors/773869?time_index=5&source_type=REAL_METR_LA")
+    detail_data = detail_r.json()
+
+    all_r = client.get("/api/sensors?source_type=REAL_METR_LA&time_index=5")
+    all_data = all_r.json()
+    s_all = next(s for s in all_data if s["sensorId"] == "773869")
+
+    assert s_snap["rawSpeed"] == detail_data["measurements"]["speed"] == s_all["speed"]
+
+
+def test_demo_state_synchronization_across_endpoints():
+    """56. Verify demo query execution updates state centrally in DataSourceManager."""
+    from fastapi.testclient import TestClient
+    from backend.main import app
+    client = TestClient(app)
+
+    res = client.post("/api/query/S05").json()
+    assert res["status"] == "SUCCESS"
+
+    detail = client.get("/api/sensors/S05").json()
+    assert detail["sensorId"] == "S05"
+    assert detail["sourceType"] == "SYNTHETIC_DEMO"
+
+
+def test_decision_engine_reads_canonical_backend_sensor_state():
+    """57. Verify decision endpoints resolve state through DataSourceManager."""
+    from fastapi.testclient import TestClient
+    from backend.main import app
+    client = TestClient(app)
+
+    need = client.get("/api/decision/sensors/S05/need-score").json()
+    assert "needScore" in need
+
+    cf = client.get("/api/decision/counterfactual/S05").json()
+    assert "sensorId" in cf
+    assert "expectedBenefit" in cf
+
+    evidence = client.get("/api/decision/evidence/S05").json()
+    assert "targetSensor" in evidence
+
+
+def test_health_and_dataset_status_endpoints():
+    """58. Verify health and datasets/status endpoints return active capabilities and modes."""
+    from fastapi.testclient import TestClient
+    from backend.main import app
+    client = TestClient(app)
+
+    h_res = client.get("/api/health").json()
+    assert h_res["backendStatus"] == "OK"
+    assert "REAL_METR_LA" in h_res["activeCapabilities"]
+
+    s_res = client.get("/api/datasets/status").json()
+    assert s_res["demoMode"]["sourceType"] == "SYNTHETIC_DEMO"
+    assert s_res["researchMode"]["sourceType"] == "REAL_BENCHMARK"
+
+
+def test_demo_reset_endpoint_clears_state():
+    """59. Verify /api/demo/reset resets demo state via DataSourceManager."""
+    from fastapi.testclient import TestClient
+    from backend.main import app
+    client = TestClient(app)
+
+    r = client.post("/api/demo/reset")
+    assert r.status_code == 200
+    assert r.json()["status"] == "RESET_SUCCESS"
+
+
+def test_network_topology_endpoint_modes():
+    """60. Verify network topology endpoint returns mode-specific node & edge counts."""
+    from fastapi.testclient import TestClient
+    from backend.main import app
+    client = TestClient(app)
+
+    topo_demo = client.get("/api/network?source_type=SYNTHETIC_DEMO").json()
+    assert topo_demo["nodeCount"] == 32
+    assert topo_demo["sourceType"] == "SYNTHETIC_DEMO"
+
+    topo_real = client.get("/api/network?source_type=REAL_METR_LA").json()
+    assert topo_real["nodeCount"] == 207
+    assert topo_real["edgeCount"] == 1722
+    assert topo_real["sourceType"] == "REAL_BENCHMARK"
+
+
+def test_authoritative_region_hash_checksum_and_counts():
+    """61. Verify exact authoritative region counts and SHA-256 hash checksum."""
+    import hashlib
+    with open("data/processed/metr-la/regions.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    counts = {k: len(v["sensorIds"]) for k, v in data.items()}
+    assert counts == {"REGION_A": 48, "REGION_B": 57, "REGION_C": 58, "REGION_D": 44}
+
+    content_bytes = json.dumps(data, sort_keys=True).encode("utf-8")
+    sha = hashlib.sha256(content_bytes).hexdigest()
+    assert sha == "ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
 
 
 

@@ -13,11 +13,14 @@ import { metricCardsData } from '../../data/dashboard';
 import { mockEvents } from '../../data/events';
 import { fetchQueryCandidates, fetchBlindSpots, executeQuery, fetchSensors } from '../../services/api';
 
+import { AlertTriangle } from 'lucide-react';
+
 export default function Overview() {
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [candidates, setCandidates] = useState(null);
   const [coverageData, setCoverageData] = useState(null);
   const [sensors, setSensors] = useState(null);
+  const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -32,9 +35,12 @@ export default function Overview() {
           if (candRes) setCandidates(candRes.slice(0, 5));
           if (covRes) setCoverageData(covRes);
           if (sensRes) setSensors(sensRes);
+          setFetchError(null);
         }
-      } catch {
-        // graceful fallback to mock
+      } catch (err) {
+        if (isMounted) {
+          setFetchError(`Backend connection failed: ${err.message}. Ensure FastAPI server is running on http://127.0.0.1:8000`);
+        }
       }
     }
     loadData();
@@ -53,6 +59,15 @@ export default function Overview() {
   return (
     <div className="space-y-6 pb-12">
       <OverviewHero />
+
+      {fetchError && (
+        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 flex items-center gap-3 shadow-xs">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500" />
+          <div className="text-sm font-medium">
+            <span className="font-bold">Backend Connection Error:</span> {fetchError}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
         {metricCardsData.map((card) => (
