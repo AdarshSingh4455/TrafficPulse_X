@@ -1,0 +1,20 @@
+{
+  "modelType": "SpatialGCN",
+  "spatialOnly": true,
+  "temporalRecurrence": false,
+  "inputFeatures": 2,
+  "hiddenDim": 64,
+  "outputHorizons": 4,
+  "dropout": 0.1,
+  "seed": 42,
+  "batchSize": 64,
+  "learningRate": 0.001,
+  "maxEpochs": 30,
+  "epochsCompleted": 30,
+  "bestEpoch": 29,
+  "bestValLoss": 4.8757,
+  "trainingDurationSeconds": 833.37,
+  "parameterCount": 4612,
+  "checkpointSizeBytes": 21473,
+  "device": "cpu"
+}

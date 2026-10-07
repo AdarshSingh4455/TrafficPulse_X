@@ -1,0 +1,328 @@
+{
+  "dataset": "METR-LA",
+  "stage": "6.4",
+  "evaluationSet": "test.npz",
+  "units": "raw_mph",
+  "sampleCounts": {
+    "numTestWindows": 6832,
+    "totalTestTargets": 5656896,
+    "validEvaluatedTargets": 4970212,
+    "maskedTargetsExcluded": 686684
+  },
+  "modelConfig": {
+    "modelType": "SpatialGCN",
+    "spatialOnly": true,
+    "temporalRecurrence": false,
+    "inputFeatures": 2,
+    "hiddenDim": 64,
+    "outputHorizons": 4,
+    "dropout": 0.1,
+    "seed": 42,
+    "batchSize": 64,
+    "learningRate": 0.001,
+    "maxEpochs": 30,
+    "epochsCompleted": 30,
+    "bestEpoch": 29,
+    "bestValLoss": 4.8757,
+    "trainingDurationSeconds": 833.37,
+    "parameterCount": 4612,
+    "checkpointSizeBytes": 21473,
+    "device": "cpu"
+  },
+  "overallMetrics": {
+    "gcn": {
+      "mae": 5.4604,
+      "rmse": 8.9625,
+      "mape": 15.67,
+      "MAE": 5.4604,
+      "RMSE": 8.9625,
+      "MAPE": 15.67
+    }
+  },
+  "byHorizon": {
+    "+5 min": {
+      "horizonStep": 1,
+      "horizonMinutes": 5,
+      "validTargetCount": 1242580,
+      "absoluteErrorSum": 5857393.0,
+      "squaredErrorSum": 68584760.0,
+      "mae": 4.7139,
+      "rmse": 7.4294,
+      "mape": 12.82,
+      "MAE": 4.7139,
+      "RMSE": 7.4294,
+      "MAPE": 12.82
+    },
+    "+15 min": {
+      "horizonStep": 3,
+      "horizonMinutes": 15,
+      "validTargetCount": 1242568,
+      "absoluteErrorSum": 6354292.0,
+      "squaredErrorSum": 84716064.0,
+      "mae": 5.1138,
+      "rmse": 8.257,
+      "mape": 14.26,
+      "MAE": 5.1138,
+      "RMSE": 8.257,
+      "MAPE": 14.26
+    },
+    "+30 min": {
+      "horizonStep": 6,
+      "horizonMinutes": 30,
+      "validTargetCount": 1242550,
+      "absoluteErrorSum": 6950732.5,
+      "squaredErrorSum": 105569864.0,
+      "mae": 5.5939,
+      "rmse": 9.2175,
+      "mape": 16.07,
+      "MAE": 5.5939,
+      "RMSE": 9.2175,
+      "MAPE": 16.07
+    },
+    "+60 min": {
+      "horizonStep": 12,
+      "horizonMinutes": 60,
+      "validTargetCount": 1242514,
+      "absoluteErrorSum": 7977007.0,
+      "squaredErrorSum": 140366288.0,
+      "mae": 6.4201,
+      "rmse": 10.6287,
+      "mape": 19.56,
+      "MAE": 6.4201,
+      "RMSE": 10.6287,
+      "MAPE": 19.56
+    }
+  },
+  "byRegion": {
+    "gcn": {
+      "REGION_A": {
+        "sensorCount": 48,
+        "mae": 3.5751,
+        "rmse": 5.7925,
+        "mape": 7.42
+      },
+      "REGION_B": {
+        "sensorCount": 57,
+        "mae": 6.8854,
+        "rmse": 10.6975,
+        "mape": 22.61
+      },
+      "REGION_C": {
+        "sensorCount": 58,
+        "mae": 5.3005,
+        "rmse": 8.7399,
+        "mape": 14.65
+      },
+      "REGION_D": {
+        "sensorCount": 44,
+        "mae": 5.9184,
+        "rmse": 9.6576,
+        "mape": 17.21
+      }
+    }
+  },
+  "graphAblation": {
+    "ablationMethodology": "Method B: Real-graph trained SpatialGCN checkpoint (gcn_best.pt) evaluated with Identity Adjacency (A_norm = I_207)",
+    "adjacencyWeighting": "WEIGHTED (1,477 unique distance-based threshold weights)",
+    "realGraphMae": 5.4604,
+    "realGraphRmse": 8.9625,
+    "realGraphMape": 15.67,
+    "identityGraphMae": 4.1602,
+    "identityGraphRmse": 7.8049,
+    "identityGraphMape": 10.92,
+    "maeDifference": -1.3002,
+    "spatialGainPercent": -31.25,
+    "finding": "Evaluating the real-graph checkpoint on an identity matrix yields MAE 4.1602 mph vs real-graph MAE 5.4604 mph (Difference: -1.3002 mph)."
+  },
+  "sanityChecks": {
+    "gcn": {
+      "hasNaN": false,
+      "hasInf": false,
+      "negativePredictionCount": 0,
+      "above70MphPredictionCount": 0
+    }
+  },
+  "sixModelComparison": {
+    "overallWinners": {
+      "Last Value": 3.9839,
+      "Historical Average": 4.193,
+      "Linear Regression": 3.9763,
+      "GRU": 3.5669,
+      "LSTM": 3.5613,
+      "GCN": 5.4604
+    },
+    "overallWinner": "LSTM",
+    "horizonWinners": {
+      "+5 min": {
+        "winner": "GRU",
+        "winnerMae": 2.4349,
+        "allModels": {
+          "Last Value": 2.8158,
+          "Historical Average": 4.1928,
+          "Linear Regression": 2.6763,
+          "GRU": 2.4349,
+          "LSTM": 2.4372,
+          "GCN": 4.7139
+        }
+      },
+      "+15 min": {
+        "winner": "LSTM",
+        "winnerMae": 3.094,
+        "allModels": {
+          "Last Value": 3.5045,
+          "Historical Average": 4.1928,
+          "Linear Regression": 3.4026,
+          "GRU": 3.0976,
+          "LSTM": 3.094,
+          "GCN": 5.1138
+        }
+      },
+      "+30 min": {
+        "winner": "LSTM",
+        "winnerMae": 3.7984,
+        "allModels": {
+          "Last Value": 4.2166,
+          "Historical Average": 4.1929,
+          "Linear Regression": 4.2384,
+          "GRU": 3.8068,
+          "LSTM": 3.7984,
+          "GCN": 5.5939
+        }
+      },
+      "+60 min": {
+        "winner": "Historical Average",
+        "winnerMae": 4.1934,
+        "allModels": {
+          "Last Value": 5.3987,
+          "Historical Average": 4.1934,
+          "Linear Regression": 5.5879,
+          "GRU": 4.9284,
+          "LSTM": 4.9156,
+          "GCN": 6.4201
+        }
+      }
+    }
+  },
+  "samplePredictions": [
+    {
+      "description": "Short Horizon (North-East)",
+      "sensorId": "773869",
+      "region": "REGION_C",
+      "horizon": "+5 min",
+      "timestamp": "2012-06-04T05:45:00",
+      "validTarget": true,
+      "actualSpeedMph": 67.12,
+      "lastValueMph": 63.75,
+      "historicalAverageMph": 65.86,
+      "linearRegressionMph": 63.68,
+      "gruMph": 64.43,
+      "lstmMph": 64.41,
+      "gcnMph": 64.38
+    },
+    {
+      "description": "Short-Medium Horizon (Central-West)",
+      "sensorId": "767541",
+      "region": "REGION_B",
+      "horizon": "+15 min",
+      "timestamp": "2012-06-04T06:05:00",
+      "validTarget": true,
+      "actualSpeedMph": 64.0,
+      "lastValueMph": 59.25,
+      "historicalAverageMph": 61.71,
+      "linearRegressionMph": 60.23,
+      "gruMph": 61.6,
+      "lstmMph": 61.52,
+      "gcnMph": 64.32
+    },
+    {
+      "description": "Medium-Long Horizon (Central-West)",
+      "sensorId": "767542",
+      "region": "REGION_B",
+      "horizon": "+30 min",
+      "timestamp": "2012-06-04T06:35:00",
+      "validTarget": true,
+      "actualSpeedMph": 66.38,
+      "lastValueMph": 68.5,
+      "historicalAverageMph": 66.48,
+      "linearRegressionMph": 66.78,
+      "gruMph": 68.05,
+      "lstmMph": 68.09,
+      "gcnMph": 66.38
+    },
+    {
+      "description": "Long Horizon (South-East)",
+      "sensorId": "717445",
+      "region": "REGION_B",
+      "horizon": "+60 min",
+      "timestamp": "2012-06-04T07:30:00",
+      "validTarget": true,
+      "actualSpeedMph": 55.88,
+      "lastValueMph": 56.0,
+      "historicalAverageMph": 56.96,
+      "linearRegressionMph": 56.56,
+      "gruMph": 56.95,
+      "lstmMph": 56.5,
+      "gcnMph": 60.67
+    },
+    {
+      "description": "Short Horizon (North-West)",
+      "sensorId": "717816",
+      "region": "REGION_D",
+      "horizon": "+5 min",
+      "timestamp": "2012-06-04T07:00:00",
+      "validTarget": true,
+      "actualSpeedMph": 14.56,
+      "lastValueMph": 20.5,
+      "historicalAverageMph": 21.74,
+      "linearRegressionMph": 23.46,
+      "gruMph": 21.98,
+      "lstmMph": 21.79,
+      "gcnMph": 32.2
+    },
+    {
+      "description": "Long Horizon (North-West)",
+      "sensorId": "765171",
+      "region": "REGION_D",
+      "horizon": "+60 min",
+      "timestamp": "2012-06-04T08:45:00",
+      "validTarget": true,
+      "actualSpeedMph": 5.67,
+      "lastValueMph": 11.88,
+      "historicalAverageMph": 10.53,
+      "linearRegressionMph": 25.53,
+      "gruMph": 16.19,
+      "lstmMph": 15.3,
+      "gcnMph": 39.88
+    },
+    {
+      "description": "Mid-Test Window (North-East)",
+      "sensorId": "773869",
+      "region": "REGION_C",
+      "horizon": "+30 min",
+      "timestamp": "2012-06-04T14:30:00",
+      "validTarget": true,
+      "actualSpeedMph": 65.12,
+      "lastValueMph": 63.0,
+      "historicalAverageMph": 64.19,
+      "linearRegressionMph": 62.86,
+      "gruMph": 63.02,
+      "lstmMph": 63.13,
+      "gcnMph": 64.49
+    },
+    {
+      "description": "Late-Test Window (Central-West)",
+      "sensorId": "767541",
+      "region": "REGION_B",
+      "horizon": "+60 min",
+      "timestamp": "2012-06-06T00:20:00",
+      "validTarget": true,
+      "actualSpeedMph": 66.44,
+      "lastValueMph": 67.38,
+      "historicalAverageMph": 66.37,
+      "linearRegressionMph": 64.85,
+      "gruMph": 66.52,
+      "lstmMph": 66.39,
+      "gcnMph": 66.19
+    }
+  ]
+}
