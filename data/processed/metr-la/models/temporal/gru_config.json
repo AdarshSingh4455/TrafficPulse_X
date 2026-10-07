@@ -1,0 +1,17 @@
+{
+  "modelType": "GRU",
+  "inputSize": 2,
+  "hiddenSize": 64,
+  "numLayers": 1,
+  "outputHorizons": 4,
+  "parameterCount": 13316,
+  "seed": 42,
+  "batchSize": 64,
+  "learningRate": 0.001,
+  "maxEpochs": 30,
+  "patience": 5,
+  "scalerMean": 58.584258,
+  "scalerStd": 12.822883,
+  "deviceUsed": "cpu",
+  "pytorchVersion": "2.14.1+cpu"
+}

@@ -1,0 +1,391 @@
+{
+  "dataset": "METR-LA",
+  "stage": "6.3",
+  "evaluationSet": "test.npz",
+  "units": "raw_mph",
+  "mapeEpsilon": 1e-05,
+  "sampleCounts": {
+    "numTestWindows": 6832,
+    "totalTestTargets": 5656896,
+    "validEvaluatedTargets": 4970212,
+    "maskedTargetsExcluded": 686684
+  },
+  "modelSelection": {
+    "decisionRule": "Validation Masked MAE on val.npz",
+    "gruBestValLoss": 3.1316,
+    "lstmBestValLoss": 3.1306,
+    "validationSelectedWinner": "LSTM"
+  },
+  "overallMetrics": {
+    "lastValue": {
+      "mae": 3.9839,
+      "rmse": 7.6411,
+      "mape": 10.15
+    },
+    "historicalAverage": {
+      "mae": 4.193,
+      "rmse": 7.8618,
+      "mape": 13.06
+    },
+    "linearRegression": {
+      "mae": 3.9763,
+      "rmse": 7.2053,
+      "mape": 11.14
+    },
+    "gru": {
+      "mae": 3.5669,
+      "rmse": 7.2345,
+      "mape": 10.03
+    },
+    "lstm": {
+      "mae": 3.5613,
+      "rmse": 7.242,
+      "mape": 9.93
+    }
+  },
+  "byHorizon": {
+    "+5 min": {
+      "lastValue": {
+        "mae": 2.8158,
+        "rmse": 4.6226,
+        "mape": 6.5
+      },
+      "historicalAverage": {
+        "mae": 4.1928,
+        "rmse": 7.8616,
+        "mape": 13.06
+      },
+      "linearRegression": {
+        "mae": 2.6763,
+        "rmse": 4.46,
+        "mape": 6.55
+      },
+      "gru": {
+        "horizonStep": 1,
+        "horizonMinutes": 5,
+        "validTargetCount": 1242580,
+        "mae": 2.4349,
+        "rmse": 4.3265,
+        "mape": 5.97,
+        "MAE": 2.4349,
+        "RMSE": 4.3265,
+        "MAPE": 5.97
+      },
+      "lstm": {
+        "horizonStep": 1,
+        "horizonMinutes": 5,
+        "validTargetCount": 1242580,
+        "mae": 2.4372,
+        "rmse": 4.3358,
+        "mape": 5.94,
+        "MAE": 2.4372,
+        "RMSE": 4.3358,
+        "MAPE": 5.94
+      }
+    },
+    "+15 min": {
+      "lastValue": {
+        "mae": 3.5045,
+        "rmse": 6.4092,
+        "mape": 8.63
+      },
+      "historicalAverage": {
+        "mae": 4.1928,
+        "rmse": 7.8617,
+        "mape": 13.06
+      },
+      "linearRegression": {
+        "mae": 3.4026,
+        "rmse": 6.1432,
+        "mape": 9.13
+      },
+      "gru": {
+        "horizonStep": 3,
+        "horizonMinutes": 15,
+        "validTargetCount": 1242568,
+        "mae": 3.0976,
+        "rmse": 6.126,
+        "mape": 8.27,
+        "MAE": 3.0976,
+        "RMSE": 6.126,
+        "MAPE": 8.27
+      },
+      "lstm": {
+        "horizonStep": 3,
+        "horizonMinutes": 15,
+        "validTargetCount": 1242568,
+        "mae": 3.094,
+        "rmse": 6.1299,
+        "mape": 8.2,
+        "MAE": 3.094,
+        "RMSE": 6.1299,
+        "MAPE": 8.2
+      }
+    },
+    "+30 min": {
+      "lastValue": {
+        "mae": 4.2166,
+        "rmse": 8.0372,
+        "mape": 10.89
+      },
+      "historicalAverage": {
+        "mae": 4.1929,
+        "rmse": 7.8618,
+        "mape": 13.06
+      },
+      "linearRegression": {
+        "mae": 4.2384,
+        "rmse": 7.6458,
+        "mape": 12.1
+      },
+      "gru": {
+        "horizonStep": 6,
+        "horizonMinutes": 30,
+        "validTargetCount": 1242550,
+        "mae": 3.8068,
+        "rmse": 7.7015,
+        "mape": 10.83,
+        "MAE": 3.8068,
+        "RMSE": 7.7015,
+        "MAPE": 10.83
+      },
+      "lstm": {
+        "horizonStep": 6,
+        "horizonMinutes": 30,
+        "validTargetCount": 1242550,
+        "mae": 3.7984,
+        "rmse": 7.703,
+        "mape": 10.71,
+        "MAE": 3.7984,
+        "RMSE": 7.703,
+        "MAPE": 10.71
+      }
+    },
+    "+60 min": {
+      "lastValue": {
+        "mae": 5.3987,
+        "rmse": 10.32,
+        "mape": 14.58
+      },
+      "historicalAverage": {
+        "mae": 4.1934,
+        "rmse": 7.862,
+        "mape": 13.06
+      },
+      "linearRegression": {
+        "mae": 5.5879,
+        "rmse": 9.5697,
+        "mape": 16.76
+      },
+      "gru": {
+        "horizonStep": 12,
+        "horizonMinutes": 60,
+        "validTargetCount": 1242514,
+        "mae": 4.9284,
+        "rmse": 9.6849,
+        "mape": 15.05,
+        "MAE": 4.9284,
+        "RMSE": 9.6849,
+        "MAPE": 15.05
+      },
+      "lstm": {
+        "horizonStep": 12,
+        "horizonMinutes": 60,
+        "validTargetCount": 1242514,
+        "mae": 4.9156,
+        "rmse": 9.6993,
+        "mape": 14.85,
+        "MAE": 4.9156,
+        "RMSE": 9.6993,
+        "MAPE": 14.85
+      }
+    }
+  },
+  "byRegion": {
+    "gru": {
+      "REGION_A": {
+        "sensorCount": 48,
+        "mae": 2.4543,
+        "rmse": 4.8737,
+        "mape": 5.23
+      },
+      "REGION_B": {
+        "sensorCount": 57,
+        "mae": 4.0965,
+        "rmse": 7.9885,
+        "mape": 12.71
+      },
+      "REGION_C": {
+        "sensorCount": 58,
+        "mae": 3.5407,
+        "rmse": 7.5706,
+        "mape": 10.1
+      },
+      "REGION_D": {
+        "sensorCount": 44,
+        "mae": 4.1509,
+        "rmse": 7.9071,
+        "mape": 11.78
+      }
+    },
+    "lstm": {
+      "REGION_A": {
+        "sensorCount": 48,
+        "mae": 2.4549,
+        "rmse": 4.8842,
+        "mape": 5.21
+      },
+      "REGION_B": {
+        "sensorCount": 57,
+        "mae": 4.0793,
+        "rmse": 7.9822,
+        "mape": 12.51
+      },
+      "REGION_C": {
+        "sensorCount": 58,
+        "mae": 3.5367,
+        "rmse": 7.5876,
+        "mape": 10.03
+      },
+      "REGION_D": {
+        "sensorCount": 44,
+        "mae": 4.151,
+        "rmse": 7.9187,
+        "mape": 11.67
+      }
+    }
+  },
+  "sanityChecks": {
+    "gru": {
+      "hasNaN": false,
+      "hasInf": false,
+      "negativePredictionCount": 0,
+      "above70MphPredictionCount": 1178
+    },
+    "lstm": {
+      "hasNaN": false,
+      "hasInf": false,
+      "negativePredictionCount": 0,
+      "above70MphPredictionCount": 995
+    }
+  },
+  "samplePredictions": [
+    {
+      "description": "Short Horizon (North-East)",
+      "sensorId": "773869",
+      "region": "REGION_C",
+      "horizon": "+5 min",
+      "timestamp": "2012-06-04T05:45:00",
+      "validTarget": true,
+      "actualSpeedMph": 67.12,
+      "lastValueMph": 63.75,
+      "historicalAverageMph": 65.86,
+      "linearRegressionMph": 63.68,
+      "gruMph": 64.43,
+      "lstmMph": 64.41
+    },
+    {
+      "description": "Short-Medium Horizon (Central-West)",
+      "sensorId": "767541",
+      "region": "REGION_B",
+      "horizon": "+15 min",
+      "timestamp": "2012-06-04T05:55:00",
+      "validTarget": true,
+      "actualSpeedMph": 66.25,
+      "lastValueMph": 59.25,
+      "historicalAverageMph": 61.71,
+      "linearRegressionMph": 60.23,
+      "gruMph": 61.6,
+      "lstmMph": 61.52
+    },
+    {
+      "description": "Medium-Long Horizon (Central-West)",
+      "sensorId": "767542",
+      "region": "REGION_B",
+      "horizon": "+30 min",
+      "timestamp": "2012-06-04T06:10:00",
+      "validTarget": true,
+      "actualSpeedMph": 67.89,
+      "lastValueMph": 68.5,
+      "historicalAverageMph": 66.48,
+      "linearRegressionMph": 66.78,
+      "gruMph": 68.05,
+      "lstmMph": 68.09
+    },
+    {
+      "description": "Long Horizon (South-East)",
+      "sensorId": "717445",
+      "region": "REGION_B",
+      "horizon": "+60 min",
+      "timestamp": "2012-06-04T06:40:00",
+      "validTarget": true,
+      "actualSpeedMph": 55.0,
+      "lastValueMph": 56.0,
+      "historicalAverageMph": 56.96,
+      "linearRegressionMph": 56.56,
+      "gruMph": 56.95,
+      "lstmMph": 56.5
+    },
+    {
+      "description": "Short Horizon (North-West)",
+      "sensorId": "717816",
+      "region": "REGION_D",
+      "horizon": "+5 min",
+      "timestamp": "2012-06-04T06:35:00",
+      "validTarget": true,
+      "actualSpeedMph": 20.12,
+      "lastValueMph": 20.5,
+      "historicalAverageMph": 21.74,
+      "linearRegressionMph": 23.46,
+      "gruMph": 21.98,
+      "lstmMph": 21.79
+    },
+    {
+      "description": "Long Horizon (North-West)",
+      "sensorId": "765171",
+      "region": "REGION_D",
+      "horizon": "+60 min",
+      "timestamp": "2012-06-04T07:30:00",
+      "validTarget": true,
+      "actualSpeedMph": 6.12,
+      "lastValueMph": 11.88,
+      "historicalAverageMph": 10.53,
+      "linearRegressionMph": 25.53,
+      "gruMph": 16.19,
+      "lstmMph": 15.3
+    },
+    {
+      "description": "Mid-Test Window (North-East)",
+      "sensorId": "773869",
+      "region": "REGION_C",
+      "horizon": "+30 min",
+      "timestamp": "2012-06-04T14:30:00",
+      "validTarget": true,
+      "actualSpeedMph": 65.12,
+      "lastValueMph": 63.0,
+      "historicalAverageMph": 64.19,
+      "linearRegressionMph": 62.86,
+      "gruMph": 63.02,
+      "lstmMph": 63.13
+    },
+    {
+      "description": "Late-Test Window (Central-West)",
+      "sensorId": "767541",
+      "region": "REGION_B",
+      "horizon": "+60 min",
+      "timestamp": "2012-06-04T23:20:00",
+      "validTarget": true,
+      "actualSpeedMph": 66.0,
+      "lastValueMph": 67.38,
+      "historicalAverageMph": 66.37,
+      "linearRegressionMph": 64.85,
+      "gruMph": 66.52,
+      "lstmMph": 66.39
+    }
+  ],
+  "reproducibilityCommands": {
+    "trainGRU": "python -m ml.temporal.train --model gru",
+    "trainLSTM": "python -m ml.temporal.train --model lstm",
+    "evaluate": "python -m ml.temporal.evaluate_temporal"
+  }
+}

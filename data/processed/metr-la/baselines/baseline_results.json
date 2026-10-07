@@ -1,0 +1,308 @@
+{
+  "dataset": "METR-LA",
+  "evaluationSet": "test.npz",
+  "numTestWindows": 6832,
+  "totalEvaluations": 5656896,
+  "validEvaluations": 4970212,
+  "maskedEvaluations": 686684,
+  "units": "raw_mph",
+  "noDataLeakageConfirmed": true,
+  "baselines": {
+    "lastValue": {
+      "name": "Last Value Baseline (Persistence)",
+      "description": "Predicts last valid input observation from step 11",
+      "overall": {
+        "mae": 3.9839,
+        "rmse": 7.6411,
+        "mape": 10.15
+      },
+      "byHorizon": {
+        "+5 min": {
+          "mae": 2.8158,
+          "rmse": 4.6226,
+          "mape": 6.5
+        },
+        "+15 min": {
+          "mae": 3.5045,
+          "rmse": 6.4092,
+          "mape": 8.63
+        },
+        "+30 min": {
+          "mae": 4.2166,
+          "rmse": 8.0372,
+          "mape": 10.89
+        },
+        "+60 min": {
+          "mae": 5.3987,
+          "rmse": 10.32,
+          "mape": 14.58
+        }
+      },
+      "byRegion": {
+        "REGION_A": {
+          "sensorCount": 48,
+          "mae": 2.9803,
+          "rmse": 5.4555,
+          "mape": 5.92
+        },
+        "REGION_B": {
+          "sensorCount": 57,
+          "mae": 4.4414,
+          "rmse": 8.3009,
+          "mape": 12.4
+        },
+        "REGION_C": {
+          "sensorCount": 58,
+          "mae": 3.9509,
+          "rmse": 8.004,
+          "mape": 10.22
+        },
+        "REGION_D": {
+          "sensorCount": 44,
+          "mae": 4.5493,
+          "rmse": 8.3014,
+          "mape": 11.84
+        }
+      }
+    },
+    "historicalAverage": {
+      "name": "Historical Average Baseline (HA)",
+      "description": "Weekly 5-min slot averages fitted strictly on train split [0, 23990)",
+      "overall": {
+        "mae": 4.193,
+        "rmse": 7.8618,
+        "mape": 13.06
+      },
+      "byHorizon": {
+        "+5 min": {
+          "mae": 4.1928,
+          "rmse": 7.8616,
+          "mape": 13.06
+        },
+        "+15 min": {
+          "mae": 4.1928,
+          "rmse": 7.8617,
+          "mape": 13.06
+        },
+        "+30 min": {
+          "mae": 4.1929,
+          "rmse": 7.8618,
+          "mape": 13.06
+        },
+        "+60 min": {
+          "mae": 4.1934,
+          "rmse": 7.862,
+          "mape": 13.06
+        }
+      },
+      "byRegion": {
+        "REGION_A": {
+          "sensorCount": 48,
+          "mae": 2.6,
+          "rmse": 4.9,
+          "mape": 5.79
+        },
+        "REGION_B": {
+          "sensorCount": 57,
+          "mae": 4.9097,
+          "rmse": 8.7994,
+          "mape": 16.65
+        },
+        "REGION_C": {
+          "sensorCount": 58,
+          "mae": 4.2824,
+          "rmse": 8.3684,
+          "mape": 14.72
+        },
+        "REGION_D": {
+          "sensorCount": 44,
+          "mae": 4.9125,
+          "rmse": 8.5137,
+          "mape": 14.25
+        }
+      }
+    }
+  },
+  "samplePredictions": [
+    {
+      "sensorId": "773869",
+      "targetHorizon": "+5 min",
+      "timestamp": "2012-06-04T05:45:00",
+      "actualSpeedMph": 67.12,
+      "lastValuePredMph": 63.75,
+      "historicalAvgPredMph": 65.86,
+      "validTarget": true
+    },
+    {
+      "sensorId": "773869",
+      "targetHorizon": "+15 min",
+      "timestamp": "2012-06-04T05:55:00",
+      "actualSpeedMph": 65.38,
+      "lastValuePredMph": 63.75,
+      "historicalAvgPredMph": 66.47,
+      "validTarget": true
+    },
+    {
+      "sensorId": "773869",
+      "targetHorizon": "+30 min",
+      "timestamp": "2012-06-04T06:10:00",
+      "actualSpeedMph": 64.33,
+      "lastValuePredMph": 63.75,
+      "historicalAvgPredMph": 65.95,
+      "validTarget": true
+    },
+    {
+      "sensorId": "773869",
+      "targetHorizon": "+60 min",
+      "timestamp": "2012-06-04T06:40:00",
+      "actualSpeedMph": 67.78,
+      "lastValuePredMph": 63.75,
+      "historicalAvgPredMph": 66.96,
+      "validTarget": true
+    },
+    {
+      "sensorId": "767541",
+      "targetHorizon": "+5 min",
+      "timestamp": "2012-06-04T05:45:00",
+      "actualSpeedMph": 63.88,
+      "lastValuePredMph": 59.25,
+      "historicalAvgPredMph": 61.14,
+      "validTarget": true
+    },
+    {
+      "sensorId": "767541",
+      "targetHorizon": "+15 min",
+      "timestamp": "2012-06-04T05:55:00",
+      "actualSpeedMph": 66.25,
+      "lastValuePredMph": 59.25,
+      "historicalAvgPredMph": 61.71,
+      "validTarget": true
+    },
+    {
+      "sensorId": "767541",
+      "targetHorizon": "+30 min",
+      "timestamp": "2012-06-04T06:10:00",
+      "actualSpeedMph": 63.44,
+      "lastValuePredMph": 59.25,
+      "historicalAvgPredMph": 62.54,
+      "validTarget": true
+    },
+    {
+      "sensorId": "767541",
+      "targetHorizon": "+60 min",
+      "timestamp": "2012-06-04T06:40:00",
+      "actualSpeedMph": 64.78,
+      "lastValuePredMph": 59.25,
+      "historicalAvgPredMph": 63.45,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717447",
+      "targetHorizon": "+5 min",
+      "timestamp": "2012-06-04T05:45:00",
+      "actualSpeedMph": 54.12,
+      "lastValuePredMph": 59.0,
+      "historicalAvgPredMph": 55.97,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717447",
+      "targetHorizon": "+15 min",
+      "timestamp": "2012-06-04T05:55:00",
+      "actualSpeedMph": 56.88,
+      "lastValuePredMph": 59.0,
+      "historicalAvgPredMph": 55.64,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717447",
+      "targetHorizon": "+30 min",
+      "timestamp": "2012-06-04T06:10:00",
+      "actualSpeedMph": 54.22,
+      "lastValuePredMph": 59.0,
+      "historicalAvgPredMph": 53.44,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717447",
+      "targetHorizon": "+60 min",
+      "timestamp": "2012-06-04T06:40:00",
+      "actualSpeedMph": 52.22,
+      "lastValuePredMph": 59.0,
+      "historicalAvgPredMph": 52.67,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717816",
+      "targetHorizon": "+5 min",
+      "timestamp": "2012-06-04T05:45:00",
+      "actualSpeedMph": 64.62,
+      "lastValuePredMph": 65.25,
+      "historicalAvgPredMph": 53.14,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717816",
+      "targetHorizon": "+15 min",
+      "timestamp": "2012-06-04T05:55:00",
+      "actualSpeedMph": 47.12,
+      "lastValuePredMph": 65.25,
+      "historicalAvgPredMph": 45.86,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717816",
+      "targetHorizon": "+30 min",
+      "timestamp": "2012-06-04T06:10:00",
+      "actualSpeedMph": 33.33,
+      "lastValuePredMph": 65.25,
+      "historicalAvgPredMph": 34.28,
+      "validTarget": true
+    },
+    {
+      "sensorId": "717816",
+      "targetHorizon": "+60 min",
+      "timestamp": "2012-06-04T06:40:00",
+      "actualSpeedMph": 19.56,
+      "lastValuePredMph": 65.25,
+      "historicalAvgPredMph": 20.49,
+      "validTarget": true
+    },
+    {
+      "sensorId": "765171",
+      "targetHorizon": "+5 min",
+      "timestamp": "2012-06-04T05:45:00",
+      "actualSpeedMph": 57.25,
+      "lastValuePredMph": 57.88,
+      "historicalAvgPredMph": 51.59,
+      "validTarget": true
+    },
+    {
+      "sensorId": "765171",
+      "targetHorizon": "+15 min",
+      "timestamp": "2012-06-04T05:55:00",
+      "actualSpeedMph": 55.12,
+      "lastValuePredMph": 57.88,
+      "historicalAvgPredMph": 39.02,
+      "validTarget": true
+    },
+    {
+      "sensorId": "765171",
+      "targetHorizon": "+30 min",
+      "timestamp": "2012-06-04T06:10:00",
+      "actualSpeedMph": 19.88,
+      "lastValuePredMph": 57.88,
+      "historicalAvgPredMph": 19.39,
+      "validTarget": true
+    },
+    {
+      "sensorId": "765171",
+      "targetHorizon": "+60 min",
+      "timestamp": "2012-06-04T06:40:00",
+      "actualSpeedMph": 12.44,
+      "lastValuePredMph": 57.88,
+      "historicalAvgPredMph": 14.12,
+      "validTarget": true
+    }
+  ]
+}
