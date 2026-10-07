@@ -96,7 +96,7 @@ export default function Prediction() {
               </span>
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Real METR-LA Spatio-Temporal Traffic Forecasting (+5, +15, +30, +60 min)
+              Runtime Inference on METR-LA Historical Replay (+5, +15, +30, +60 min)
             </p>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function Prediction() {
       <div className="space-y-3">
         <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
           <Activity className="w-4 h-4 text-blue-500" />
-          Multi-Horizon Real Forecast Strip
+          Multi-Horizon Historical Replay Forecast Strip
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
