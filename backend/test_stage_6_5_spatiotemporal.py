@@ -189,12 +189,17 @@ def test_16_dynamic_winner_derivation():
     with open(res_path, "r", encoding="utf-8") as f:
         res = json.load(f)
 
-    assert res["sevenModelComparison"]["overallWinner"] == "LSTM"
-    winners = res["sevenModelComparison"]["horizonWinners"]
-    assert winners["+5 min"]["winner"] == "GRU"
-    assert winners["+15 min"]["winner"] == "LSTM"
-    assert winners["+30 min"]["winner"] == "LSTM"
-    assert winners["+60 min"]["winner"] == "Historical Average"
+    comp = res["sevenModelComparison"]
+    models_overall = comp["overallWinners"]
+    expected_overall_winner = min(models_overall, key=models_overall.get)
+    assert comp["overallWinner"] == expected_overall_winner
+
+    winners = comp["horizonWinners"]
+    for h_name, h_info in winners.items():
+        all_models = h_info["allModels"]
+        expected_h_winner = min(all_models, key=all_models.get)
+        assert h_info["winner"] == expected_h_winner
+
 
 
 def test_17_sample_region_labels_from_canonical_regions():

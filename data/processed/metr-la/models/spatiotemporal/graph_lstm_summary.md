@@ -3,10 +3,10 @@
 ## Executive Summary
 Stage 6.5 evaluates the **SpatialGraphLSTM** spatio-temporal architecture combining 2-layer Graph Convolution (with self-residual connection) across all 12 input timesteps with a 1-layer LSTM sequence processor over the real METR-LA 207-sensor benchmark.
 
-- **Overall Graph+LSTM Test MAE**: `3.6413 mph`
-- **Overall Graph+LSTM Test RMSE**: `7.3511 mph`
-- **Overall Graph+LSTM Test MAPE**: `10.11%`
-- **Comparison to Temporal-Only LSTM**: `Graph+LSTM achieves 3.6413 mph MAE vs Temporal LSTM 3.5613 mph MAE (MAE Diff: +0.0800 mph, +2.25%). Temporal persistence dominates speed patterns over 60 minutes; graph neighbor propagation provides secondary spatial structure.`
+- **Overall Graph+LSTM Test MAE**: `3.4378 mph`
+- **Overall Graph+LSTM Test RMSE**: `6.8873 mph`
+- **Overall Graph+LSTM Test MAPE**: `9.57%`
+- **Comparison to Temporal-Only LSTM**: `Graph+LSTM achieves 3.4378 mph MAE vs Temporal LSTM 3.5613 mph MAE (MAE Diff: -0.1235 mph, -3.47%). Adding graph context improves spatial-temporal forecasting quality.`
 
 ---
 
@@ -20,18 +20,18 @@ Stage 6.5 evaluates the **SpatialGraphLSTM** spatio-temporal architecture combin
 | Temporal Model | GRU | 3.5669 | 7.0734 | 10.14% | **2.4349** 🏆 | 3.0976 | 3.8068 | 4.9284 |
 | Temporal Model | **LSTM** | **3.5613** 🏆 | **7.0673** 🏆 | **10.11%** 🏆 | 2.4372 | **3.0940** 🏆 | **3.7984** 🏆 | 4.9156 |
 | Spatial Graph Model | Spatial GCN | 5.4604 | 8.9625 | 15.67% | 4.7139 | 5.1138 | 5.5939 | 6.4201 |
-| **Spatio-Temporal Model**| **Graph+LSTM** | `3.6413` | `7.3511` | `10.11%` | `2.5097` | `3.1724` | `3.8799` | `5.0032` |
+| **Spatio-Temporal Model**| **Graph+LSTM** | `3.4378` | `6.8873` | `9.57%` | `2.3648` | `3.0007` | `3.6699` | `4.7158` |
 
 ---
 
 ## 2. Regional Performance Breakdown
 
-- **REGION_A** (48 sensors): `2.5215 mph` MAE
-- **REGION_B** (57 sensors): `4.1635 mph` MAE
-- **REGION_C** (58 sensors): `3.6183 mph` MAE
-- **REGION_D** (44 sensors): `4.2385 mph` MAE
+- **REGION_A** (48 sensors): `2.4094 mph` MAE
+- **REGION_B** (57 sensors): `3.9294 mph` MAE
+- **REGION_C** (58 sensors): `3.3897 mph` MAE
+- **REGION_D** (44 sensors): `4.0069 mph` MAE
 
 ---
 
 ## 3. Key Scientific Finding
-Graph+LSTM achieves 3.6413 mph MAE vs Temporal LSTM 3.5613 mph MAE (MAE Diff: +0.0800 mph, +2.25%). Temporal persistence dominates speed patterns over 60 minutes; graph neighbor propagation provides secondary spatial structure.
+Graph+LSTM achieves 3.4378 mph MAE vs Temporal LSTM 3.5613 mph MAE (MAE Diff: -0.1235 mph, -3.47%). Adding graph context improves spatial-temporal forecasting quality.

@@ -9,15 +9,32 @@
     "validEvaluatedTargets": 4970212,
     "maskedTargetsExcluded": 686684
   },
-  "modelConfig": {},
+  "modelConfig": {
+    "modelType": "SpatialGraphLSTM",
+    "spatialDim": 32,
+    "hiddenDim": 64,
+    "outputHorizons": 4,
+    "useResidual": true,
+    "seed": 42,
+    "batchSize": 64,
+    "learningRate": 0.001,
+    "maxEpochs": 30,
+    "epochsCompleted": 30,
+    "bestEpoch": 30,
+    "bestValLoss": 3.0302,
+    "trainingDurationSeconds": 10340.36,
+    "parameterCount": 26596,
+    "checkpointSizeBytes": 111119,
+    "device": "cpu"
+  },
   "overallMetrics": {
     "graphLSTM": {
-      "mae": 3.6413,
-      "rmse": 7.3511,
-      "mape": 10.11,
-      "MAE": 3.6413,
-      "RMSE": 7.3511,
-      "MAPE": 10.11
+      "mae": 3.4378,
+      "rmse": 6.8873,
+      "mape": 9.57,
+      "MAE": 3.4378,
+      "RMSE": 6.8873,
+      "MAPE": 9.57
     }
   },
   "byHorizon": {
@@ -25,53 +42,53 @@
       "horizonStep": 1,
       "horizonMinutes": 5,
       "validTargetCount": 1242580,
-      "absoluteErrorSum": 3118562.5,
-      "squaredErrorSum": 24462800.0,
-      "mae": 2.5097,
-      "rmse": 4.437,
-      "mape": 6.23,
-      "MAE": 2.5097,
-      "RMSE": 4.437,
-      "MAPE": 6.23
+      "absoluteErrorSum": 2938402.75,
+      "squaredErrorSum": 20928024.0,
+      "mae": 2.3648,
+      "rmse": 4.1039,
+      "mape": 5.72,
+      "MAE": 2.3648,
+      "RMSE": 4.1039,
+      "MAPE": 5.72
     },
     "+15 min": {
       "horizonStep": 3,
       "horizonMinutes": 15,
       "validTargetCount": 1242568,
-      "absoluteErrorSum": 3941889.0,
-      "squaredErrorSum": 47772988.0,
-      "mae": 3.1724,
-      "rmse": 6.2006,
-      "mape": 8.41,
-      "MAE": 3.1724,
-      "RMSE": 6.2006,
-      "MAPE": 8.41
+      "absoluteErrorSum": 3728625.5,
+      "squaredErrorSum": 41922012.0,
+      "mae": 3.0007,
+      "rmse": 5.8085,
+      "mape": 7.88,
+      "MAE": 3.0007,
+      "RMSE": 5.8085,
+      "MAPE": 7.88
     },
     "+30 min": {
       "horizonStep": 6,
       "horizonMinutes": 30,
       "validTargetCount": 1242550,
-      "absoluteErrorSum": 4820940.0,
-      "squaredErrorSum": 75382184.0,
-      "mae": 3.8799,
-      "rmse": 7.7889,
-      "mape": 10.96,
-      "MAE": 3.8799,
-      "RMSE": 7.7889,
-      "MAPE": 10.96
+      "absoluteErrorSum": 4560052.0,
+      "squaredErrorSum": 66412956.0,
+      "mae": 3.6699,
+      "rmse": 7.3109,
+      "mape": 10.29,
+      "MAE": 3.6699,
+      "RMSE": 7.3109,
+      "MAPE": 10.29
     },
     "+60 min": {
       "horizonStep": 12,
       "horizonMinutes": 60,
       "validTargetCount": 1242514,
-      "absoluteErrorSum": 6216590.5,
-      "squaredErrorSum": 120962560.0,
-      "mae": 5.0032,
-      "rmse": 9.8668,
-      "mape": 14.83,
-      "MAE": 5.0032,
-      "RMSE": 9.8668,
-      "MAPE": 14.83
+      "absoluteErrorSum": 5859456.0,
+      "squaredErrorSum": 106497744.0,
+      "mae": 4.7158,
+      "rmse": 9.2581,
+      "mape": 14.4,
+      "MAE": 4.7158,
+      "RMSE": 9.2581,
+      "MAPE": 14.4
     }
   },
   "byRegion": {
@@ -79,54 +96,54 @@
       "REGION_A": {
         "sensorCount": 48,
         "validTargetCount": 1162340,
-        "mae": 2.5215,
-        "rmse": 4.9648,
-        "mape": 5.35
+        "mae": 2.4094,
+        "rmse": 4.7103,
+        "mape": 5.1
       },
       "REGION_B": {
         "sensorCount": 57,
         "validTargetCount": 1359564,
-        "mae": 4.1635,
-        "rmse": 8.1143,
-        "mape": 12.72
+        "mae": 3.9294,
+        "rmse": 7.6177,
+        "mape": 12.08
       },
       "REGION_C": {
         "sensorCount": 58,
         "validTargetCount": 1403672,
-        "mae": 3.6183,
-        "rmse": 7.687,
-        "mape": 10.17
+        "mae": 3.3897,
+        "rmse": 7.1121,
+        "mape": 9.56
       },
       "REGION_D": {
         "sensorCount": 44,
         "validTargetCount": 1044636,
-        "mae": 4.2385,
-        "rmse": 8.0366,
-        "mape": 11.92
+        "mae": 4.0069,
+        "rmse": 7.5835,
+        "mape": 11.3
       }
     }
   },
   "ablationStudy": {
     "ablationType": "temporal_only_lstm_vs_graph_plus_lstm",
     "temporalOnlyLstmMae": 3.5613,
-    "graphPlusLstmMae": 3.6413,
-    "maeDifference": 0.08,
-    "percentageDifference": 2.25,
-    "beatsLstm": false,
+    "graphPlusLstmMae": 3.4378,
+    "maeDifference": -0.1235,
+    "percentageDifference": -3.47,
+    "beatsLstm": true,
     "identityAdjacencySubstitutionSensitivity": {
       "label": "identity-adjacency substitution sensitivity",
-      "realGraphMae": 3.6413,
-      "identityGraphMae": 3.6531,
-      "sensitivityDifference": 0.0118
+      "realGraphMae": 3.4378,
+      "identityGraphMae": 3.6542,
+      "sensitivityDifference": 0.2164
     },
-    "spatialContributionAnalysis": "Graph+LSTM achieves 3.6413 mph MAE vs Temporal LSTM 3.5613 mph MAE (MAE Diff: +0.0800 mph, +2.25%). Temporal persistence dominates speed patterns over 60 minutes; graph neighbor propagation provides secondary spatial structure."
+    "spatialContributionAnalysis": "Graph+LSTM achieves 3.4378 mph MAE vs Temporal LSTM 3.5613 mph MAE (MAE Diff: -0.1235 mph, -3.47%). Adding graph context improves spatial-temporal forecasting quality."
   },
   "sanityChecks": {
     "graphLSTM": {
       "hasNaN": false,
       "hasInf": false,
       "negativePredictionCount": 0,
-      "above70MphPredictionCount": 0
+      "above70MphPredictionCount": 311
     }
   },
   "sevenModelComparison": {
@@ -137,13 +154,13 @@
       "GRU": 3.5669,
       "LSTM": 3.5613,
       "Spatial GCN": 5.4604,
-      "Graph+LSTM": 3.6413
+      "Graph+LSTM": 3.4378
     },
-    "overallWinner": "LSTM",
+    "overallWinner": "Graph+LSTM",
     "horizonWinners": {
       "+5 min": {
-        "winner": "GRU",
-        "winnerMae": 2.4349,
+        "winner": "Graph+LSTM",
+        "winnerMae": 2.3648,
         "allModels": {
           "Last Value": 2.8158,
           "Historical Average": 4.1928,
@@ -151,12 +168,12 @@
           "GRU": 2.4349,
           "LSTM": 2.4372,
           "Spatial GCN": 4.7139,
-          "Graph+LSTM": 2.5097
+          "Graph+LSTM": 2.3648
         }
       },
       "+15 min": {
-        "winner": "LSTM",
-        "winnerMae": 3.094,
+        "winner": "Graph+LSTM",
+        "winnerMae": 3.0007,
         "allModels": {
           "Last Value": 3.5045,
           "Historical Average": 4.1928,
@@ -164,12 +181,12 @@
           "GRU": 3.0976,
           "LSTM": 3.094,
           "Spatial GCN": 5.1138,
-          "Graph+LSTM": 3.1724
+          "Graph+LSTM": 3.0007
         }
       },
       "+30 min": {
-        "winner": "LSTM",
-        "winnerMae": 3.7984,
+        "winner": "Graph+LSTM",
+        "winnerMae": 3.6699,
         "allModels": {
           "Last Value": 4.2166,
           "Historical Average": 4.1929,
@@ -177,7 +194,7 @@
           "GRU": 3.8068,
           "LSTM": 3.7984,
           "Spatial GCN": 5.5939,
-          "Graph+LSTM": 3.8799
+          "Graph+LSTM": 3.6699
         }
       },
       "+60 min": {
@@ -190,7 +207,7 @@
           "GRU": 4.9284,
           "LSTM": 4.9156,
           "Spatial GCN": 6.4201,
-          "Graph+LSTM": 5.0032
+          "Graph+LSTM": 4.7158
         }
       }
     }
@@ -210,7 +227,7 @@
       "gruMph": 64.43,
       "lstmMph": 64.41,
       "spatialGcnMph": 64.38,
-      "graphLstmMph": 64.61
+      "graphLstmMph": 64.44
     },
     {
       "description": "Short-Medium Horizon (Central-West)",
@@ -226,7 +243,7 @@
       "gruMph": 61.6,
       "lstmMph": 61.52,
       "spatialGcnMph": 64.32,
-      "graphLstmMph": 62.62
+      "graphLstmMph": 62.37
     },
     {
       "description": "Medium-Long Horizon (Central-West)",
@@ -242,7 +259,7 @@
       "gruMph": 68.05,
       "lstmMph": 68.09,
       "spatialGcnMph": 66.38,
-      "graphLstmMph": 67.84
+      "graphLstmMph": 68.27
     },
     {
       "description": "Long Horizon (South-East)",
@@ -258,7 +275,7 @@
       "gruMph": 56.95,
       "lstmMph": 56.5,
       "spatialGcnMph": 60.67,
-      "graphLstmMph": 57.03
+      "graphLstmMph": 55.79
     },
     {
       "description": "Short Horizon (North-West)",
@@ -274,7 +291,7 @@
       "gruMph": 21.98,
       "lstmMph": 21.79,
       "spatialGcnMph": 32.2,
-      "graphLstmMph": 17.49
+      "graphLstmMph": 15.88
     },
     {
       "description": "Long Horizon (North-West)",
@@ -290,7 +307,7 @@
       "gruMph": 16.19,
       "lstmMph": 15.3,
       "spatialGcnMph": 39.88,
-      "graphLstmMph": 14.36
+      "graphLstmMph": 5.65
     },
     {
       "description": "Mid-Test Window (North-East)",
@@ -306,7 +323,7 @@
       "gruMph": 63.02,
       "lstmMph": 63.13,
       "spatialGcnMph": 64.49,
-      "graphLstmMph": 63.9
+      "graphLstmMph": 62.83
     },
     {
       "description": "Late-Test Window (Central-West)",
@@ -322,7 +339,7 @@
       "gruMph": 66.52,
       "lstmMph": 66.39,
       "spatialGcnMph": 66.19,
-      "graphLstmMph": 66.18
+      "graphLstmMph": 65.9
     }
   ]
 }

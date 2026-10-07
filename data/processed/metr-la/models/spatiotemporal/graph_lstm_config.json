@@ -1,0 +1,18 @@
+{
+  "modelType": "SpatialGraphLSTM",
+  "spatialDim": 32,
+  "hiddenDim": 64,
+  "outputHorizons": 4,
+  "useResidual": true,
+  "seed": 42,
+  "batchSize": 64,
+  "learningRate": 0.001,
+  "maxEpochs": 30,
+  "epochsCompleted": 30,
+  "bestEpoch": 30,
+  "bestValLoss": 3.0302,
+  "trainingDurationSeconds": 10340.36,
+  "parameterCount": 26596,
+  "checkpointSizeBytes": 111119,
+  "device": "cpu"
+}

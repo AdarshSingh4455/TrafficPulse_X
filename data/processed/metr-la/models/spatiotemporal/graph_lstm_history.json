@@ -1,0 +1,152 @@
+[
+  {
+    "epoch": 1,
+    "trainLoss": 3.7548,
+    "valLoss": 3.188
+  },
+  {
+    "epoch": 2,
+    "trainLoss": 3.4032,
+    "valLoss": 3.1388
+  },
+  {
+    "epoch": 3,
+    "trainLoss": 3.374,
+    "valLoss": 3.142
+  },
+  {
+    "epoch": 4,
+    "trainLoss": 3.3601,
+    "valLoss": 3.1244
+  },
+  {
+    "epoch": 5,
+    "trainLoss": 3.3502,
+    "valLoss": 3.1038
+  },
+  {
+    "epoch": 6,
+    "trainLoss": 3.3396,
+    "valLoss": 3.0993
+  },
+  {
+    "epoch": 7,
+    "trainLoss": 3.333,
+    "valLoss": 3.0893
+  },
+  {
+    "epoch": 8,
+    "trainLoss": 3.328,
+    "valLoss": 3.0873
+  },
+  {
+    "epoch": 9,
+    "trainLoss": 3.3216,
+    "valLoss": 3.0791
+  },
+  {
+    "epoch": 10,
+    "trainLoss": 3.3148,
+    "valLoss": 3.0806
+  },
+  {
+    "epoch": 11,
+    "trainLoss": 3.3105,
+    "valLoss": 3.0752
+  },
+  {
+    "epoch": 12,
+    "trainLoss": 3.3068,
+    "valLoss": 3.0695
+  },
+  {
+    "epoch": 13,
+    "trainLoss": 3.301,
+    "valLoss": 3.0698
+  },
+  {
+    "epoch": 14,
+    "trainLoss": 3.2971,
+    "valLoss": 3.061
+  },
+  {
+    "epoch": 15,
+    "trainLoss": 3.2928,
+    "valLoss": 3.0556
+  },
+  {
+    "epoch": 16,
+    "trainLoss": 3.288,
+    "valLoss": 3.056
+  },
+  {
+    "epoch": 17,
+    "trainLoss": 3.287,
+    "valLoss": 3.0534
+  },
+  {
+    "epoch": 18,
+    "trainLoss": 3.2831,
+    "valLoss": 3.0538
+  },
+  {
+    "epoch": 19,
+    "trainLoss": 3.2804,
+    "valLoss": 3.0472
+  },
+  {
+    "epoch": 20,
+    "trainLoss": 3.2763,
+    "valLoss": 3.0569
+  },
+  {
+    "epoch": 21,
+    "trainLoss": 3.2747,
+    "valLoss": 3.0478
+  },
+  {
+    "epoch": 22,
+    "trainLoss": 3.2715,
+    "valLoss": 3.0543
+  },
+  {
+    "epoch": 23,
+    "trainLoss": 3.2709,
+    "valLoss": 3.0423
+  },
+  {
+    "epoch": 24,
+    "trainLoss": 3.2681,
+    "valLoss": 3.0421
+  },
+  {
+    "epoch": 25,
+    "trainLoss": 3.2658,
+    "valLoss": 3.0359
+  },
+  {
+    "epoch": 26,
+    "trainLoss": 3.2634,
+    "valLoss": 3.0445
+  },
+  {
+    "epoch": 27,
+    "trainLoss": 3.262,
+    "valLoss": 3.0342
+  },
+  {
+    "epoch": 28,
+    "trainLoss": 3.2613,
+    "valLoss": 3.0375
+  },
+  {
+    "epoch": 29,
+    "trainLoss": 3.2592,
+    "valLoss": 3.0332
+  },
+  {
+    "epoch": 30,
+    "trainLoss": 3.2575,
+    "valLoss": 3.0302
+  }
+]
