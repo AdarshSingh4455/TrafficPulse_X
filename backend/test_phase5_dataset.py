@@ -719,10 +719,10 @@ def test_single_fastapi_app_entrypoint():
 
 
 def test_real_sensors_resolve_through_data_source_manager():
-    """52. Verify REAL_METR_LA sensors resolve through DataSourceManager."""
+    """52. Verify 207 REAL_METR_LA sensors resolve through DataSourceManager."""
     from backend.data_source import DataSourceManager
     mgr = DataSourceManager()
-    sensors = mgr.get_sensors(source_type="REAL_METR_LA", time_index=0)
+    sensors = mgr.get_sensors(time_index=0)
     assert len(sensors) == 207
     s0 = sensors[0]
     assert s0["sourceType"] == "REAL_BENCHMARK"
@@ -730,35 +730,39 @@ def test_real_sensors_resolve_through_data_source_manager():
     assert s0["mode"] == "HISTORICAL_REPLAY"
 
 
-def test_demo_sensors_resolve_through_data_source_manager():
-    """53. Verify SYNTHETIC_DEMO sensors resolve through DataSourceManager."""
+def test_canonical_sensor_schema_and_telemetry_availability():
+    """53. Verify canonical sensor schema and explicit telemetry availability contract."""
     from backend.data_source import DataSourceManager
     mgr = DataSourceManager()
-    sensors = mgr.get_sensors(source_type="SYNTHETIC_DEMO")
-    assert len(sensors) == 32
-    s0 = sensors[0]
-    assert s0["sourceType"] == "SYNTHETIC_DEMO"
-    assert s0["datasetName"] == "TrafficPulse-X Demo"
-    assert s0["mode"] == "LIVE_SIMULATION"
+    sensors = mgr.get_sensors(time_index=0)
+    s = sensors[0]
+
+    assert "sensorId" in s
+    assert "regionId" in s
+    assert "timestamp" in s
+    assert "coordinates" in s
+    assert "measurements" in s
+    assert "validity" in s
+    assert "availability" in s
+
+    # Availability contract: speed=true, flow=false, occupancy=false, hardwareHealth=false
+    avail = s["availability"]
+    assert avail["speed"] is True
+    assert avail["flow"] is False
+    assert avail["occupancy"] is False
+    assert avail["hardwareHealth"] is False
 
 
-def test_api_responses_include_explicit_data_mode_tags():
-    """54. Verify dashboard and sensor API responses include explicit mode tags."""
-    from fastapi.testclient import TestClient
-    from backend.main import app
-    client = TestClient(app)
-
-    r_demo = client.get("/api/dashboard?source_type=SYNTHETIC_DEMO")
-    assert r_demo.status_code == 200
-    d_demo = r_demo.json()
-    assert d_demo["sourceType"] == "SYNTHETIC_DEMO"
-    assert d_demo["mode"] == "LIVE_SIMULATION"
-
-    r_real = client.get("/api/dashboard?source_type=REAL_METR_LA&time_index=0")
-    assert r_real.status_code == 200
-    d_real = r_real.json()
-    assert d_real["sourceType"] == "REAL_BENCHMARK"
-    assert d_real["mode"] == "HISTORICAL_REPLAY"
+def test_no_fake_flow_occupancy_or_hardware_health_fabricated():
+    """54. Verify no fake flow, occupancy, or hardware health values are fabricated."""
+    from backend.data_source import DataSourceManager
+    mgr = DataSourceManager()
+    s = mgr.get_sensor_by_id("773869", time_index=0)
+    assert "flow" not in s["measurements"] or s["measurements"].get("flow") is None
+    assert "occupancy" not in s["measurements"] or s["measurements"].get("occupancy") is None
+    assert s["availability"]["flow"] is False
+    assert s["availability"]["occupancy"] is False
+    assert s["availability"]["hardwareHealth"] is False
 
 
 def test_real_replay_speed_consistency_across_endpoints():
@@ -771,49 +775,48 @@ def test_real_replay_speed_consistency_across_endpoints():
     snap_data = snap_r.json()
     s_snap = next(s for s in snap_data["sensors"] if s["sensorId"] == "773869")
 
-    detail_r = client.get("/api/sensors/773869?time_index=5&source_type=REAL_METR_LA")
+    detail_r = client.get("/api/sensors/773869?time_index=5")
     detail_data = detail_r.json()
 
-    all_r = client.get("/api/sensors?source_type=REAL_METR_LA&time_index=5")
+    all_r = client.get("/api/sensors?time_index=5")
     all_data = all_r.json()
     s_all = next(s for s in all_data if s["sensorId"] == "773869")
 
     assert s_snap["rawSpeed"] == detail_data["measurements"]["speed"] == s_all["speed"]
 
 
-def test_demo_state_synchronization_across_endpoints():
-    """56. Verify demo query execution updates state centrally in DataSourceManager."""
+def test_spatial_speed_consistency_endpoint():
+    """56. Verify spatial speed consistency calculation across adjacent real sensors."""
     from fastapi.testclient import TestClient
     from backend.main import app
     client = TestClient(app)
 
-    res = client.post("/api/query/S05").json()
-    assert res["status"] == "SUCCESS"
-
-    detail = client.get("/api/sensors/S05").json()
-    assert detail["sensorId"] == "S05"
-    assert detail["sourceType"] == "SYNTHETIC_DEMO"
+    res = client.get("/api/network/spatial-consistency?from_id=773869&to_id=767541").json()
+    assert "consistencyScore" in res
+    assert "speedDifferenceMph" in res
+    assert "isDisagreement" in res
 
 
 def test_decision_engine_reads_canonical_backend_sensor_state():
-    """57. Verify decision endpoints resolve state through DataSourceManager."""
+    """57. Verify decision endpoints resolve state through DataSourceManager on real sensors."""
     from fastapi.testclient import TestClient
     from backend.main import app
     client = TestClient(app)
 
-    need = client.get("/api/decision/sensors/S05/need-score").json()
+    need = client.get("/api/decision/sensors/773869/need-score").json()
     assert "needScore" in need
+    assert "spatialSpeedDisagreement" in need["factors"]
 
-    cf = client.get("/api/decision/counterfactual/S05").json()
+    cf = client.get("/api/decision/counterfactual/773869").json()
     assert "sensorId" in cf
     assert "expectedBenefit" in cf
 
-    evidence = client.get("/api/decision/evidence/S05").json()
+    evidence = client.get("/api/decision/evidence/773869").json()
     assert "targetSensor" in evidence
 
 
 def test_health_and_dataset_status_endpoints():
-    """58. Verify health and datasets/status endpoints return active capabilities and modes."""
+    """58. Verify health and datasets/status endpoints report REAL_METR_LA benchmark dataset."""
     from fastapi.testclient import TestClient
     from backend.main import app
     client = TestClient(app)
@@ -823,35 +826,25 @@ def test_health_and_dataset_status_endpoints():
     assert "REAL_METR_LA" in h_res["activeCapabilities"]
 
     s_res = client.get("/api/datasets/status").json()
-    assert s_res["demoMode"]["sourceType"] == "SYNTHETIC_DEMO"
     assert s_res["researchMode"]["sourceType"] == "REAL_BENCHMARK"
+    assert s_res["researchMode"]["sensorCount"] == 207
 
 
-def test_demo_reset_endpoint_clears_state():
-    """59. Verify /api/demo/reset resets demo state via DataSourceManager."""
+def test_network_topology_endpoint_returns_real_207_nodes():
+    """59. Verify network topology endpoint returns 207 real METR-LA nodes."""
     from fastapi.testclient import TestClient
     from backend.main import app
     client = TestClient(app)
 
-    r = client.post("/api/demo/reset")
-    assert r.status_code == 200
-    assert r.json()["status"] == "RESET_SUCCESS"
+    topo = client.get("/api/network").json()
+    assert topo["nodeCount"] == 207
+    assert topo["sourceType"] == "REAL_BENCHMARK"
 
 
-def test_network_topology_endpoint_modes():
-    """60. Verify network topology endpoint returns mode-specific node & edge counts."""
-    from fastapi.testclient import TestClient
-    from backend.main import app
-    client = TestClient(app)
-
-    topo_demo = client.get("/api/network?source_type=SYNTHETIC_DEMO").json()
-    assert topo_demo["nodeCount"] == 32
-    assert topo_demo["sourceType"] == "SYNTHETIC_DEMO"
-
-    topo_real = client.get("/api/network?source_type=REAL_METR_LA").json()
-    assert topo_real["nodeCount"] == 207
-    assert topo_real["edgeCount"] == 1722
-    assert topo_real["sourceType"] == "REAL_BENCHMARK"
+def test_no_synthetic_runtime_file_exists():
+    """60. Verify backend/data.py and src/data/ have been removed from production runtime."""
+    assert not os.path.exists("backend/data.py")
+    assert not os.path.exists("src/data/sensors.js")
 
 
 def test_authoritative_region_hash_checksum_and_counts():
@@ -870,6 +863,7 @@ def test_authoritative_region_hash_checksum_and_counts():
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
 
 
 

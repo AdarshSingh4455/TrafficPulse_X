@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import RealTrafficMap from '../../components/traffic/RealTrafficMap';
 import HistoricalReplayBar from '../../components/traffic/HistoricalReplayBar';
-import TrafficNetworkMap from '../../components/traffic/TrafficNetworkMap';
 import SensorDetailPanel from '../../components/traffic/SensorDetailPanel';
 import SensorTable from '../../components/traffic/SensorTable';
 import CoverageCard from '../../components/common/CoverageCard';
@@ -10,40 +9,33 @@ import NeedScoreBreakdown from '../../components/decision/NeedScoreBreakdown';
 import CounterfactualQueryCard from '../../components/decision/CounterfactualQueryCard';
 import EvidenceChain from '../../components/decision/EvidenceChain';
 import MetricCard from '../../components/common/MetricCard';
-import { networkSummaryMetrics } from '../../data/network';
 import { 
-  fetchSensors, 
   fetchNeedScore, 
   fetchCounterfactual, 
   fetchEvidenceChain, 
   executeQuery, 
   fetchBlindSpots,
-  fetchMetrSnapshot,
-  fetchMetrSensor,
-  fetchMetrRegions
+  fetchMetrSnapshot
 } from '../../services/api';
-import { Layers, Database, ShieldAlert, Activity, AlertTriangle } from 'lucide-react';
+import { Database, AlertTriangle } from 'lucide-react';
 
 export default function TrafficNetwork() {
-  const [dataMode, setDataMode] = useState('REAL'); // 'REAL' | 'DEMO'
-  const [activeRegion, setActiveRegion] = useState('ALL'); // 'ALL' | 'REGION_A' | 'REGION_B' | 'REGION_C' | 'REGION_D'
+  const [activeRegion, setActiveRegion] = useState('ALL');
   const [timeIndex, setTimeIndex] = useState(0);
   const [showGraphEdges, setShowGraphEdges] = useState(false);
 
   const [realSnapshot, setRealSnapshot] = useState(null);
   const [realSensors, setRealSensors] = useState([]);
-  const [demoSensors, setDemoSensors] = useState([]);
   const [fetchError, setFetchError] = useState(null);
-  
+
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
-  
+
   const [needScoreData, setNeedScoreData] = useState(null);
   const [counterfactualData, setCounterfactualData] = useState(null);
   const [evidenceData, setEvidenceData] = useState(null);
   const [coverageData, setCoverageData] = useState(null);
 
-  // Load Real METR-LA snapshot telemetry
   const loadRealSnapshot = useCallback(async (tIndex, rId) => {
     try {
       const snap = await fetchMetrSnapshot(tIndex, rId, true);
@@ -63,52 +55,26 @@ export default function TrafficNetwork() {
     }
   }, []);
 
-  // Initial load
+  useEffect(() => {
+    loadRealSnapshot(timeIndex, activeRegion);
+  }, [timeIndex, activeRegion, loadRealSnapshot]);
+
   useEffect(() => {
     let isMounted = true;
-    async function init() {
-      if (dataMode === 'REAL') {
-        await loadRealSnapshot(timeIndex, activeRegion);
-      } else {
-        try {
-          const [sens, cov] = await Promise.all([fetchSensors('SYNTHETIC_DEMO'), fetchBlindSpots()]);
-          if (isMounted) {
-            if (sens && sens.length > 0) {
-              setDemoSensors(sens);
-              setSelectedSensor(prev => sens.find(s => s.id === prev?.id) || sens[0]);
-            }
-            if (cov) setCoverageData(cov);
-            setFetchError(null);
-          }
-        } catch (err) {
-          if (isMounted) {
-            setFetchError(`Backend API connection failed: ${err.message}. Ensure FastAPI server is running at http://127.0.0.1:8000`);
-          }
-        }
+    async function loadCoverage() {
+      try {
+        const cov = await fetchBlindSpots();
+        if (isMounted && cov) setCoverageData(cov);
+      } catch (err) {
+        console.error("Coverage fetch error:", err);
       }
     }
-    init();
+    loadCoverage();
     return () => { isMounted = false; };
-  }, [dataMode, activeRegion, loadRealSnapshot]);
+  }, []);
 
-  // Handle replay time changes
-  useEffect(() => {
-    if (dataMode === 'REAL') {
-      loadRealSnapshot(timeIndex, activeRegion);
-    }
-  }, [timeIndex, activeRegion, dataMode, loadRealSnapshot]);
-
-  const handleSelectSensor = async (sensor) => {
+  const handleSelectSensor = (sensor) => {
     setSelectedSensor(sensor);
-  };
-
-  const handleModeSwitch = (mode) => {
-    setDataMode(mode);
-    if (mode === 'REAL') {
-      loadRealSnapshot(timeIndex, activeRegion);
-    } else {
-      setSelectedSensor(demoSensors[0]);
-    }
   };
 
   const handleRegionChange = (regionId) => {
@@ -118,7 +84,7 @@ export default function TrafficNetwork() {
   const handleWhySelected = async () => {
     setActiveModal('why-selected');
     if (selectedSensor) {
-      const sid = selectedSensor.sensorId || selectedSensor.id || "S05";
+      const sid = selectedSensor.sensorId || selectedSensor.id || "773869";
       const data = await fetchNeedScore(sid);
       setNeedScoreData(data);
     }
@@ -127,7 +93,7 @@ export default function TrafficNetwork() {
   const handleEvaluateQuery = async () => {
     setActiveModal('counterfactual');
     if (selectedSensor) {
-      const sid = selectedSensor.sensorId || selectedSensor.id || "S05";
+      const sid = selectedSensor.sensorId || selectedSensor.id || "773869";
       const data = await fetchCounterfactual(sid);
       setCounterfactualData(data);
     }
@@ -136,7 +102,7 @@ export default function TrafficNetwork() {
   const handleViewEvidence = async () => {
     setActiveModal('evidence');
     if (selectedSensor) {
-      const sid = selectedSensor.sensorId || selectedSensor.id || "S05";
+      const sid = selectedSensor.sensorId || selectedSensor.id || "773869";
       const data = await fetchEvidenceChain(sid);
       setEvidenceData(data);
     }
@@ -145,19 +111,10 @@ export default function TrafficNetwork() {
   const handleQuerySensor = async (sensor) => {
     const sid = sensor.sensorId || sensor.id;
     const res = await executeQuery(sid);
-    alert(`Evidence-on-Demand Query dispatched for ${sensor.displayAlias || sid}!\nTransferred: ${res.bytesTransferred || '4.2 KB'}\nBenefit: ${res.expectedBenefit || '18%'}`);
-    if (dataMode === 'REAL') {
-      loadRealSnapshot(timeIndex, activeRegion);
-    } else {
-      const updated = await fetchSensors();
-      if (updated) {
-        setDemoSensors(updated);
-        setSelectedSensor(updated.find(s => s.id === sid) || sensor);
-      }
-    }
+    alert(`Evidence Query dispatched for ${sensor.displayAlias || sid}!\nTransferred: ${res.bytesTransferred || '4.2 KB'}\nBenefit: ${res.expectedBenefit || '18%'}`);
+    loadRealSnapshot(timeIndex, activeRegion);
   };
 
-  // Build graph connection polylines for representative map
   const graphEdgeLines = React.useMemo(() => {
     if (!showGraphEdges || !realSensors || realSensors.length === 0) return [];
     const lines = [];
@@ -181,47 +138,28 @@ export default function TrafficNetwork() {
     return lines;
   }, [showGraphEdges, realSensors]);
 
+  const networkSummaryMetrics = [
+    { id: "total", label: "Total Sensors", value: "207", variant: "blue", iconType: "sensor" },
+    { id: "active", label: "Active", value: `${realSnapshot?.activeSensors || 178}`, subtext: "Valid telemetry", isBullet: true, variant: "emerald", iconType: "signal" },
+    { id: "inactive", label: "Masked Nulls", value: `${realSnapshot?.inactiveSensors || 29}`, subtext: "Zero values", isBullet: true, variant: "slate", iconType: "offline" },
+    { id: "regions", label: "Spatial Regions", value: "4", subtext: "REGION_A..D", isTrendUp: true, variant: "purple", iconType: "layers" }
+  ];
+
   return (
     <div className="space-y-6 pb-12">
-      {/* Top Header & Data Mode Switcher */}
+      {/* Top Header */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-xl lg:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
               Traffic Network
             </h1>
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700">
-              <button
-                onClick={() => handleModeSwitch('REAL')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  dataMode === 'REAL'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Real METR-LA
-              </button>
-              <button
-                onClick={() => handleModeSwitch('DEMO')}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                  dataMode === 'DEMO'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Demo (32-Sensors)
-              </button>
-            </div>
           </div>
 
           <div className="flex items-center gap-2 mt-1.5">
-            <span className={`inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded border ${
-              dataMode === 'REAL'
-                ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
-            }`}>
+            <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded border bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
               <Database className="w-3 h-3" />
-              {dataMode === 'REAL' ? 'REAL BENCHMARK • METR-LA • HISTORICAL REPLAY' : 'SIMULATED DEMO • 32-SENSOR NETWORK'}
+              REAL BENCHMARK • METR-LA • HISTORICAL REPLAY
             </span>
           </div>
         </div>
@@ -251,8 +189,8 @@ export default function TrafficNetwork() {
         </div>
       )}
 
-      {/* Historical Replay Clock Bar (REAL mode only) */}
-      {dataMode === 'REAL' && realSnapshot && (
+      {/* Historical Replay Clock Bar */}
+      {realSnapshot && (
         <HistoricalReplayBar
           timeIndex={timeIndex}
           maxTimeSteps={realSnapshot.totalTimeSteps || 34272}
@@ -265,24 +203,16 @@ export default function TrafficNetwork() {
       {/* Map & Detail Panel Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-8">
-          {dataMode === 'REAL' ? (
-            <RealTrafficMap
-              sensors={realSensors}
-              selectedSensor={selectedSensor}
-              onSelectSensor={handleSelectSensor}
-              activeRegion={activeRegion}
-              onRegionChange={handleRegionChange}
-              showGraphEdges={showGraphEdges}
-              onToggleGraphEdges={() => setShowGraphEdges(!showGraphEdges)}
-              graphEdges={graphEdgeLines}
-            />
-          ) : (
-            <TrafficNetworkMap
-              selectedSensor={selectedSensor}
-              onSelectSensor={handleSelectSensor}
-              sensors={demoSensors}
-            />
-          )}
+          <RealTrafficMap
+            sensors={realSensors}
+            selectedSensor={selectedSensor}
+            onSelectSensor={handleSelectSensor}
+            activeRegion={activeRegion}
+            onRegionChange={handleRegionChange}
+            showGraphEdges={showGraphEdges}
+            onToggleGraphEdges={() => setShowGraphEdges(!showGraphEdges)}
+            graphEdges={graphEdgeLines}
+          />
         </div>
 
         <div className="lg:col-span-4">
@@ -329,7 +259,7 @@ export default function TrafficNetwork() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-6">
           <SensorTable
-            sensors={dataMode === 'REAL' ? realSensors : demoSensors}
+            sensors={realSensors}
             selectedSensorId={selectedSensor?.sensorId || selectedSensor?.id}
             onSelectSensor={handleSelectSensor}
           />

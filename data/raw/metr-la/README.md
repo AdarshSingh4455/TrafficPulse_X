@@ -5,7 +5,7 @@ This directory contains raw dataset files for the **METR-LA** (Los Angeles Count
 ## Dataset Overview
 - **Location**: Los Angeles County Highway System loop detectors
 - **Sensors**: 207 spatial traffic sensors
-- **Timeframe**: March 1, 2012 to June 30, 2012 (4 months)
+- **Timeframe**: March 1, 2012 00:00:00 to June 27, 2012 23:55:00
 - **Frequency**: 5-minute intervals (34,272 time steps)
 - **Features**: Traffic speed (mph) measurements
 

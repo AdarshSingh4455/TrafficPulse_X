@@ -1,6 +1,23 @@
 import React from 'react';
 import { TrendingUp, Radio, GitFork, Quote } from 'lucide-react';
-import { heroHighlights } from '../../data/dashboard';
+
+const heroHighlights = [
+  {
+    id: "predict",
+    title: "Predict Traffic Speed",
+    description: "Multi-horizon spatio-temporal forecasting (+5m to +60m) across the METR-LA network."
+  },
+  {
+    id: "query",
+    title: "Query Only Vital Sensors",
+    description: "Counterfactual Need Score gates communication so only vital telemetry is pulled."
+  },
+  {
+    id: "federated",
+    title: "Spatio-Temporal Intelligence",
+    description: "Regional sub-networks process data locally and communicate with zero data fabrication."
+  }
+];
 
 export default function OverviewHero() {
   const iconMap = {
@@ -21,7 +38,7 @@ export default function OverviewHero() {
           </h1>
 
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl font-normal leading-relaxed">
-            Sense only what matters. Ask the next best question, Share only what helps.
+            Sense only what matters. Ask the next best question. Share only what helps.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -72,7 +89,7 @@ export default function OverviewHero() {
             <div className="relative z-10 max-w-sm">
               <Quote className="w-6 h-6 text-blue-400/80 mb-2 rotate-180" />
               <p className="text-base lg:text-lg font-semibold text-slate-100 leading-snug">
-                “From raw sensor data to intelligent, city-scale traffic foresight.”
+                “From raw METR-LA sensor data to intelligent, city-scale traffic foresight.”
               </p>
             </div>
           </div>

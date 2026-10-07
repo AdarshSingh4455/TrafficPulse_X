@@ -1,7 +1,8 @@
-# Candidate ranking and counterfactual query evaluator (Phase 4 State-Based)
+# Candidate ranking and counterfactual query evaluator for real METR-LA sensors
 
 from typing import Dict, Any, List
-from decision.config import MIN_QUERY_BENEFIT
+from backend.decision.config import MIN_QUERY_BENEFIT
+
 
 def compute_counterfactual_estimate(
     sensor_id: str,
@@ -14,46 +15,41 @@ def compute_counterfactual_estimate(
     debt = factors.get("informationDebt", 0.2)
     need_score = need_result.get("needScore", 0.3)
     cov_need = factors.get("coverageNeed", 0.2)
-    health = factors.get("sensorHealth", 0.95)
-    
-    sensor_obj = graph.sensors.get(sensor_id, {})
-    raw_bytes_str = sensor_obj.get("expectedBytes", "4.2 KB")
-    cost_kb = float(raw_bytes_str.replace(" KB", "")) if "KB" in raw_bytes_str else 4.0
 
-    # WITHOUT QUERY state (Phase 4 State metrics)
+    cost_kb = 4.2
+    raw_bytes_str = "4.2 KB"
+
     unc_before = unc_proxy
     risk_before = "High" if unc_proxy > 0.6 else ("Moderate" if unc_proxy > 0.3 else "Low")
     debt_before = debt
 
-    # WITH QUERY state: detailed 5-min telemetry reduces local uncertainty proxy & clears debt
     unc_after = max(0.06, round(unc_proxy * 0.40, 2))
     unc_reduction = round(unc_before - unc_after, 2)
     cov_gain = round(cov_need * 0.50, 2)
     risk_after = "Low" if unc_after <= 0.2 else "Moderate"
     debt_after = 0.0
 
-    # Estimated State Benefit combining uncertainty reduction, coverage gain, and debt clearance
     benefit_ratio = round(
         min(1.0, max(0.05, (0.50 * unc_reduction / max(unc_before, 0.1)) + (0.30 * cov_gain) + (0.20 * debt_before))),
         2
     )
     benefit_percent_str = f"{int(benefit_ratio * 100)}%"
 
-    # Normalized cost factor (1 to 10 KB scaled to 0.1 to 1.0)
     cost_norm = max(0.1, cost_kb / 10.0)
 
-    # Query Utility formula: (needScore * estimatedStateBenefit) / normalizedCost
     utility = round((need_score * benefit_ratio) / cost_norm, 2)
 
-    # Decision criteria with health protection
-    is_active = state_mgr.get_state(sensor_id).get("active", True)
+    st = state_mgr.get_state(sensor_id)
+    is_active = st.get("active", True)
+    data_quality = st.get("dataQuality", 0.98)
+
     if not is_active:
         decision = "SKIP"
-        reason = "Sensor is offline; query suppressed"
+        reason = "Sensor telemetry is offline; query suppressed"
         utility = 0.0
-    elif health < 0.50:
+    elif data_quality < 0.50:
         decision = "SKIP"
-        reason = "Sensor health degraded (< 50%); query suppressed to avoid noisy telemetry"
+        reason = "Sensor data quality degraded (< 50%); query suppressed to avoid noisy telemetry"
         utility = round(utility * 0.1, 2)
     elif benefit_ratio >= MIN_QUERY_BENEFIT and need_score >= 0.40 and utility > 0.15:
         decision = "QUERY"
@@ -85,17 +81,18 @@ def compute_counterfactual_estimate(
         "reason": reason
     }
 
+
 def rank_query_candidates(
     sensors: List[Dict[str, Any]],
     graph,
     state_mgr,
     sector_coverage_map: Dict[str, float]
 ) -> List[Dict[str, Any]]:
-    from decision.need_score import compute_sensor_need_score
+    from backend.decision.need_score import compute_sensor_need_score
     candidates = []
 
     for s in sensors:
-        sid = s["id"]
+        sid = s.get("sensorId", s.get("id"))
         st = state_mgr.get_state(sid)
         if not st.get("active", True):
             continue
@@ -105,18 +102,19 @@ def rank_query_candidates(
 
         candidates.append({
             "sensor": sid,
-            "road": s.get("road", "Arterial"),
-            "sector": s.get("sector", "Sector A"),
+            "sensorId": sid,
+            "road": s.get("displayAlias", f"Sensor {sid}"),
+            "sector": s.get("regionId", "REGION_A"),
+            "regionId": s.get("regionId", "REGION_A"),
             "needScore": need_res["needScore"],
             "expectedBenefit": cf["expectedBenefit"],
             "expectedBytes": cf["withQuery"]["expectedCost"],
             "queryUtility": cf["queryUtility"],
-            "reason": need_res["reasons"][0] if need_res["reasons"] else "Nominal",
+            "reason": need_res["reasons"][0] if need_res.get("reasons") else "Nominal",
             "action": "Query" if cf["decision"] == "QUERY" else "Skip",
             "decision": cf["decision"],
             "commState": st.get("commState", "NORMAL")
         })
 
-    # Sort descending by queryUtility
     candidates.sort(key=lambda c: c["queryUtility"], reverse=True)
     return candidates

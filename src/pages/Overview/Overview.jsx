@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import OverviewHero from './OverviewHero';
 import MetricCard from '../../components/common/MetricCard';
-import TrafficNetworkMap from '../../components/traffic/TrafficNetworkMap';
 import PerformanceChart from '../../components/charts/PerformanceChart';
 import TrafficDistributionChart from '../../components/charts/TrafficDistributionChart';
 import CongestionTable from '../../components/common/CongestionTable';
@@ -9,32 +8,33 @@ import EventFeed from '../../components/common/EventFeed';
 import CoverageCard from '../../components/common/CoverageCard';
 import TrafficHeatmap from '../../components/charts/TrafficHeatmap';
 import NextQueryTable from '../../components/common/NextQueryTable';
-import { metricCardsData } from '../../data/dashboard';
-import { mockEvents } from '../../data/events';
-import { fetchQueryCandidates, fetchBlindSpots, executeQuery, fetchSensors } from '../../services/api';
-
+import RealTrafficMap from '../../components/traffic/RealTrafficMap';
+import { fetchQueryCandidates, fetchBlindSpots, executeQuery, fetchMetrSnapshot, fetchEvents } from '../../services/api';
 import { AlertTriangle } from 'lucide-react';
 
 export default function Overview() {
   const [selectedSensor, setSelectedSensor] = useState(null);
   const [candidates, setCandidates] = useState(null);
   const [coverageData, setCoverageData] = useState(null);
-  const [sensors, setSensors] = useState(null);
+  const [realSensors, setRealSensors] = useState([]);
+  const [events, setEvents] = useState([]);
   const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
     async function loadData() {
       try {
-        const [candRes, covRes, sensRes] = await Promise.all([
+        const [candRes, covRes, snapRes, evRes] = await Promise.all([
           fetchQueryCandidates(),
           fetchBlindSpots(),
-          fetchSensors()
+          fetchMetrSnapshot(0, 'ALL', true),
+          fetchEvents()
         ]);
         if (isMounted) {
           if (candRes) setCandidates(candRes.slice(0, 5));
           if (covRes) setCoverageData(covRes);
-          if (sensRes) setSensors(sensRes);
+          if (snapRes && snapRes.sensors) setRealSensors(snapRes.sensors);
+          if (evRes) setEvents(evRes);
           setFetchError(null);
         }
       } catch (err) {
@@ -52,9 +52,58 @@ export default function Overview() {
   };
 
   const handleQuery = async (queryItem) => {
-    const res = await executeQuery(queryItem.sensor);
-    alert(`Evidence-on-Demand Query executed for ${queryItem.sensor}!\nStatus: ${res.status || 'Success'}\nBytes Transferred: ${res.bytesTransferred || queryItem.expectedBytes}\nEstimated Benefit: ${res.expectedBenefit || queryItem.expectedBenefit}`);
+    const sid = queryItem.sensor || queryItem.sensorId;
+    const res = await executeQuery(sid);
+    alert(`Evidence-on-Demand Query executed for ${sid}!\nStatus: ${res.status || 'Success'}\nBytes Transferred: ${res.bytesTransferred || queryItem.expectedBytes}\nEstimated Benefit: ${res.expectedBenefit || queryItem.expectedBenefit}`);
   };
+
+  const metricCardsData = [
+    {
+      id: "total-sensors",
+      label: "Total Real Sensors",
+      value: "207",
+      subtext: "METR-LA benchmark",
+      isTrendUp: true,
+      variant: "blue",
+      iconType: "sensor"
+    },
+    {
+      id: "active-sensors",
+      label: "Active Sensors",
+      value: "178",
+      subtext: "86.0% valid telemetry",
+      isBullet: true,
+      variant: "emerald",
+      iconType: "signal"
+    },
+    {
+      id: "inactive-sensors",
+      label: "Masked Nulls",
+      value: "29",
+      subtext: "14.0% zero values",
+      isBullet: true,
+      variant: "slate",
+      iconType: "offline"
+    },
+    {
+      id: "spatial-regions",
+      label: "Spatial Regions",
+      value: "4",
+      subtext: "KMeans clusters",
+      isTrendUp: true,
+      variant: "rose",
+      iconType: "alert"
+    },
+    {
+      id: "comm-saved",
+      label: "Bandwidth Saved",
+      value: "78.2%",
+      subtext: "Selective communication",
+      isTrendUp: true,
+      variant: "purple",
+      iconType: "layers"
+    }
+  ];
 
   return (
     <div className="space-y-6 pb-12">
@@ -86,10 +135,10 @@ export default function Overview() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         <div className="lg:col-span-6">
-          <TrafficNetworkMap
+          <RealTrafficMap
+            sensors={realSensors}
             selectedSensor={selectedSensor}
             onSelectSensor={handleSelectSensor}
-            sensors={sensors}
           />
         </div>
         <div className="lg:col-span-6">
@@ -105,7 +154,7 @@ export default function Overview() {
           <CongestionTable />
         </div>
         <div className="lg:col-span-4">
-          <EventFeed events={mockEvents} />
+          <EventFeed events={events} />
         </div>
       </div>
 

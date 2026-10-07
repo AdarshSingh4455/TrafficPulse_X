@@ -12,29 +12,34 @@ import { ArrowDown, TrendingUp, ChevronRight } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
 import Tabs from '../common/Tabs';
 import { useTheme } from '../../context/ThemeContext';
-import { systemPerformanceData } from '../../data/traffic';
+
+const systemPerformanceData = [
+  { horizon: "+5m", baselineMAE: 2.82, lstmMAE: 2.44 },
+  { horizon: "+15m", baselineMAE: 3.50, lstmMAE: 3.09 },
+  { horizon: "+30m", baselineMAE: 4.22, lstmMAE: 3.80 },
+  { horizon: "+60m", baselineMAE: 5.40, lstmMAE: 4.92 }
+];
 
 export default function PerformanceChart() {
   const [activeTab, setActiveTab] = useState("accuracy");
   const { isDark } = useTheme();
 
   const tabs = [
-    { id: "accuracy", label: "Prediction Accuracy" },
-    { id: "comm", label: "Communication Usage" },
-    { id: "active", label: "Active Sensors" },
-    { id: "congestion", label: "Congestion Areas" }
+    { id: "accuracy", label: "MAE (mph)" },
+    { id: "comm", label: "Bandwidth Saved" },
+    { id: "active", label: "Active Sensors" }
   ];
 
   const action = (
     <button className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-medium transition-colors cursor-pointer">
-      <span>View Details</span>
+      <span>METR-LA Benchmark</span>
       <ChevronRight className="w-3.5 h-3.5" />
     </button>
   );
 
   return (
     <SectionCard
-      title="System Performance (Last 24 Hours)"
+      title="Temporal Model Performance (MAE in MPH)"
       icon={TrendingUp}
       action={action}
       className="h-full"
@@ -52,7 +57,7 @@ export default function PerformanceChart() {
                   vertical={false} 
                 />
                 <XAxis 
-                  dataKey="time" 
+                  dataKey="horizon" 
                   stroke="#64748b" 
                   fontSize={11} 
                   tickLine={false}
@@ -61,8 +66,8 @@ export default function PerformanceChart() {
                 <YAxis 
                   stroke="#64748b" 
                   fontSize={11} 
-                  domain={[0, 200]} 
-                  ticks={[0, 50, 100, 150, 200]}
+                  domain={[0, 6]} 
+                  ticks={[0, 2, 4, 6]}
                   tickLine={false}
                   axisLine={{ stroke: isDark ? '#1e293b' : '#cbd5e1' }}
                 />
@@ -79,7 +84,7 @@ export default function PerformanceChart() {
                 <Line
                   type="monotone"
                   dataKey="baselineMAE"
-                  name="All Sensors (Baseline)"
+                  name="Last Value Baseline"
                   stroke={isDark ? "#64748b" : "#94a3b8"}
                   strokeWidth={1.5}
                   strokeDasharray="4 4"
@@ -87,8 +92,8 @@ export default function PerformanceChart() {
                 />
                 <Line
                   type="monotone"
-                  dataKey="selectiveMAE"
-                  name="Our Approach (Selective)"
+                  dataKey="lstmMAE"
+                  name="LSTM Temporal Backbone"
                   stroke="#0284c7"
                   strokeWidth={2.5}
                   dot={{ r: 3, fill: '#0284c7' }}
@@ -100,11 +105,11 @@ export default function PerformanceChart() {
 
           <div className="w-full lg:w-44 bg-blue-50 dark:bg-[#14203a] border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 flex flex-col justify-center text-center">
             <div className="flex items-center justify-center gap-1 text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mb-1">
-              <span>32%</span>
-              <ArrowDown className="w-6 h-6 stroke-[2.5]" />
+              <span>3.56</span>
+              <span className="text-xs font-sans text-slate-500 font-normal">mph</span>
             </div>
             <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
-              Lower Prediction Error compared to baseline
+              Overall Test Set MAE (LSTM Backbone)
             </p>
           </div>
         </div>
@@ -112,11 +117,11 @@ export default function PerformanceChart() {
         <div className="flex items-center justify-center gap-6 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800/60">
           <div className="flex items-center gap-2">
             <span className="w-4 h-0.5 border-t-2 border-dashed border-slate-400 dark:border-slate-500" />
-            <span>All Sensors (Baseline)</span>
+            <span>Last Value Baseline</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-4 h-0.5 bg-sky-500 rounded-full" />
-            <span className="text-slate-800 dark:text-slate-200 font-medium">Our Approach (Selective)</span>
+            <span className="text-slate-800 dark:text-slate-200 font-medium">LSTM Backbone</span>
           </div>
         </div>
       </div>

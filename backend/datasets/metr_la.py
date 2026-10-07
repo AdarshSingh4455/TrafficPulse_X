@@ -520,20 +520,18 @@ class METRLADatasetInspector:
                     "classification": "NOT_AVAILABLE",
                     "available": False,
                     "source": None,
-                    "realModeClassification": "NOT_AVAILABLE",
-                    "demoModeClassification": "SIMULATED_DEMO",
-                    "reason": "NOT_AVAILABLE in REAL METR-LA mode (Hardware health is SIMULATED_DEMO in Demo Mode only)"
+                    "reason": "NOT_AVAILABLE in REAL METR-LA mode (Hardware health telemetry is not present in METR-LA)"
                 },
                 "heartbeatState": {
                     "classification": "STATE_SUPPORTED",
                     "available": True,
-                    "description": "Heartbeat and wake-up simulation state logic"
+                    "description": "Heartbeat and replay query state logic"
                 },
-                "flowConservation": {
-                    "classification": "NOT_AVAILABLE",
-                    "available": False,
-                    "source": None,
-                    "reason": "Traffic flow (vehicles/hr) telemetry does not exist in METR-LA"
+                "spatialSpeedConsistency": {
+                    "classification": "REAL_DERIVED",
+                    "available": True,
+                    "source": "real speed + real adjacency graph",
+                    "description": "Spatial speed variation and anomaly detection across adjacent real sensors"
                 },
                 "occupancyCongestion": {
                     "classification": "NOT_AVAILABLE",

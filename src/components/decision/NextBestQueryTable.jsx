@@ -3,10 +3,30 @@ import { Sparkles } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
 import DataTable from '../common/DataTable';
 import Button from '../common/Button';
-import { nextBestDecisionQueries } from '../../data/decision';
+
+const defaultNextBestDecisionQueries = [
+  {
+    sensor: "773869",
+    road: "REGION_A (North-East Arterial)",
+    needScore: 0.87,
+    expectedBenefit: "18%",
+    expectedBytes: "4.2 KB",
+    reason: "Core arterial chokepoint influence",
+    action: "Query"
+  },
+  {
+    sensor: "767541",
+    road: "REGION_C (Central-West Corridor)",
+    needScore: 0.72,
+    expectedBenefit: "14%",
+    expectedBytes: "3.1 KB",
+    reason: "Spatial speed disagreement detected",
+    action: "Query"
+  }
+];
 
 export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
-  const candidates = data || nextBestDecisionQueries;
+  const candidates = data || defaultNextBestDecisionQueries;
 
   const columns = [
     {
@@ -14,8 +34,8 @@ export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
       key: "sensor",
       render: (row) => (
         <div className="flex flex-col">
-          <span className="font-mono font-bold text-slate-900 dark:text-white text-xs">{row.sensor}</span>
-          <span className="text-[10px] text-slate-500 dark:text-slate-400">{row.road}</span>
+          <span className="font-mono font-bold text-slate-900 dark:text-white text-xs">{row.sensor || row.sensorId}</span>
+          <span className="text-[10px] text-slate-500 dark:text-slate-400">{row.road || row.sector}</span>
         </div>
       )
     },
@@ -57,7 +77,7 @@ export default function NextBestQueryTable({ onQuery, onSelectSensor, data }) {
       header: "Action",
       key: "action",
       render: (row) => {
-        const isQuery = row.action === "Query";
+        const isQuery = (row.action || row.decision) === "Query" || (row.action || row.decision) === "QUERY";
         return (
           <Button
             size="xs"

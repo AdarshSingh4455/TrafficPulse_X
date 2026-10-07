@@ -1,11 +1,17 @@
 import React from 'react';
 import { ShieldCheck, AlertCircle, ChevronRight } from 'lucide-react';
 import SectionCard from './SectionCard';
-import { coverageStats } from '../../data/dashboard';
+
+const defaultCoverageStats = {
+  coveragePercent: 85,
+  coveredRoads: 176,
+  uncoveredRoads: 31,
+  blindSpots: 0
+};
 
 export default function CoverageCard({ data }) {
-  const current = data || coverageStats;
-  const { coveragePercent = 75, coveredRoads = 134, uncoveredRoads = 45, blindSpots = 2 } = current;
+  const current = data || defaultCoverageStats;
+  const { coveragePercent = 85, coveredRoads = 176, uncoveredRoads = 31, blindSpots = 0 } = current;
 
   return (
     <SectionCard
@@ -46,14 +52,14 @@ export default function CoverageCard({ data }) {
             <div className="flex justify-between items-center">
               <span className="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
-                Covered Roads
+                Covered Sensors
               </span>
               <span className="font-mono font-bold text-slate-800 dark:text-white">{coveredRoads}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
-                Uncovered Roads
+                Coverage Deficit
               </span>
               <span className="font-mono font-bold text-slate-700 dark:text-slate-300">{uncoveredRoads}</span>
             </div>
@@ -67,14 +73,14 @@ export default function CoverageCard({ data }) {
           </div>
         </div>
 
-        <div className="p-2.5 rounded-lg bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-500/30 flex items-center justify-between text-xs text-rose-700 dark:text-rose-300">
+        <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/30 flex items-center justify-between text-xs text-emerald-700 dark:text-emerald-300">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0" />
+            <AlertCircle className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
             <span className="text-[11px] leading-tight">
-              <b>{blindSpots} potential blind spots:</b> Low sensor coverage in Sector C & near River.
+              <b>{blindSpots === 0 ? "Full 4-Region Coverage:" : `${blindSpots} Regional Gaps:`}</b> 207 real METR-LA sensors active.
             </span>
           </div>
-          <ChevronRight className="w-4 h-4 text-rose-500 dark:text-rose-400 shrink-0" />
+          <ChevronRight className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
         </div>
       </div>
     </SectionCard>
