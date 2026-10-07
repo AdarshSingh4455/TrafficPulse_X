@@ -100,6 +100,18 @@ class DataSourceManager:
             "networkCoveragePercent": valid_pct
         }
 
+    def get_representatives_for_region(self, region_id: str) -> List[str]:
+        r_code = region_id.upper()
+        if not r_code.startswith("REGION_"):
+            r_code = f"REGION_{r_code}"
+        rep_path = os.path.join(self.processed_dir, "representative_sensors.json")
+        if os.path.exists(rep_path):
+            with open(rep_path, "r", encoding="utf-8") as f:
+                all_reps = json.load(f)
+                if r_code in all_reps:
+                    return [r["sensorId"] if isinstance(r, dict) else str(r) for r in all_reps[r_code]]
+        return []
+
     def get_sensors(self, time_index: int = 0) -> List[Dict[str, Any]]:
         snap = self.inspector.get_historical_snapshot(time_index=time_index, region_id="ALL", representatives_only=False)
         result = []

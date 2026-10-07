@@ -15,11 +15,14 @@
 | **Phase 3** | Backend + Sensor Graph Architecture | ✅ COMPLETE |
 | **Phase 4** | Decision Intelligence & Information Debt Engine | ✅ COMPLETE |
 | **Phase 5** | Real Dataset Preprocessing & Geospatial Network | ✅ COMPLETE |
-| **Phase 6** | Traffic Prediction Machine Learning | 🟡 IN PROGRESS |
+| **Phase 6** | Traffic Prediction Machine Learning | ✅ COMPLETE |
 | ↳ *Stage 6.1* | *Last Value + Historical Average Baselines* | ✅ COMPLETE |
 | ↳ *Stage 6.2* | *Linear Regression Baseline* | ✅ COMPLETE |
 | ↳ *Stage 6.3* | *GRU + LSTM Temporal Models* | ✅ COMPLETE |
-| ↳ *Stage 6.4* | *Spatio-Temporal Graph Neural Network* | ⏳ NEXT |
+| ↳ *Stage 6.4* | *Spatial GCN Model* | ✅ COMPLETE |
+| ↳ *Stage 6.5* | *SpatialGraphLSTM Model* | ✅ COMPLETE |
+| ↳ *Stage 6.6* | *Final Prediction Evaluation & Model Freeze* | ✅ COMPLETE |
+| ↳ *Stage 6.7* | *Prediction Intelligence API & Dashboard Integration* | ✅ COMPLETE |
 
 ---
 
@@ -70,9 +73,9 @@ SensorStateManager         FastAPI Endpoints (backend/main.py)
 - **Sensors**: 207 real loop detectors
 - **Adjacency Matrix**: 207×207 distance-based Gaussian threshold graph
 - **Spatial Segmentation**: 4 deterministic geographic regions:
-  - `REGION_A`: 48 sensors (South-East)
-  - `REGION_B`: 57 sensors (Central-West / Downtown)
-  - `REGION_C`: 58 sensors (North-East / Valleys)
+  - `REGION_A`: 48 sensors (North-East)
+  - `REGION_B`: 57 sensors (South-East)
+  - `REGION_C`: 58 sensors (Central-West)
   - `REGION_D`: 44 sensors (North-West)
   - **Total**: 207 sensors
 - **Authoritative Region Checksum**: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2` *(SHA-256)*
@@ -90,14 +93,25 @@ SensorStateManager         FastAPI Endpoints (backend/main.py)
 
 | Model Category | Model | Overall MAE | Overall RMSE | Overall MAPE | +5 min MAE | +15 min MAE | +30 min MAE | +60 min MAE |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Stage 6.1 Baseline** | Last Value | 3.9839 | 7.6411 | 10.15% | 2.8158 | 3.5045 | 4.2166 | 5.3987 |
-| **Stage 6.1 Baseline** | Historical Average | 4.1930 | 7.8618 | 13.06% | 4.1928 | 4.1928 | 4.1929 | **4.1934** 🏆 |
-| **Stage 6.2 Baseline** | Linear Regression | 3.9763 | 7.2053 | 11.14% | 2.6763 | 3.4026 | 4.2384 | 5.5879 |
-| **Stage 6.3 Temporal** | GRU | 3.5669 | 7.0734 | 10.14% | **2.4349** 🏆 | 3.0976 | 3.8068 | 4.9284 |
-| **Stage 6.3 Temporal** | **LSTM** | **3.5613** 🏆 | **7.0673** 🏆 | **10.11%** 🏆 | 2.4372 | **3.0940** 🏆 | **3.7984** 🏆 | 4.9156 |
+| **Classical Baseline** | Last Value | 3.9839 | 7.6411 | 10.15% | 2.8158 | 3.5045 | 4.2166 | 5.3987 |
+| **Classical Baseline** | Historical Average | 4.1930 | 7.8618 | 13.06% | 4.1928 | 4.1928 | 4.1929 | **4.1934** 🏆 |
+| **Linear Baseline** | Linear Regression | 3.9763 | 7.2053 | 11.14% | 2.6763 | 3.4026 | 4.2384 | 5.5879 |
+| **Temporal Model** | GRU | 3.5669 | 7.0734 | 10.14% | 2.4349 | 3.0976 | 3.8068 | 4.9284 |
+| **Temporal Model** | LSTM | 3.5613 | 7.0673 | 10.11% | 2.4372 | 3.0940 | 3.7984 | 4.9156 |
+| **Spatial Graph Model** | Spatial GCN | 5.4604 | 8.9625 | 15.67% | 4.7139 | 5.1138 | 5.5939 | 6.4201 |
+| **Spatio-Temporal Model** | **Graph+LSTM** 🏆 | **3.4378** 🏆 | **6.8873** 🏆 | **9.57%** 🏆 | **2.3648** 🏆 | **3.0007** 🏆 | **3.6699** 🏆 | 4.7158 |
 
 > [!IMPORTANT]
-> **LSTM** achieved the lowest overall validation loss and is selected as the temporal backbone for future spatio-temporal graph models.
+> **Graph+LSTM** (`SpatialGraphLSTM`) achieves the lowest overall test MAE (**3.4378 mph**) and is frozen as the **Primary Centralized Prediction Model**. Historical Average remains the benchmark winner at `+60 min` (`4.1934 mph`).
+
+---
+
+## 🔮 Prediction Intelligence API Endpoints
+
+- `GET /api/prediction/status`: Returns model readiness, checkpoint path (`graph_lstm_best.pt`), parameters, and device.
+- `GET /api/prediction/forecast`: Returns multi-horizon (+5, +15, +30, +60 min) predictions over historical replay (`time_index`, `sensor_id`, `region_id`).
+- `GET /api/prediction/metrics`: Returns frozen Stage 6.6 overall, horizon-wise, and region-wise metrics.
+- `GET /api/prediction/models`: Returns authoritative 7-model comparative benchmark matrix.
 
 ---
 

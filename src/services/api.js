@@ -184,3 +184,40 @@ export async function fetchMetrSensor(sensorId, timeIndex = 0) {
   if (!res.ok) throw new Error(`METR Sensor Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
+
+// -------------------------------------------------------------
+// Prediction Intelligence API Methods (Stage 6.7)
+// -------------------------------------------------------------
+
+export async function fetchPredictionStatus() {
+  const res = await fetch(`${API_BASE}/prediction/status`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Prediction Status Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchForecast(timeIndex = 12, sensorId = null, regionId = null) {
+  let url = `${API_BASE}/prediction/forecast?time_index=${timeIndex}`;
+  if (sensorId) url += `&sensor_id=${encodeURIComponent(sensorId)}`;
+  if (regionId) url += `&region_id=${encodeURIComponent(regionId)}`;
+
+  const res = await fetch(url, { signal: AbortSignal.timeout(3500) });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    const detail = errData.detail || `Prediction Forecast Failed: ${res.status} ${res.statusText}`;
+    throw new Error(detail);
+  }
+  return await res.json();
+}
+
+export async function fetchPredictionMetrics() {
+  const res = await fetch(`${API_BASE}/prediction/metrics`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Prediction Metrics Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchPredictionModels() {
+  const res = await fetch(`${API_BASE}/prediction/models`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Prediction Models Table Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
