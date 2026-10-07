@@ -1,0 +1,186 @@
+{
+  "stage": "6.6",
+  "stageName": "Final Prediction Evaluation and Model Freeze",
+  "dataset": "METR-LA Benchmark",
+  "units": "raw_mph",
+  "primaryCentralizedModel": {
+    "modelName": "Graph+LSTM",
+    "modelType": "SpatialGraphLSTM",
+    "checkpointPath": "data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt",
+    "parameterCount": 26596,
+    "checkpointSizeBytes": 111119,
+    "selectionReason": "Lowest overall test MAE (3.4378 mph) selected strictly via validation loss without test data leakage."
+  },
+  "referenceHorizonModel": {
+    "modelName": "Historical Average",
+    "referenceHorizon": "+60 min",
+    "selectionReason": "Lowest MAE (4.1934 mph) at 60-minute prediction horizon."
+  },
+  "sevenModelComparativeBenchmark": {
+    "overallWinner": "Graph+LSTM",
+    "overallWinners": {
+      "Last Value": 3.9839,
+      "Historical Average": 4.193,
+      "Linear Regression": 3.9763,
+      "GRU": 3.5669,
+      "LSTM": 3.5613,
+      "Spatial GCN": 5.4604,
+      "Graph+LSTM": 3.4378
+    },
+    "modelsOverall": {
+      "Last Value": {
+        "mae": 3.9839,
+        "rmse": 7.6411,
+        "mape": 10.15
+      },
+      "Historical Average": {
+        "mae": 4.193,
+        "rmse": 7.8618,
+        "mape": 13.06
+      },
+      "Linear Regression": {
+        "mae": 3.9763,
+        "rmse": 7.2053,
+        "mape": 11.14
+      },
+      "GRU": {
+        "mae": 3.5669,
+        "rmse": 7.2345,
+        "mape": 10.03
+      },
+      "LSTM": {
+        "mae": 3.5613,
+        "rmse": 7.242,
+        "mape": 9.93
+      },
+      "Spatial GCN": {
+        "mae": 5.4604,
+        "rmse": 8.9625,
+        "mape": 15.67
+      },
+      "Graph+LSTM": {
+        "mae": 3.4378,
+        "rmse": 6.8873,
+        "mape": 9.57
+      }
+    },
+    "horizonWinners": {
+      "+5 min": {
+        "winner": "Graph+LSTM",
+        "winnerMae": 2.3648,
+        "allModels": {
+          "Last Value": 2.8158,
+          "Historical Average": 4.1928,
+          "Linear Regression": 2.6763,
+          "GRU": 2.4349,
+          "LSTM": 2.4372,
+          "Spatial GCN": 4.7139,
+          "Graph+LSTM": 2.3648
+        }
+      },
+      "+15 min": {
+        "winner": "Graph+LSTM",
+        "winnerMae": 3.0007,
+        "allModels": {
+          "Last Value": 3.5045,
+          "Historical Average": 4.1928,
+          "Linear Regression": 3.4026,
+          "GRU": 3.0976,
+          "LSTM": 3.094,
+          "Spatial GCN": 5.1138,
+          "Graph+LSTM": 3.0007
+        }
+      },
+      "+30 min": {
+        "winner": "Graph+LSTM",
+        "winnerMae": 3.6699,
+        "allModels": {
+          "Last Value": 4.2166,
+          "Historical Average": 4.1929,
+          "Linear Regression": 4.2384,
+          "GRU": 3.8068,
+          "LSTM": 3.7984,
+          "Spatial GCN": 5.5939,
+          "Graph+LSTM": 3.6699
+        }
+      },
+      "+60 min": {
+        "winner": "Historical Average",
+        "winnerMae": 4.1934,
+        "allModels": {
+          "Last Value": 5.3987,
+          "Historical Average": 4.1934,
+          "Linear Regression": 5.5879,
+          "GRU": 4.9284,
+          "LSTM": 4.9156,
+          "Spatial GCN": 6.4201,
+          "Graph+LSTM": 4.7158
+        }
+      }
+    }
+  },
+  "scientificClaims": {
+    "primaryClaim": "Graph+LSTM is the best overall implemented forecasting model and the best model at +5, +15 and +30 minute horizons.",
+    "horizon60Claim": "Historical Average remains strongest at +60 minutes.",
+    "ablationSensitivityTest": "identity-adjacency substitution sensitivity test"
+  },
+  "regionBreakdown": {
+    "model": "Graph+LSTM",
+    "regions": {
+      "REGION_A": {
+        "sensorCount": 48,
+        "validTargetCount": 1162340,
+        "mae": 2.4094,
+        "rmse": 4.7103,
+        "mape": 5.1
+      },
+      "REGION_B": {
+        "sensorCount": 57,
+        "validTargetCount": 1359564,
+        "mae": 3.9294,
+        "rmse": 7.6177,
+        "mape": 12.08
+      },
+      "REGION_C": {
+        "sensorCount": 58,
+        "validTargetCount": 1403672,
+        "mae": 3.3897,
+        "rmse": 7.1121,
+        "mape": 9.56
+      },
+      "REGION_D": {
+        "sensorCount": 44,
+        "validTargetCount": 1044636,
+        "mae": 4.0069,
+        "rmse": 7.5835,
+        "mape": 11.3
+      }
+    }
+  },
+  "predictionContract": {
+    "inputHistorySteps": 12,
+    "inputHistoryMinutes": 60,
+    "inputFeatures": 2,
+    "outputHorizonsMinutes": [
+      5,
+      15,
+      30,
+      60
+    ],
+    "canonicalSensorCount": 207,
+    "trainOnlyScaler": {
+      "mean": 58.584258,
+      "std": 12.822883
+    },
+    "maskingContract": "Target speeds <= 0.0 mph are masked nulls and excluded from metric computation.",
+    "graphNormalization": "Symmetric adjacency normalization with self-loops: D~^{-1/2} A~ D~^{-1/2}"
+  },
+  "stage67InferenceContract": {
+    "step1_Input": "12 historical 5-minute speed observations [12, 207, 2] (speed + binary valid mask).",
+    "step2_Preprocessing": "Normalize speed using train-only scaler (mean=58.584258, std=12.822883).",
+    "step3_GraphContext": "Load canonical weighted normalized 207x207 adjacency matrix.",
+    "step4_ModelInference": "Pass normalized tensor and normalized adjacency into loaded graph_lstm_best.pt checkpoint.",
+    "step5_Postprocessing": "Denormalize predictions (pred * std + mean) and clip negative predictions to 0.0 mph if present.",
+    "step6_Output": "4 multi-step forecast horizons (+5, +15, +30, +60 min) for all 207 canonical METR-LA sensors."
+  }
+}
