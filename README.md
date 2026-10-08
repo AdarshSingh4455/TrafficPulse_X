@@ -1,195 +1,235 @@
 # TrafficPulse-X
 
-> **Dynamic Relevance-Aware Traffic Forecasting & Evidence-on-Demand Spatio-Temporal Intelligence**
-> 
-> *"Sense only what matters. Ask the next best question. Share only what helps."*
+> **Sense only what matters. Ask the next best question. Share only what helps.**
+
+TrafficPulse-X is an **Evidence-on-Demand Federated Traffic-Flow Prediction Platform** built on the real **METR-LA** Los Angeles highway benchmark (207 speed sensors).
 
 ---
 
-## 📌 Project Status
+## 1. Project Objectives
 
-| Phase | Description | Status |
-| :--- | :--- | :---: |
-| **Phase 1** | Frontend Foundation | ✅ COMPLETE |
-| **Phase 2** | Traffic Network + Decision UI | ✅ COMPLETE |
-| **Phase 3** | Backend + Sensor Graph Architecture | ✅ COMPLETE |
-| **Phase 4** | Decision Intelligence & Information Debt Engine | ✅ COMPLETE |
-| **Phase 5** | Real Dataset Preprocessing & Geospatial Network | ✅ COMPLETE |
-| **Phase 6** | Traffic Prediction Machine Learning | ✅ COMPLETE |
-| ↳ *Stage 6.1* | *Last Value + Historical Average Baselines* | ✅ COMPLETE |
-| ↳ *Stage 6.2* | *Linear Regression Baseline* | ✅ COMPLETE |
-| ↳ *Stage 6.3* | *GRU + LSTM Temporal Models* | ✅ COMPLETE |
-| ↳ *Stage 6.4* | *Spatial GCN Model* | ✅ COMPLETE |
-| ↳ *Stage 6.5* | *SpatialGraphLSTM Model* | ✅ COMPLETE |
-| ↳ *Stage 6.6* | *Final Prediction Evaluation & Model Freeze* | ✅ COMPLETE |
-| ↳ *Stage 6.7* | *Prediction Intelligence API & Dashboard Integration* | ✅ COMPLETE |
-| ↳ *Stage 6.8* | *Final Phase 6 Regression & Prediction System Freeze* | ✅ COMPLETE |
-| **Phase 7** | Prediction + Decision Intelligence Fusion | ✅ COMPLETE |
-| **Phase 8** | Federated Learning Simulation | ✅ COMPLETE |
-| ↳ *Stage 8.1* | *FL Client Partition & Training Contract* | ✅ COMPLETE |
-| ↳ *Stage 8.2* | *Full-Participation Federated Graph+LSTM Training* | ✅ COMPLETE |
-| ↳ *Stage 8.3* | *Federated Learning API & Dashboard Integration* | ✅ COMPLETE |
-| ↳ *Stage 8.4* | *Final Federated Learning Audit & System Freeze* | ✅ COMPLETE |
-| **Phase 9** | Communication Intelligence & Optimization | ⏳ NOT STARTED |
-| **Phase 10** | Experiments & Final System Synthesis | ⏳ NOT STARTED |
+1. **Prediction Accuracy**: Multi-horizon spatio-temporal traffic speed forecasting (+5m to +60m) using Spatial Graph Convolutions and LSTM cells (`Graph+LSTM`). *(Implemented & Evaluated)*
+2. **Communication Efficiency & Accounting**: Application payload monitoring and selective edge evidence acquisition. *(Baseline Accounting Implemented; Optimization pending Phase 9)*
 
 ---
 
-## 📊 Dataset Specifications
+## 2. Important Scientific Scope
 
-TrafficPulse-X is evaluated exclusively on the **METR-LA Real Benchmark** dataset:
-
-- **Sensors**: 207 spatial traffic sensors across Los Angeles County highways
-- **Timestamps**: 34,272 time steps at 5-minute sampling intervals
-- **First Timestamp**: `2012-03-01 00:00:00`
-- **Last Timestamp**: `2012-06-27 23:55:00`
-- **Available Telemetry**: Traffic speed (measured in miles per hour, mph)
-- **Real Metadata**: Geographic coordinates (latitude/longitude), 207×207 spatial adjacency matrix, chronological timestamps
-- **Unavailable Telemetry**: Volume flow, lane occupancy, hardware health *(explicitly set to `false` availability; no dummy values fabricated)*
-
-> [!NOTE]
-> TrafficPulse-X operates strictly on **HISTORICAL REPLAY** mode using benchmark telemetry, not present-day live sensor feeds. Real traffic data integration is complete via historical METR-LA replay; live present-day streaming is not connected.
+- **Real METR-LA Dataset**: YES (Los Angeles County highway speed sensors)
+- **Historical Replay Execution**: YES (March 1, 2012 to June 27, 2012)
+- **Live Present-Day Streaming**: NO
+- **Predicted Telemetry Signal**: Vehicle Speed (mph)
+- **Flow (Volume) Telemetry**: NOT_AVAILABLE
+- **Occupancy (%) Telemetry**: NOT_AVAILABLE
+- **Hardware Health**: NOT_AVAILABLE
 
 ---
 
-## 🏗️ Architecture
+## 3. Core Features
+
+- **Real METR-LA Ingestion Pipeline**: 34,272 time steps across 207 sensors at 5-minute intervals.
+- **Spatio-Temporal Model (`Graph+LSTM`)**: Combines weighted symmetrically normalized adjacency ($\tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2}$) with 2-layer LSTM temporal units.
+- **7-Model Prediction Benchmark**: Evaluated against Last Value, Historical Average, Linear Regression, Temporal GRU, Temporal LSTM, and Spatial GCN.
+- **Decision Intelligence Engine**: 9-factor dynamic Need Score (`DERIVED`), residual error uncertainty calibration (`CALIBRATED_PROXY`), Sensor Jury consensus voting, and Physics Gate spatial speed consistency checks.
+- **Federated Learning Framework**: 4 Regional FL Clients executing FedAvg over regional subgraphs.
+- **Dual-Level Communication Accounting**: Level 1 (Sensor-to-Edge single query & batch) and Level 2 (FL client-to-server weight updates).
+- **React 19 Dashboard**: 7 active pages with interactive Leaflet geospatial maps, Recharts visual analytics, and dark/light themes.
+
+---
+
+## 4. System Architecture
 
 ```
-METR-LA Benchmark Dataset (HDF5 / NPZ)
-                 ↓
-      Canonical Dataset Loader
-                 ↓
-        DataSourceManager (Single Source of Truth)
-                 ↓
-  ┌──────────────┴──────────────┐
-  ▼                             ▼
-SensorStateManager         FastAPI Endpoints (backend/main.py)
-(Derived Decision State)        ↓
-  │                    src/services/api.js
-  └──────────────┬──────────────┘
-                 ▼
-           React Frontend
++-------------------------------------------------------------------------------+
+|                       REAL METR-LA BENCHMARK DATASET                          |
+|  data/raw/metr-la/metr-la.h5 | data/processed/metr-la/ml_ready/*.npz          |
++-------------------------------------------------------------------------------+
+                                       |
+                                       v
++-------------------------------------------------------------------------------+
+|                             BACKEND SERVICES                                  |
+|  backend/data_source.py (DataSourceManager)                                   |
+|  backend/prediction/service.py (PredictionService -> graph_lstm_best.pt)      |
+|  backend/federated/service.py (FederatedService -> global_best.pt)            |
++-------------------------------------------------------------------------------+
+                                       |
+                                       v
++-------------------------------------------------------------------------------+
+|                       DECISION INTELLIGENCE ENGINE                            |
+|  backend/decision/need_score.py | uncertainty.py | jury.py | physics.py       |
++-------------------------------------------------------------------------------+
+                                       |
+                                       v
++-------------------------------------------------------------------------------+
+|                        SINGLE FASTAPI APPLICATION                             |
+|  backend/main.py (38 REST HTTP Endpoints under /api/*)                        |
++-------------------------------------------------------------------------------+
+                                       |
+                                       v
++-------------------------------------------------------------------------------+
+|                         FRONTEND API SERVICE LAYER                            |
+|  src/services/api.js (Axios HTTP Client -> Single Endpoint Gateway Mapping)    |
++-------------------------------------------------------------------------------+
+                                       |
+                                       v
++-------------------------------------------------------------------------------+
+|                            REACT USER INTERFACE                               |
+|  Overview | TrafficNetwork | DecisionIntelligence | Prediction | FL | Comm | Alerts|
++-------------------------------------------------------------------------------+
 ```
 
-- **Single Source of Truth**: `DataSourceManager` owns all base sensor state (speed, location, region, validity). `SensorStateManager` manages derived decision states (need scores, query history, information debt).
-- **Unified Backend**: Served by exactly **ONE** production FastAPI backend (`backend/main.py`).
-- **No Mock Fallbacks**: Frontend API service (`src/services/api.js`) handles failures cleanly via HTTP error notices without synthetic data fallbacks.
+---
+
+## 5. Technology Stack
+
+### Backend & ML (Python)
+- **FastAPI** (`backend/main.py`): Web framework hosting 38 REST endpoints.
+- **Uvicorn**: ASGI web server runner.
+- **PyTorch** (`torch`): Deep learning framework for `Graph+LSTM`, `GCN`, `LSTM`, `GRU`, and FL training.
+- **NumPy & Pandas**: Data manipulation and tensor operations.
+- **SciPy**: Graph distance matrix and Gaussian kernel computations.
+- **PyTables (`tables`)**: HDF5 benchmark data reading (`metr-la.h5`).
+- **Pytest & HTTPX**: Backend test suite execution (270 unit & regression tests).
+
+### Frontend (JavaScript / React)
+- **React 19 & React Router DOM 7**: UI rendering and client-side routing.
+- **Vite 8**: Modern frontend build tool and dev server.
+- **Tailwind CSS 4**: Utility-first styling with dark mode support.
+- **Leaflet & React Leaflet**: Interactive geospatial traffic network mapping.
+- **Recharts**: Data visualization and multi-horizon prediction charts.
+- **Lucide React**: Modern iconography.
 
 ---
 
-## 🌐 Graph Topology & Spatial Regions
+## 6. Dataset & Splits Contract
 
-- **Sensors**: 207 real loop detectors
-- **Adjacency Matrix**: 207×207 weighted symmetrically normalized adjacency with self-loops ($\tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2}$)
-- **Spatial Segmentation**: 4 deterministic geographic regions:
-  - `REGION_A`: 48 sensors (North-East)
-  - `REGION_B`: 57 sensors (South-East)
-  - `REGION_C`: 58 sensors (Central-West)
-  - `REGION_D`: 44 sensors (North-West)
-  - **Total**: 207 sensors
-- **Authoritative Region Checksum**: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2` *(SHA-256)*
-
----
-
-## 📈 Forecasting Contract & Evaluated Baselines
-
-- **Input History**: 12 historical steps (60 minutes) of speed telemetry + binary validity mask ($X \in \mathbb{R}^{12 \times 207 \times 2}$)
-  - **Channel 1**: Normalized speed
-  - **Channel 2**: Binary validity mask (`1.0` for valid, `0.0` for benchmark-masked)
-- **Target Horizons**: 4 evaluation horizons: `+5 min` (step 1), `+15 min` (step 3), `+30 min` (step 6), `+60 min` (step 12)
-- **Train-Only Standardization**: `mean = 58.584258 mph`, `std = 12.822883 mph` computed strictly on training split
-- **Masking Contract**: Invalid target speeds (`0.0 mph`) are masked out (`y_mask = 0`). Metrics are computed only on valid `y_mask` targets; benchmark-masked zero readings are excluded.
-
-### Authoritative Model Performance (Raw mph Space)
-
-| Model Category | Model | Overall MAE | Overall RMSE | Overall MAPE | +5 min MAE | +15 min MAE | +30 min MAE | +60 min MAE |
-| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Classical Baseline** | Last Value | 3.9839 | 7.6411 | 10.15% | 2.8158 | 3.5045 | 4.2166 | 5.3987 |
-| **Classical Baseline** | Historical Average | 4.1930 | 7.8618 | 13.06% | 4.1928 | 4.1928 | 4.1929 | **4.1934** 🏆 |
-| **Linear Baseline** | Linear Regression | 3.9763 | 7.2053 | 11.14% | 2.6763 | 3.4026 | 4.2384 | 5.5879 |
-| **Temporal Model** | GRU | 3.5669 | 7.2345 | 10.03% | 2.4349 | 3.0976 | 3.8068 | 4.9284 |
-| **Temporal Model** | LSTM | 3.5613 | 7.2420 | 9.93% | 2.4372 | 3.0940 | 3.7984 | 4.9156 |
-| **Spatial Graph Model** | Spatial GCN | 5.4604 | 8.9625 | 15.67% | 4.7139 | 5.1138 | 5.5939 | 6.4201 |
-| **Spatio-Temporal Model** | **Graph+LSTM** 🏆 | **3.4378** 🏆 | **6.8873** 🏆 | **9.57%** 🏆 | **2.3648** 🏆 | **3.0007** 🏆 | **3.6699** 🏆 | 4.7158 |
-
-> [!IMPORTANT]
-> **Graph+LSTM** (`SpatialGraphLSTM`) is the best overall and strongest short-to-medium horizon model (**3.4378 mph** MAE) and is frozen as the **Primary Centralized Prediction Model**. Historical Average remains the benchmark winner at `+60 min` (`4.1934 mph`).
+- **Authoritative Dataset Path**: [data/raw/metr-la/metr-la.h5](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/raw/metr-la/metr-la.h5) (57,038,056 bytes).
+- **Matrix Dimensions**: **34,272 time steps × 207 traffic sensors** (5-minute interval).
+- **Date Range**: `2012-03-01 00:00:00` to `2012-06-27 23:55:00`.
+- **Chronological Splits**:
+  - **Train**: `[0, 23990)` $\rightarrow$ **23,967** sliding-window samples (70%)
+  - **Val**: `[23990, 27417)` $\rightarrow$ **3,404** sliding-window samples (10%)
+  - **Test**: `[27417, 34272)` $\rightarrow$ **6,832** sliding-window samples (20%)
+- **Z-Score Normalization**: Mean ($\mu$) = **58.584258 mph**, Std ($\sigma$) = **12.822883 mph**.
 
 ---
 
-## 🔮 Prediction Intelligence API Endpoints
+## 7. Prediction Models & Phase-6 Results
 
-- `GET /api/prediction/status`: Returns model readiness, checkpoint path (`graph_lstm_best.pt`), parameters, and device.
-- `GET /api/prediction/forecast`: Returns multi-horizon (+5, +15, +30, +60 min) predictions over historical replay (`time_index`, `sensor_id`, `region_id`).
-- `GET /api/prediction/metrics`: Returns frozen Stage 6.6 overall, horizon-wise, and region-wise metrics.
-- `GET /api/prediction/models`: Returns authoritative 7-model comparative benchmark matrix.
+Evaluated over 6,832 test set samples:
 
----
+| Model | MAE (mph) | RMSE (mph) | MAPE (%) | Notes |
+|---|---|---|---|---|
+| Last Value | 3.9839 | 7.6411 | 10.15% | Simple baseline |
+| Historical Average | 4.1930 | 7.8618 | 13.06% | **Winner at +60m horizon (4.1934 mph)** |
+| Linear Regression | 3.9763 | 7.2053 | 11.14% | Ridge regularized linear baseline |
+| Temporal GRU | 3.5669 | 7.2345 | 10.03% | Temporal baseline |
+| Temporal LSTM | 3.5613 | 7.2420 | 9.93% | Non-spatial sequence baseline |
+| Spatial GCN | 5.4604 | 8.9625 | 15.67% | Pure GCN without temporal memory |
+| **Graph+LSTM (Selected)** | **3.4378** | **6.8873** | **9.57%** | **Overall Winner** (Best overall MAE, RMSE, MAPE) |
 
-## 🎯 Decision Intelligence Engine
-
-TrafficPulse-X implements Evidence-on-Demand decision capabilities:
-
-- **Need Score Calculation**: Deterministic composite score (`DERIVED`) combining 9 decision factors (spatial influence, residual prediction uncertainty, spatial disagreement, speed drift, freshness, information debt, coverage need, telemetry data quality, and redundancy penalty).
-- **Counterfactual Next-Query Planning**: Evaluates expected information gain vs byte payload costs before initiating telemetry pulls.
-- **Spatial Speed Consistency**: Evaluates speed agreement across adjacent graph nodes.
-- **Coverage Verification Records**: Algorithmic region coverage certificates validating topological coverage without claiming digital cryptographic signatures.
-
----
-
-## 🌐 Phase 8 — Federated Learning Simulation over METR-LA Subgraphs
-
-Phase 8 implements a federated learning simulation across 4 regional FL client partitions (`CLIENT_A`, `CLIENT_B`, `CLIENT_C`, `CLIENT_D`):
-
-- **Disjoint Regional Partitions**: 207 sensors partitioned into 4 disjoint geographic subgraphs (`REGION_A`: 48, `REGION_B`: 57, `REGION_C`: 58, `REGION_D`: 44 sensors).
-- **Full-Participation FedAvg Baseline**: 4 clients train 1 local epoch per round using Adam optimizer (`lr=1e-3`) and masked MAE loss in raw mph space.
-- **Validation-Selected Global Model**: Global model selection conducted strictly on `val.npz` (Best: **Round 8**, Best Validation MAE: **`3.1536 mph`**).
-- **Final FL Benchmark Performance**: Evaluated **once** on `test.npz` (`global_best.pt`): Overall Test MAE = **`3.5322 mph`**, RMSE = **`7.0956 mph`**, MAPE = **`9.99%`**.
-- **Centralized Baseline Comparison**: Full-participation FedAvg achieved 3.5322 mph test MAE, **`2.75%`** higher than the frozen centralized Graph+LSTM reference baseline (`3.4378 mph`).
-- **Baseline Application Payload Accounting**: Level 2 FL state dict updates transfer 106,384 raw tensor bytes ($26,596 \times 4$) and 110,271 serialized bytes per state update (11.47 MB cumulative total across 13 rounds). Protocol overhead is excluded.
-
-> [!NOTE]
-> Phase 8 is an **in-process simulation** over regional partitions. Selective client participation and communication optimization belong to Phase 9 (Not Yet Evaluated).
+### Graph+LSTM Forecast Horizons
+- **+5 min**: **2.3648 mph**
+- **+15 min**: **3.0007 mph**
+- **+30 min**: **3.6699 mph**
+- **+60 min**: **4.7158 mph**
 
 ---
 
-## 🛠️ Tech Stack
+## 8. Federated Learning (Phase 8 Simulation)
 
-- **Backend**: Python 3.14, FastAPI, PyTorch, NumPy, Pandas, scikit-learn, h5py
-- **Frontend**: React 19, Vite, Tailwind CSS v4, React Leaflet, Recharts, Lucide Icons
-- **Dataset & ML Pipeline**: METR-LA HDF5, PyTorch DataLoader, Custom Scaler/Metrics Engine
+- **Regional FL Clients**: 4 Subgraphs (Client A: 48, Client B: 57, Client C: 58, Client D: 44 sensors).
+- **Algorithm**: Federated Averaging (`FedAvg`) weighted by target counts ($n_i$).
+- **Best Validation Round**: **Round 8** (Validation MAE = **3.1536 mph**).
+- **Final FL Test Metrics**: **MAE = 3.5322 mph**, **RMSE = 7.0956 mph**, **MAPE = 9.99%**.
+- **FL Gap**: Full-participation FedAvg achieved 3.5322 mph test MAE, 2.75% higher (+0.0944 mph) than the frozen centralized Graph+LSTM reference baseline of 3.4378 mph under the evaluated regional federated setup.
+- *Explicitly classified as a Federated Learning Simulation without security or privacy guarantees.*
 
 ---
 
-## 🚀 Running the Project
+## 9. Baseline Communication Accounting
 
-### 1. Backend Server
+- **Level 1 Single Query**: 32 bytes raw float64 (`NUMERIC_FIELD_RAW_BYTES`) / 187 bytes serialized application payload (`MEASURED_SERIALIZED_APPLICATION_PAYLOAD`).
+- **Level 1 Batch**: ~4.2 KB application payload proxy (`APPLICATION_PAYLOAD_PROXY`).
+- **Level 2 FL Client Update**: 26,596 FP32 parameters $\rightarrow$ 106,384 bytes raw tensor $\rightarrow$ 110,271 bytes serialized PyTorch state dict per update.
+- **13-Round Total**: 52 uploads (5,734,092 bytes) + 52 downloads (5,734,092 bytes) = 104 transfers = **11,468,184 bytes** (11.47 MB).
+- *Phase 9 Communication Optimization is marked as NOT_STARTED.*
+
+---
+
+## 10. User Interface (7 Active Pages)
+
+1. **Overview**: Executive summary dashboard with network-wide speed metrics and replay controls.
+2. **Traffic Network**: Interactive Leaflet geospatial map with sensor markers and spatial historical replay.
+3. **Decision Intelligence**: Dynamic 9-factor Need Score breakdown, Sensor Jury voting, and Next-Best Query ranker.
+4. **Predictions**: 7-model benchmark comparison and multi-horizon (+5m to +60m) visual analytics.
+5. **Communication**: Baseline communication accounting dashboard auditing Level 1 and Level 2 application payloads.
+6. **Federated Learning**: Regional FL Client partition map, round history, and Round 8 validation-selected model statistics.
+7. **Alerts**: Network congestion warning alerts and anomaly detection feed.
+
+---
+
+## 11. Installation & Quickstart
+
+### Backend Installation & Startup
 ```bash
-python -m uvicorn backend.main:app --reload
-```
-*API docs available at `http://localhost:8000/docs`*
+# 1. Create and activate virtual environment
+python -m venv .venv
+# On Windows: .\.venv\Scripts\Activate.ps1
+# On Linux/macOS: source .venv/bin/activate
 
-### 2. Frontend Dashboard
+# 2. Install dependencies
+python -m pip install -r backend/requirements.txt
+
+# 3. Start backend API server (port 8000)
+python -m uvicorn backend.main:app --reload --port 8000
+```
+
+### Frontend Installation & Startup
 ```bash
+# 1. Install dependencies
 npm install
+
+# 2. Start dev server (port 5173)
 npm run dev
 ```
-*UI accessible at `http://localhost:5173`*
 
-### 3. Run Backend Test Suite
-```bash
-python -m pytest backend -v
-```
+---
 
-### 4. Build Frontend Production Bundle
+## 12. Testing & Verification
+
 ```bash
+# Run backend pytest suite (270 passed expected)
+PYTHONPATH=. pytest backend -v
+
+# Run frontend build check
 npm run build
 ```
 
 ---
 
-## 🔬 Scientific Disclaimers
+## 13. Project Documentation Links
 
-- **Aggregate Telemetry**: TrafficPulse-X performs macroscopic traffic speed forecasting and dynamic query optimization. It does **not** track individual vehicles or personal identities.
-- **Data Integrity**: Missing or unavailable METR-LA telemetry fields (such as lane volume or occupancy) are declared unavailable and **never** artificially fabricated.
-- **Scope**: Designed as an empirical research and decision intelligence prototype for spatio-temporal traffic network benchmarking.
+- [docs/ARCHITECTURE.md](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/docs/ARCHITECTURE.md): System layout, ML pipeline, decision engine flow, and communication accounting.
+- [docs/SCIENTIFIC_CONTRACT.md](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/docs/SCIENTIFIC_CONTRACT.md): Frozen scientific contracts, dataset split numbers, model metrics, checkpoint SHA hashes, and communication payload rules.
+- [docs/DEVELOPMENT.md](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/docs/DEVELOPMENT.md): Setup, execution commands, testing, and repository development conventions.
+- [docs/DEMO_VIVA.md](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/docs/DEMO_VIVA.md): 5-minute demo sequence, elevator pitch, and safe viva Q&A guide.
+- [audit_report.md](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/audit_report.md): Final Authoritative A–Z Implementation Audit & Provenance Report.
+
+---
+
+## 14. Frozen Checkpoints & Verification Hashes
+
+- **Centralized Checkpoint**: [data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt)
+  - Raw Size: **111,119 bytes** | SHA-256: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
+- **Federated Checkpoint**: [data/processed/metr-la/federated/checkpoints/global_best.pt](file:///c:/Users/shaur/OneDrive/Desktop/PS-003/data/processed/metr-la/federated/checkpoints/global_best.pt)
+  - Raw Size: **111,047 bytes** | SHA-256: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
+- **Canonical Regions Checksum**: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2`
+
+---
+
+## 15. Project Status & Roadmap
+
+- **Phase 1 – Phase 8**: **COMPLETE & FROZEN**
+- **Phase 9 (Communication Intelligence)**: **NOT_STARTED**
+- **Phase 10 (Final System & Experiments)**: **NOT_STARTED**

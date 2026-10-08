@@ -1,3 +1,13 @@
+# TrafficPulse-X Backend & ML Python Dependencies
+# Direct project dependencies only (no Environment Dumps)
+
 fastapi>=0.110.0
 uvicorn>=0.28.0
 pydantic>=2.6.0
+torch>=2.0.0
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+tables>=3.8.0
+pytest>=8.0.0
+httpx>=0.27.0
