@@ -1,0 +1,128 @@
+{
+  "phase": "8",
+  "phaseName": "Federated Learning Simulation over Real METR-LA Subgraphs",
+  "stage": "8.4",
+  "stageName": "Final Federated Learning Audit and System Freeze",
+  "freezeStatus": "FROZEN_AND_VERIFIED",
+  "clientDefinitions": {
+    "CLIENT_A": {
+      "regionId": "REGION_A",
+      "directionalName": "North-East",
+      "sensorCount": 48,
+      "fedAvgWeight": 0.229069,
+      "validTargetTimestepSamples": 1099026,
+      "validTargetScalarElementsAcrossHorizons": 4221681
+    },
+    "CLIENT_B": {
+      "regionId": "REGION_B",
+      "directionalName": "South-East",
+      "sensorCount": 57,
+      "fedAvgWeight": 0.277117,
+      "validTargetTimestepSamples": 1329573,
+      "validTargetScalarElementsAcrossHorizons": 5107193
+    },
+    "CLIENT_C": {
+      "regionId": "REGION_C",
+      "directionalName": "Central-West",
+      "sensorCount": 58,
+      "fedAvgWeight": 0.279458,
+      "validTargetTimestepSamples": 1340799,
+      "validTargetScalarElementsAcrossHorizons": 5150335
+    },
+    "CLIENT_D": {
+      "regionId": "REGION_D",
+      "directionalName": "North-West",
+      "sensorCount": 44,
+      "fedAvgWeight": 0.214357,
+      "validTargetTimestepSamples": 1028442,
+      "validTargetScalarElementsAcrossHorizons": 3950552
+    }
+  },
+  "totalSensors": 207,
+  "regionMappingChecksum": "ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2",
+  "targetCountSemanticsExplanation": {
+    "validTargetTimestepSamplesTotal": 4797840,
+    "validTargetScalarElementsAcrossHorizonsTotal": 18429761,
+    "explanation": "Set B (4,797,840 valid target timestep samples) represents valid sample points in [B, N, 1] target space and was the exact n_i used for FedAvg weighting. Set A (18,429,761 valid target scalar elements) sums valid scalar targets across all 4 output horizons [B, 4, N, 1]. Both sets are mathematically proportional and produce identical normalized FedAvg weights w_i."
+  },
+  "flTrainingContract": {
+    "modelArchitecture": "SpatialGraphLSTM",
+    "parameterCount": 26596,
+    "optimizer": "Adam",
+    "learningRate": 0.001,
+    "lossFunction": "Masked MAE in raw mph space",
+    "seed": 42,
+    "localEpochsPerRound": 1,
+    "maxRounds": 20,
+    "earlyStoppingPatience": 5,
+    "roundsExecuted": 13
+  },
+  "validationSelectedGlobalBest": {
+    "bestRound": 8,
+    "bestValidationMAE": 3.1536,
+    "selectionSplit": "val.npz (strictly zero test leakage)"
+  },
+  "finalTestMetrics": {
+    "evaluationSplit": "test.npz (evaluated ONCE on global_best.pt after selection)",
+    "overall": {
+      "mae": 3.5322,
+      "rmse": 7.0956,
+      "mape": 9.99
+    },
+    "byHorizon": {
+      "5": 2.4121,
+      "15": 3.0663,
+      "30": 3.7698,
+      "60": 4.8806
+    },
+    "byRegion": {
+      "REGION_A": 2.4446,
+      "REGION_B": 4.077,
+      "REGION_C": 3.484,
+      "REGION_D": 4.0979
+    }
+  },
+  "centralizedReferenceComparison": {
+    "centralizedGraphLSTMTestMAE": 3.4378,
+    "flTestMAE": 3.5322,
+    "absoluteMAEDifferenceMph": 0.0944,
+    "relativeMAEDifferencePercent": "+2.75%",
+    "referenceBaselineType": "centralized reference baseline",
+    "wording": "Full-participation FedAvg achieved 3.5322 mph test MAE, 2.75% higher than the frozen centralized Graph+LSTM reference baseline of 3.4378 mph."
+  },
+  "communicationBaseline": {
+    "rawTensorBytesPerModel": 106384,
+    "serializedStateBytesPerModel": 110271,
+    "downloadsPerRound": 4,
+    "uploadsPerRound": 4,
+    "roundsCompleted": 13,
+    "cumulativeRawDownloadBytes": 5531968,
+    "cumulativeRawUploadBytes": 5531968,
+    "totalRawPayloadBytes": 11063936,
+    "cumulativeSerializedDownloadBytes": 5734092,
+    "cumulativeSerializedUploadBytes": 5734092,
+    "totalSerializedPayloadBytes": 11468184,
+    "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES",
+    "notice": "Application payload only; protocol overhead excluded."
+  },
+  "runtimeAudit": {
+    "round13DurationSec": 5117.68,
+    "medianNormalRoundDurationSec": 306.35,
+    "meanNormalRoundDurationSec": 304.77,
+    "round13AnomalyRatio": 16.71,
+    "totalWallClockDurationSec": 8874.77,
+    "classification": "WALL_CLOCK_RUNTIME_WITH_EXTERNAL_DELAY / RESOURCE STALL"
+  },
+  "checkpointMetadata": {
+    "checkpointPath": "data/processed/metr-la/federated/checkpoints/global_best.pt",
+    "checkpointSizeBytes": 111047,
+    "sha256Checksum": "24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930",
+    "parameterCount": 26596
+  },
+  "systemIntegrationStatus": {
+    "apiEndpoints": "GET /api/federated/status, clients, rounds, metrics, communication",
+    "frontendDashboard": "Integrated in src/pages/FederatedLearning/FederatedLearning.jsx",
+    "unitTestsPassing": "237/237 PASSED",
+    "viteBuildStatus": "SUCCESS"
+  }
+}
