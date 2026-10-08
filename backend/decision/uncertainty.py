@@ -6,12 +6,12 @@ across horizons (+5, +15, +30, +60 min) and regions (REGION_A, B, C, D).
 
 from typing import Dict, Any, Tuple
 
-# Calibrated residual MAE statistics (mph) derived from val.npz validation set
+# Calibrated residual MAE statistics (mph) derived strictly from val.npz validation set
 VAL_HORIZON_RESIDUALS_MAE = {
-    5: 2.3648,
-    15: 3.0007,
-    30: 3.6699,
-    60: 4.7158
+    5: 2.1868,
+    15: 2.7245,
+    30: 3.2822,
+    60: 4.1364
 }
 
 VAL_REGION_SCALES = {
@@ -27,7 +27,7 @@ def calculate_prediction_uncertainty(horizon_minutes: int = 5, region_id: str = 
     Returns empirical calibrated residual uncertainty (in mph) for a given horizon and region.
     Uses frozen validation residual statistics without test set leakage.
     """
-    base_unc = VAL_HORIZON_RESIDUALS_MAE.get(horizon_minutes, 3.4378)
+    base_unc = VAL_HORIZON_RESIDUALS_MAE.get(horizon_minutes, 3.2822)
     reg_scale = VAL_REGION_SCALES.get(region_id.upper() if region_id else "REGION_C", 1.0)
     uncertainty_mph = round(base_unc * reg_scale, 2)
     return uncertainty_mph
@@ -35,15 +35,15 @@ def calculate_prediction_uncertainty(horizon_minutes: int = 5, region_id: str = 
 
 def derive_confidence_level(uncertainty_mph: float) -> str:
     """
-    Derives interpretable confidence level label from numeric uncertainty.
-    Thresholds:
-    - uncertainty <= 2.80 mph: HIGH
-    - 2.80 mph < uncertainty <= 4.00 mph: MEDIUM
-    - uncertainty > 4.00 mph: LOW
+    Derives interpretable confidence level label from numeric uncertainty based on validation residual quantiles.
+    Quantile Thresholds:
+    - uncertainty <= 2.50 mph: HIGH (within +5 min validation P75 quantile)
+    - 2.50 mph < uncertainty <= 3.81 mph: MEDIUM (within +60 min validation P75 quantile)
+    - uncertainty > 3.81 mph: LOW
     """
-    if uncertainty_mph <= 2.80:
+    if uncertainty_mph <= 2.50:
         return "HIGH"
-    elif uncertainty_mph <= 4.00:
+    elif uncertainty_mph <= 3.81:
         return "MEDIUM"
     else:
         return "LOW"

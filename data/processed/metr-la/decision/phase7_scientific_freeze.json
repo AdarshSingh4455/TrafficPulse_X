@@ -1,0 +1,48 @@
+{
+  "phase": "7",
+  "title": "Prediction + Decision Intelligence Fusion Scientific Freeze",
+  "checksums": {
+    "region_json_sha256": "ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2",
+    "graph_lstm_parameter_count": 26596
+  },
+  "validationUncertaintyCalibration": {
+    "source": "val.npz validation residual distribution",
+    "mae_by_horizon": {
+      "5": 2.1868,
+      "15": 2.7245,
+      "30": 3.2822,
+      "60": 4.1364
+    },
+    "quantileThresholds": {
+      "HIGH": "<= 2.50 mph (+5 min validation P75)",
+      "MEDIUM": "2.50 - 3.81 mph (+60 min validation P75)",
+      "LOW": "> 3.81 mph"
+    }
+  },
+  "needScoreFormula": {
+    "weights": {
+      "spatialInfluence": 0.15,
+      "uncertaintyProxy": 0.2,
+      "spatialSpeedDisagreement": 0.2,
+      "trafficDrift": 0.15,
+      "freshness": 0.1,
+      "informationDebt": 0.1,
+      "coverageNeed": 0.1,
+      "sensorHealth": 0.05,
+      "redundancyPenalty": 0.05
+    },
+    "bounds": [
+      0.05,
+      1.0
+    ]
+  },
+  "communicationAccounting": {
+    "classification": "APPLICATION_PAYLOAD_BYTES_PROXY",
+    "payloadBytesProxy": 4301,
+    "formattedString": "4.2 KB",
+    "note": "Application payload bytes proxy; excludes protocol (HTTP/TCP/TLS) overhead."
+  },
+  "physicsGateClassification": "HEURISTIC_SAFETY_PLAUSIBILITY_THRESHOLDS",
+  "sensorJuryClassification": "EVIDENCE_CONSENSUS_CLASSIFICATION",
+  "minimumEvidenceClassification": "minimum selected evidence set under the current heuristic"
+}

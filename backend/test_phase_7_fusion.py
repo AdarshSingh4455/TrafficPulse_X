@@ -23,28 +23,28 @@ client = TestClient(app)
 # -----------------------------------------------------------------------------
 
 def test_calibrated_uncertainty_horizons():
-    """Verify validation residual baseline MAEs for horizons +5, +15, +30, +60 min."""
+    """Verify validation residual baseline MAEs for horizons +5, +15, +30, +60 min derived from val.npz."""
     u5 = calculate_prediction_uncertainty(horizon_minutes=5, region_id="REGION_A")
     u15 = calculate_prediction_uncertainty(horizon_minutes=15, region_id="REGION_A")
     u30 = calculate_prediction_uncertainty(horizon_minutes=30, region_id="REGION_A")
     u60 = calculate_prediction_uncertainty(horizon_minutes=60, region_id="REGION_A")
 
-    # REGION_A scale is 0.70: 2.3648 * 0.70 = 1.66, 3.0007 * 0.70 = 2.10, 3.6699 * 0.70 = 2.57, 4.7158 * 0.70 = 3.30
-    assert abs(u5 - 1.66) < 0.1
-    assert abs(u15 - 2.10) < 0.1
-    assert abs(u30 - 2.57) < 0.1
-    assert abs(u60 - 3.30) < 0.1
+    # REGION_A scale is 0.70: 2.1868 * 0.70 = 1.53, 2.7245 * 0.70 = 1.91, 3.2822 * 0.70 = 2.30, 4.1364 * 0.70 = 2.90
+    assert abs(u5 - 1.53) < 0.05
+    assert abs(u15 - 1.91) < 0.05
+    assert abs(u30 - 2.30) < 0.05
+    assert abs(u60 - 2.90) < 0.05
 
     # Base unscaled check for REGION_C (scale 0.99)
     u5_c = calculate_prediction_uncertainty(horizon_minutes=5, region_id="REGION_C")
-    assert abs(u5_c - 2.34) < 0.1
+    assert abs(u5_c - 2.16) < 0.05
 
 
 def test_confidence_level_thresholds():
-    """Verify confidence level classification HIGH, MEDIUM, LOW."""
+    """Verify validation quantile confidence level classification HIGH, MEDIUM, LOW."""
     assert derive_confidence_level(2.0) == "HIGH"
-    assert derive_confidence_level(3.5) == "MEDIUM"
-    assert derive_confidence_level(5.5) == "LOW"
+    assert derive_confidence_level(3.0) == "MEDIUM"
+    assert derive_confidence_level(4.5) == "LOW"
 
 
 # -----------------------------------------------------------------------------
@@ -233,3 +233,51 @@ def test_api_minimum_evidence():
     json_data = resp.json()
     assert json_data["regionId"] == "REGION_A"
     assert "selectedSensors" in json_data
+
+
+# -----------------------------------------------------------------------------
+# 8. Phase 7 Freeze Integrity & Protection Tests
+# -----------------------------------------------------------------------------
+
+def test_validation_calibration_artifact_integrity():
+    """Verify validation uncertainty calibration artifact uses val.npz statistics strictly."""
+    import os
+    import json
+    path = "data/processed/metr-la/decision/val_uncertainty_calibration.json"
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    assert "val.npz" in data["source"]
+    assert data["horizons"]["5"]["mae"] == 2.1868
+    assert data["horizons"]["60"]["mae"] == 4.1364
+
+
+def test_phase6_artifacts_and_region_checksum_immutable():
+    """Verify Graph+LSTM checkpoint and region checksum remain frozen and immutable."""
+    import os
+    import json
+    import hashlib
+    
+    ckpt_path = "data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt"
+    assert os.path.exists(ckpt_path)
+    assert os.path.getsize(ckpt_path) == 110657
+
+    with open("data/processed/metr-la/regions.json", "r", encoding="utf-8") as f:
+        reg_data = json.load(f)
+    
+    csum = hashlib.sha256(json.dumps(reg_data, sort_keys=True).encode("utf-8")).hexdigest()
+    assert csum == "ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2"
+
+
+def test_communication_bytes_proxy_classification():
+    """Verify communication payload bytes is classified as APPLICATION_PAYLOAD_BYTES_PROXY."""
+    import os
+    import json
+    path = "data/processed/metr-la/decision/phase7_scientific_freeze.json"
+    assert os.path.exists(path)
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    assert data["communicationAccounting"]["classification"] == "APPLICATION_PAYLOAD_BYTES_PROXY"
+    assert data["communicationAccounting"]["formattedString"] == "4.2 KB"

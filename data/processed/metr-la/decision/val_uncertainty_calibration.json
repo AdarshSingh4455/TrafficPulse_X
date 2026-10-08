@@ -1,0 +1,44 @@
+{
+  "source": "val.npz validation residual distribution (Graph+LSTM baseline)",
+  "description": "Pure validation set residual error statistics across evaluation horizons and regions without test set leakage.",
+  "horizons": {
+    "5": {
+      "valid_target_count": 655308,
+      "abs_error_sum": 1433027.75,
+      "mae": 2.1868,
+      "residual_median": 1.1827,
+      "residual_p75": 2.5035,
+      "residual_p90": 5.2084
+    },
+    "15": {
+      "valid_target_count": 655309,
+      "abs_error_sum": 1785409.375,
+      "mae": 2.7245,
+      "residual_median": 1.2821,
+      "residual_p75": 2.815,
+      "residual_p90": 6.289
+    },
+    "30": {
+      "valid_target_count": 655310,
+      "abs_error_sum": 2150868.25,
+      "mae": 3.2822,
+      "residual_median": 1.3947,
+      "residual_p75": 3.1763,
+      "residual_p90": 7.441
+    },
+    "60": {
+      "valid_target_count": 655319,
+      "abs_error_sum": 2710646.0,
+      "mae": 4.1364,
+      "residual_median": 1.6,
+      "residual_p75": 3.8061,
+      "residual_p90": 9.7661
+    }
+  },
+  "confidenceThresholds": {
+    "method": "DERIVED_FROM_VALIDATION_RESIDUAL_QUANTILES",
+    "HIGH": "uncertainty <= P75 (+5 min validation P75 = 2.50 mph)",
+    "MEDIUM": "2.50 mph < uncertainty <= P75 (+60 min validation P75 = 3.81 mph)",
+    "LOW": "uncertainty > P75 (+60 min validation P75 = 3.81 mph)"
+  }
+}
