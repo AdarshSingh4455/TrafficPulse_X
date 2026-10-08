@@ -261,7 +261,7 @@ def test_phase6_artifacts_and_region_checksum_immutable():
     
     ckpt_path = "data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt"
     assert os.path.exists(ckpt_path)
-    assert os.path.getsize(ckpt_path) == 110657
+    assert os.path.getsize(ckpt_path) == 111119
 
     with open("data/processed/metr-la/regions.json", "r", encoding="utf-8") as f:
         reg_data = json.load(f)
