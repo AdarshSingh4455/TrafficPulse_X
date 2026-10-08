@@ -41,9 +41,10 @@
   "totalSensors": 207,
   "regionMappingChecksum": "ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2",
   "targetCountSemanticsExplanation": {
-    "validTargetTimestepSamplesTotal": 4797840,
     "validTargetScalarElementsAcrossHorizonsTotal": 18429761,
-    "explanation": "Set B (4,797,840 valid target timestep samples) represents valid sample points in [B, N, 1] target space and was the exact n_i used for FedAvg weighting. Set A (18,429,761 valid target scalar elements) sums valid scalar targets across all 4 output horizons [B, 4, N, 1]. Both sets are mathematically proportional and produce identical normalized FedAvg weights w_i."
+    "validTargetTimestepSamplesTotal": 4797840,
+    "trainingTimeFedAvgInputSource": "SET A (18,429,761 valid target scalar elements across 4 horizons)",
+    "explanation": "Set A (18,429,761 valid target scalar elements: 4,221,681, 5,107,193, 5,150,335, 3,950,552) was the exact n_i array loaded from client_partitions.json ['trainValidTargets'] and passed to fedavg_aggregate() during Stage 8.2 training. Set B (4,797,840 valid target timestep samples) represents valid sample points in [B, N, 1] target space. The two counting schemes produce nearly identical regional proportions, but are not mathematically identical; Set A yields the exact training-time normalized weights w_i = [0.229069, 0.277117, 0.279458, 0.214357]."
   },
   "flTrainingContract": {
     "modelArchitecture": "SpatialGraphLSTM",

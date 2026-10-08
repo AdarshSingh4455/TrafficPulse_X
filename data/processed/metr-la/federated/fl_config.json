@@ -52,5 +52,18 @@
     "clientsPerRound": 4,
     "earlyStoppingPatience": 5,
     "estimatedRuntimeSec": 45
+  },
+  "fedAvgCountSemantics": {
+    "trainingTimeNiSource": "SET A (18,429,761 valid target scalar elements across 4 horizons)",
+    "clientA_n": 4221681,
+    "clientB_n": 5107193,
+    "clientC_n": 5150335,
+    "clientD_n": 3950552,
+    "normalizedWeights": {
+      "CLIENT_A": 0.229069,
+      "CLIENT_B": 0.277117,
+      "CLIENT_C": 0.279458,
+      "CLIENT_D": 0.214357
+    }
   }
 }

@@ -75,7 +75,7 @@ def test_6_fedavg_count_semantic_explicit():
 
 
 def test_7_training_time_ni_values_consistent():
-    """Verify training-time n_i values are consistent across client definitions."""
+    """Verify training-time n_i values (Set A: 18,429,761 total valid target scalar elements) match client_partitions.json."""
     partition_file = FL_DIR / "client_partitions.json"
     with open(partition_file, "r", encoding="utf-8") as f:
         data = json.load(f)
@@ -93,16 +93,32 @@ def test_7_training_time_ni_values_consistent():
 
 
 def test_8_aggregation_weights_consistent():
-    """Verify exact training-time FedAvg aggregation weights w_i."""
+    """Verify exact training-time FedAvg aggregation weights w_i recomputed from Set A n_i values match documented weights."""
+    partition_file = FL_DIR / "client_partitions.json"
     summary_file = FL_DIR / "fl_training_summary.json"
+    
+    with open(partition_file, "r", encoding="utf-8") as f:
+        p_data = json.load(f)
     with open(summary_file, "r", encoding="utf-8") as f:
         summary = json.load(f)
         
+    n_a = p_data["REGION_A"]["trainValidTargets"]
+    n_b = p_data["REGION_B"]["trainValidTargets"]
+    n_c = p_data["REGION_C"]["trainValidTargets"]
+    n_d = p_data["REGION_D"]["trainValidTargets"]
+    n_sum = n_a + n_b + n_c + n_d
+    
+    # Recompute high-precision weights w_i = n_i / sum(n_j)
+    calc_w_a = round(n_a / n_sum, 6)
+    calc_w_b = round(n_b / n_sum, 6)
+    calc_w_c = round(n_c / n_sum, 6)
+    calc_w_d = round(n_d / n_sum, 6)
+    
     weights = summary["fedAvgWeights"]
-    assert weights["CLIENT_A"] == pytest.approx(0.229069, abs=1e-5)
-    assert weights["CLIENT_B"] == pytest.approx(0.277117, abs=1e-5)
-    assert weights["CLIENT_C"] == pytest.approx(0.279458, abs=1e-5)
-    assert weights["CLIENT_D"] == pytest.approx(0.214357, abs=1e-5)
+    assert weights["CLIENT_A"] == calc_w_a == 0.229069
+    assert weights["CLIENT_B"] == calc_w_b == 0.277117
+    assert weights["CLIENT_C"] == calc_w_c == 0.279458
+    assert weights["CLIENT_D"] == calc_w_d == 0.214357
 
 
 def test_9_weights_sum_to_one():
