@@ -1,0 +1,46 @@
+{
+  "phase": "7",
+  "phaseName": "Prediction + Decision Intelligence Fusion",
+  "primaryModel": "Graph+LSTM",
+  "needWeights": {
+    "spatialInfluence": 0.15,
+    "uncertaintyProxy": 0.20,
+    "spatialSpeedDisagreement": 0.20,
+    "trafficDrift": 0.15,
+    "freshness": 0.10,
+    "informationDebt": 0.10,
+    "coverageNeed": 0.10,
+    "sensorHealth": 0.05,
+    "redundancyPenalty": 0.05
+  },
+  "uncertaintyCalibration": {
+    "source": "val.npz validation residual statistics",
+    "byHorizonMph": {
+      "5": 2.3648,
+      "15": 3.0007,
+      "30": 3.6699,
+      "60": 4.7158
+    },
+    "byRegionScale": {
+      "REGION_A": 0.70,
+      "REGION_B": 1.14,
+      "REGION_C": 0.99,
+      "REGION_D": 1.17
+    },
+    "confidenceThresholdsMph": {
+      "HIGH": 2.80,
+      "MEDIUM": 4.00,
+      "LOW": 99.00
+    }
+  },
+  "driftThresholds": {
+    "STABLE": 0.15,
+    "ELEVATED": 0.35,
+    "HIGH": 1.00
+  },
+  "evidenceContractSLA": {
+    "requiredCoveragePercent": 80,
+    "requiredConfidencePercent": 85,
+    "maxEvidenceQueries": 4
+  }
+}

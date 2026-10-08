@@ -93,6 +93,8 @@ export async function fetchNeedScore(sensorId = "773869") {
     finalNeedScore: data.needScore,
     reasons: data.reasons || [],
     driftState: data.driftState || "normal",
+    confidenceLevel: data.confidenceLevel || "MEDIUM",
+    residualUncertaintyMph: data.residualUncertaintyMph,
     factors: factorsList
   };
 }
@@ -147,6 +149,30 @@ export async function sendHeartbeat(sensorId, telemetry = {}) {
     signal: AbortSignal.timeout(3000)
   });
   if (!res.ok) throw new Error(`Heartbeat Failed for '${sensorId}': ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchCoverageCertificate(regionId = "REGION_A") {
+  const res = await fetch(`${API_BASE}/decision/certificate/${regionId}`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Coverage Certificate Fetch Failed for '${regionId}': ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchSensorJury(sensorId = "773869", timeIndex = 0) {
+  const res = await fetch(`${API_BASE}/decision/jury/${sensorId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Sensor Jury Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchPhysicsGate(sensorId = "773869", timeIndex = 0) {
+  const res = await fetch(`${API_BASE}/decision/physics-gate/${sensorId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Physics Gate Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchMinimumEvidenceSet(regionId = "REGION_A", timeIndex = 0) {
+  const res = await fetch(`${API_BASE}/decision/minimum-evidence/${regionId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Minimum Evidence Set Fetch Failed for '${regionId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 

@@ -14,7 +14,11 @@ import {
   fetchSpatialSpeedConsistency, 
   fetchQueryCandidates, 
   fetchBlindSpots, 
-  executeQuery
+  executeQuery,
+  fetchSensorJury,
+  fetchPhysicsGate,
+  fetchCoverageCertificate,
+  fetchMinimumEvidenceSet
 } from '../../services/api';
 
 export default function DecisionIntelligence() {
@@ -25,6 +29,10 @@ export default function DecisionIntelligence() {
   const [spatialConsistencyData, setSpatialConsistencyData] = useState(null);
   const [candidates, setCandidates] = useState(null);
   const [coverageData, setCoverageData] = useState(null);
+  const [juryData, setJuryData] = useState(null);
+  const [physicsData, setPhysicsData] = useState(null);
+  const [certificateData, setCertificateData] = useState(null);
+  const [minEvidenceData, setMinEvidenceData] = useState(null);
 
   // Load general candidates & coverage on mount
   useEffect(() => {
@@ -54,15 +62,19 @@ export default function DecisionIntelligence() {
     let isMounted = true;
     async function loadSensorIntelligence() {
       try {
-        const [score, cf, ev] = await Promise.all([
+        const [score, cf, ev, jury, physics] = await Promise.all([
           fetchNeedScore(selectedSensorId),
           fetchCounterfactual(selectedSensorId),
-          fetchEvidenceChain(selectedSensorId)
+          fetchEvidenceChain(selectedSensorId),
+          fetchSensorJury(selectedSensorId).catch(() => null),
+          fetchPhysicsGate(selectedSensorId).catch(() => null)
         ]);
         if (isMounted) {
           if (score) setNeedScoreData(score);
           if (cf) setCounterfactualData(cf);
           if (ev) setEvidenceData(ev);
+          if (jury) setJuryData(jury);
+          if (physics) setPhysicsData(physics);
         }
       } catch (err) {
         console.error("Sensor intelligence load error:", err);

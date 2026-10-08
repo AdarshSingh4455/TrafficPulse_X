@@ -1,0 +1,30 @@
+{
+  "phase": "7",
+  "phaseName": "Prediction + Decision Intelligence Fusion",
+  "dataset": "METR-LA",
+  "mode": "HISTORICAL_REPLAY",
+  "model": "Graph+LSTM",
+  "checkpoint": "data/processed/metr-la/models/spatiotemporal/graph_lstm_best.pt",
+  "classificationTable": {
+    "sensorSpeed": "REAL",
+    "graphLSTMForecast": "MODEL OUTPUT",
+    "spatialDisagreement": "DERIVED",
+    "calibratedResidualUncertainty": "CALIBRATED DERIVED / PROXY",
+    "trafficDrift": "DERIVED",
+    "informationDebt": "DERIVED STATE",
+    "hardwareHealth": "NOT_AVAILABLE"
+  },
+  "fusionCapabilities": [
+    "Calibrated Residual Uncertainty from val.npz",
+    "Replay-based Traffic Drift",
+    "Real Graph Spatial Speed Disagreement",
+    "Inspectable 9-factor Need Score",
+    "Counterfactual Query Planner",
+    "Progressive Evidence Acquisition",
+    "Minimum Selected Evidence Set",
+    "Coverage Certificate",
+    "Sensor Jury Consensus",
+    "Speed-Only Physics Gate",
+    "Level-1 Payload Communication Accounting"
+  ]
+}

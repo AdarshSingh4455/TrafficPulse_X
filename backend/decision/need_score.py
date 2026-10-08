@@ -1,9 +1,15 @@
-# Need Score calculation engine operating on real METR-LA telemetry and spatial consistency
+"""
+TrafficPulse-X Need Score Calculation Engine (Prediction + Decision Intelligence Fusion).
+Combines real METR-LA telemetry, graph topology, calibrated residual prediction uncertainty,
+traffic drift, spatial disagreement, freshness, information debt, coverage, data quality, and redundancy.
+"""
 
 import time
 import math
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
+
 from backend.decision.config import NEED_WEIGHTS, DRIFT_THRESHOLD, SPATIAL_DISAGREEMENT_THRESHOLD
+from backend.decision.uncertainty import calculate_prediction_uncertainty, derive_confidence_level
 
 
 def calculate_spatial_influence(sensor_id: str, graph) -> float:
@@ -18,23 +24,28 @@ def calculate_spatial_influence(sensor_id: str, graph) -> float:
     return round(min(1.0, max(0.05, score)), 2)
 
 
-def calculate_traffic_drift(recent_speeds: List[float]) -> Tuple[float, str]:
+def calculate_traffic_drift(recent_speeds: List[float], reference_speed: float = 58.58) -> Tuple[float, str]:
+    """
+    Replay-based traffic drift calculation relative to reference speed / recent median.
+    """
     valid_speeds = [s for s in recent_speeds if s is not None and s > 0.0]
-    if not valid_speeds or len(valid_speeds) < 2:
-        return 0.1, "normal"
+    if not valid_speeds:
+        return 0.1, "STABLE"
 
     current = valid_speeds[-1]
-    history = valid_speeds[:-1]
-    mean = sum(history) / len(history)
+    ref = sum(valid_speeds) / len(valid_speeds) if len(valid_speeds) >= 2 else reference_speed
 
-    variance = sum((x - mean) ** 2 for x in history) / len(history)
-    std = math.sqrt(variance) if variance > 0 else 1.0
+    diff = abs(current - ref)
+    drift = min(1.0, diff / 20.0)
 
-    z_score = abs(current - mean) / max(std, 5.0)
-    drift = min(1.0, z_score / 3.0)
+    if drift > DRIFT_THRESHOLD:
+        status = "HIGH"
+    elif drift > 0.15:
+        status = "ELEVATED"
+    else:
+        status = "STABLE"
 
-    state = "high" if drift > DRIFT_THRESHOLD else ("moderate" if drift > 0.15 else "normal")
-    return round(drift, 2), state
+    return round(drift, 2), status
 
 
 def calculate_freshness_need(last_detailed_at: float) -> float:
@@ -60,7 +71,7 @@ def calculate_spatial_speed_disagreement(sensor_id: str, graph, state_mgr) -> fl
     curr_s = state_mgr.get_state(sensor_id)
     curr_speed = curr_s.get("speed")
     if curr_speed is None or curr_speed <= 0.0:
-        return 0.3 # Uncertainty due to masked null
+        return 0.3  # Uncertainty due to masked null
 
     max_diff = 0.0
     for nbr_id in nbr_ids:
@@ -87,7 +98,13 @@ def calculate_redundancy_penalty(sensor_id: str, graph, state_mgr) -> float:
     return 0.05
 
 
-def compute_sensor_need_score(sensor_id: str, graph, state_mgr, sector_coverage_map: Dict[str, float]) -> Dict[str, Any]:
+def compute_sensor_need_score(
+    sensor_id: str,
+    graph,
+    state_mgr,
+    sector_coverage_map: Dict[str, float],
+    horizon_minutes: int = 5
+) -> Dict[str, Any]:
     st = state_mgr.get_state(sensor_id)
     if not st or not st.get("active", True):
         return {
@@ -98,26 +115,28 @@ def compute_sensor_need_score(sensor_id: str, graph, state_mgr, sector_coverage_
         }
 
     sensor_base = graph.sensors.get(sensor_id, {})
-    region = sensor_base.get("regionId", "REGION_A")
+    region = sensor_base.get("regionId", "REGION_C")
     cov_ratio = sector_coverage_map.get(region, 0.8)
     coverage_need = round(max(0.05, 1.0 - cov_ratio), 2)
 
     spatial = calculate_spatial_influence(sensor_id, graph)
-    drift, drift_state = calculate_traffic_drift(st.get("recentSpeeds", []))
+    drift, drift_status = calculate_traffic_drift(st.get("recentSpeeds", []))
     freshness = calculate_freshness_need(st.get("lastDetailedQueryAt", time.time()))
     debt = calculate_information_debt(st.get("consecutiveSkipCount", 0), st.get("lastDetailedQueryAt", time.time()))
     disagreement = calculate_spatial_speed_disagreement(sensor_id, graph, state_mgr)
     data_quality = round(st.get("dataQuality", 0.98), 2)
     redundancy = calculate_redundancy_penalty(sensor_id, graph, state_mgr)
 
-    uncertainty_proxy = round(
-        min(1.0, 0.35 * disagreement + 0.25 * drift + 0.25 * freshness + 0.15 * coverage_need),
-        2
-    )
+    # Calibrated Prediction Residual Uncertainty
+    unc_mph = calculate_prediction_uncertainty(horizon_minutes=horizon_minutes, region_id=region)
+    conf_level = derive_confidence_level(unc_mph)
+    prediction_uncertainty_factor = round(min(1.0, unc_mph / 6.0), 2)
 
     factors = {
         "spatialInfluence": spatial,
-        "uncertaintyProxy": uncertainty_proxy,
+        "uncertaintyProxy": prediction_uncertainty_factor,
+        "predictionUncertaintyMph": unc_mph,
+        "predictionConfidenceLevel": conf_level,
         "spatialSpeedDisagreement": disagreement,
         "trafficDrift": drift,
         "freshness": freshness,
@@ -129,7 +148,7 @@ def compute_sensor_need_score(sensor_id: str, graph, state_mgr, sector_coverage_
 
     raw_score = (
         NEED_WEIGHTS["spatialInfluence"] * spatial +
-        NEED_WEIGHTS["uncertaintyProxy"] * uncertainty_proxy +
+        NEED_WEIGHTS["uncertaintyProxy"] * prediction_uncertainty_factor +
         NEED_WEIGHTS["spatialSpeedDisagreement"] * disagreement +
         NEED_WEIGHTS["trafficDrift"] * drift +
         NEED_WEIGHTS["freshness"] * freshness +
@@ -144,10 +163,10 @@ def compute_sensor_need_score(sensor_id: str, graph, state_mgr, sector_coverage_
     reasons = []
     if disagreement > SPATIAL_DISAGREEMENT_THRESHOLD:
         reasons.append("Spatial speed disagreement across adjacent corridor")
-    if uncertainty_proxy > 0.6:
-        reasons.append("High local uncertainty proxy")
+    if prediction_uncertainty_factor > 0.5:
+        reasons.append(f"Elevated prediction residual uncertainty ({unc_mph} mph)")
     if drift > DRIFT_THRESHOLD:
-        reasons.append("Sudden speed drift detected")
+        reasons.append(f"Sudden traffic speed drift detected ({drift_status})")
     if spatial > 0.6:
         reasons.append("Core arterial chokepoint influence")
     if debt > 0.5:
@@ -163,5 +182,7 @@ def compute_sensor_need_score(sensor_id: str, graph, state_mgr, sector_coverage_
         "needScore": final_score,
         "reasons": reasons,
         "factors": factors,
-        "driftState": drift_state
+        "driftState": drift_status,
+        "driftStatus": drift_status,
+        "predictionConfidenceLevel": conf_level
     }

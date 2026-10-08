@@ -15,6 +15,9 @@ import backend.decision.coverage as coverage_mod
 import backend.decision.need_score as need_mod
 import backend.decision.query_ranker as ranker_mod
 import backend.decision.evidence as evidence_mod
+import backend.decision.jury as jury_mod
+import backend.decision.physics as physics_mod
+import backend.decision.uncertainty as unc_mod
 from backend.datasets.metr_la import (
     METRLADatasetInspector,
     inspect_metr_la_dataset,
@@ -238,6 +241,64 @@ class DataSourceManager:
     def get_query_candidates(self) -> List[Dict[str, Any]]:
         cov_info = coverage_mod.calculate_network_coverage(self.raw_sensors, self.state_mgr)
         return ranker_mod.rank_query_candidates(self.raw_sensors, self.graph, self.state_mgr, cov_info["sectorCoverageMap"])
+
+    def get_coverage_certificate(self, region_id: str = "REGION_A", replay_time: str = "18:42") -> Dict[str, Any]:
+        cov_info = coverage_mod.calculate_network_coverage(self.raw_sensors, self.state_mgr)
+        graph_cov = cov_info["sectorCoverageMap"].get(region_id, 0.8)
+        unresolved = [b["regionId"] for b in cov_info.get("blindSpots", []) if b["regionId"] == region_id]
+        queried = [sid for sid in self.sensor_ids if self.state_mgr.get_state(sid).get("commState") == "QUERIED"][:5]
+
+        return coverage_mod.generate_coverage_certificate(
+            region_id=region_id,
+            replay_time=replay_time,
+            queried_sensors=queried,
+            graph_coverage=graph_cov,
+            evidence_confidence=0.88,
+            unresolved_blind_spots=unresolved
+        )
+
+    def get_sensor_jury(self, sensor_id: str) -> Dict[str, Any]:
+        cov_info = coverage_mod.calculate_network_coverage(self.raw_sensors, self.state_mgr)
+        need_res = need_mod.compute_sensor_need_score(sensor_id, self.graph, self.state_mgr, cov_info["sectorCoverageMap"])
+        s_base = self.graph.sensors.get(sensor_id, {})
+        reg_id = s_base.get("regionId", "REGION_C")
+
+        pred_contract = unc_mod.get_prediction_confidence_contract(
+            predicted_speed_mph=need_res.get("factors", {}).get("predictionUncertaintyMph", 3.0),
+            horizon_minutes=5,
+            region_id=reg_id
+        )
+
+        return jury_mod.evaluate_sensor_jury(
+            sensor_id=sensor_id,
+            graph=self.graph,
+            state_mgr=self.state_mgr,
+            need_result=need_res,
+            pred_confidence_contract=pred_contract
+        )
+
+    def get_physics_gate(self, sensor_id: str) -> Dict[str, Any]:
+        st = self.state_mgr.get_state(sensor_id)
+        curr_speed = st.get("speed")
+        recent = st.get("recentSpeeds", [])
+        nbr_ids = self.graph.get_neighbors(sensor_id, k_hops=1)
+        nbr_speeds = [self.state_mgr.get_state(n).get("speed") for n in nbr_ids]
+
+        return physics_mod.evaluate_physics_gate(
+            sensor_id=sensor_id,
+            current_speed=curr_speed,
+            recent_speeds=recent,
+            neighbor_speeds=nbr_speeds
+        )
+
+    def get_minimum_evidence_set(self, region_id: str = "REGION_A") -> Dict[str, Any]:
+        return coverage_mod.find_minimum_evidence_set(
+            region_id=region_id,
+            sensors=self.raw_sensors,
+            graph=self.graph,
+            state_mgr=self.state_mgr,
+            required_coverage=0.80
+        )
 
     def record_query(self, sensor_id: str) -> Dict[str, Any]:
         cov_info = coverage_mod.calculate_network_coverage(self.raw_sensors, self.state_mgr)

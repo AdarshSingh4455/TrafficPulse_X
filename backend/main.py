@@ -92,6 +92,32 @@ def get_query_candidates():
     return data_source_mgr.get_query_candidates()
 
 
+@app.get("/api/decision/certificate/{region_id}")
+def get_coverage_certificate(region_id: str = "REGION_A", replay_time: str = "18:42"):
+    return data_source_mgr.get_coverage_certificate(region_id=region_id, replay_time=replay_time)
+
+
+@app.get("/api/decision/jury/{sensor_id}")
+def get_sensor_jury(sensor_id: str):
+    res = data_source_mgr.get_sensor_jury(sensor_id)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Sensor '{sensor_id}' not found")
+    return res
+
+
+@app.get("/api/decision/physics-gate/{sensor_id}")
+def get_physics_gate(sensor_id: str):
+    res = data_source_mgr.get_physics_gate(sensor_id)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"Sensor '{sensor_id}' not found")
+    return res
+
+
+@app.get("/api/decision/minimum-evidence/{region_id}")
+def get_minimum_evidence_set(region_id: str = "REGION_A"):
+    return data_source_mgr.get_minimum_evidence_set(region_id=region_id)
+
+
 @app.get("/api/network")
 def get_network_topology():
     return data_source_mgr.get_network_topology()

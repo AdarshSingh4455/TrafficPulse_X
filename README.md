@@ -24,7 +24,7 @@
 | ↳ *Stage 6.6* | *Final Prediction Evaluation & Model Freeze* | ✅ COMPLETE |
 | ↳ *Stage 6.7* | *Prediction Intelligence API & Dashboard Integration* | ✅ COMPLETE |
 | ↳ *Stage 6.8* | *Final Phase 6 Regression & Prediction System Freeze* | ✅ COMPLETE |
-| **Phase 7** | Prediction + Decision Intelligence Fusion | ⏳ NEXT |
+| **Phase 7** | Prediction + Decision Intelligence Fusion | ✅ COMPLETE |
 
 ---
 
@@ -175,6 +175,19 @@ python -m ml.temporal.train --model lstm
 # Evaluate Temporal Models ONCE on Test Set
 python -m ml.temporal.evaluate_temporal
 ```
+
+---
+
+## 🧩 Phase 7 — Prediction + Decision Intelligence Fusion
+
+Phase 7 fuses the frozen Phase 6 `Graph+LSTM` prediction model (`PredictionService`) directly into the Decision Intelligence engine (`backend/decision/`):
+
+- **Calibrated Residual Uncertainty**: Empirical uncertainty derived from `val.npz` validation residuals without test set leakage (+5 min: 2.36 mph, +15 min: 3.00 mph, +30 min: 3.67 mph, +60 min: 4.72 mph). Categorized into `HIGH`, `MEDIUM`, and `LOW` confidence levels.
+- **Historical Replay Traffic Drift**: Real-data traffic drift detection (`STABLE`, `ELEVATED`, `HIGH`) tracking step-to-step speed variance across 5-minute intervals.
+- **Need Score Engine**: 9 inspectable factors (`spatialInfluence`, `uncertaintyProxy`, `spatialSpeedDisagreement`, `trafficDrift`, `freshness`, `informationDebt`, `coverageNeed`, `sensorHealth`, `redundancyPenalty`) with zero fake hardware health.
+- **Sensor Jury**: Multi-signal decision consensus algorithm evaluating agreement across historical mean, neighbors, and spatial Graph+LSTM predictions.
+- **Physics Gate**: Speed-only physical plausibility validator enforcing valid speed bounds (0–100 mph), max 5-min step acceleration delta (≤ 40 mph), and max spatial neighbor speed disagreement (≤ 35 mph).
+- **Coverage Certificates & Minimum Evidence Set**: Algorithmic region coverage certificates and minimum selected evidence sets under the current heuristic.
 
 ---
 
