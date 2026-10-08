@@ -1,0 +1,56 @@
+{
+  "stage": "8.1",
+  "flMode": "IN_PROCESS_FEDERATED_SIMULATION",
+  "clientCount": 4,
+  "clients": [
+    "CLIENT_A",
+    "CLIENT_B",
+    "CLIENT_C",
+    "CLIENT_D"
+  ],
+  "regionMappingChecksum": "ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2",
+  "globalScaler": {
+    "mean": 58.584258,
+    "std": 12.822883,
+    "type": "TRAIN_ONLY_FROZEN_GLOBAL_SCALER"
+  },
+  "chronologicalSplits": {
+    "trainWindow": [
+      0,
+      23990
+    ],
+    "valWindow": [
+      23990,
+      27417
+    ],
+    "testWindow": [
+      27417,
+      34272
+    ]
+  },
+  "modelArchitecture": {
+    "modelName": "SpatialGraphLSTM",
+    "inFeatures": 2,
+    "spatialDim": 32,
+    "hiddenDim": 64,
+    "outputHorizons": 4,
+    "seqLen": 12,
+    "parameterCount": 26596,
+    "serializedPayloadBytes": 106384
+  },
+  "primaryTrainingHyperparameters": {
+    "seed": 42,
+    "optimizer": "Adam",
+    "learningRate": 0.001,
+    "localEpochsPerRound": 1,
+    "lossFunction": "Masked MAE (raw mph space)",
+    "clientsPerRound": 4
+  },
+  "proposedStage8_2Config": {
+    "maxGlobalRounds": 20,
+    "localEpochs": 1,
+    "clientsPerRound": 4,
+    "earlyStoppingPatience": 5,
+    "estimatedRuntimeSec": 45
+  }
+}
