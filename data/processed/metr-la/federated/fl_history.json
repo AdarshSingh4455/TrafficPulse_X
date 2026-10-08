@@ -41,7 +41,13 @@
           "localTrainMAE": 2.6915,
           "localValMAE": 2.383,
           "updateL2Norm": 5.697766,
-          "trainingSeconds": 35.056
+          "trainingSeconds": 35.056,
+          "round": 1,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -49,7 +55,13 @@
           "localTrainMAE": 4.265,
           "localValMAE": 3.7508,
           "updateL2Norm": 5.286481,
-          "trainingSeconds": 48.997
+          "trainingSeconds": 48.997,
+          "round": 1,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -57,7 +69,13 @@
           "localTrainMAE": 3.6578,
           "localValMAE": 3.2992,
           "updateL2Norm": 5.961411,
-          "trainingSeconds": 52.794
+          "trainingSeconds": 52.794,
+          "round": 1,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -65,7 +83,13 @@
           "localTrainMAE": 4.2672,
           "localValMAE": 3.5065,
           "updateL2Norm": 5.351434,
-          "trainingSeconds": 44.758
+          "trainingSeconds": 44.758,
+          "round": 1,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -74,8 +98,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 203.31,
@@ -106,7 +130,13 @@
           "localTrainMAE": 2.456,
           "localValMAE": 2.3602,
           "updateL2Norm": 3.745639,
-          "trainingSeconds": 82.236
+          "trainingSeconds": 82.236,
+          "round": 2,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -114,7 +144,13 @@
           "localTrainMAE": 3.8447,
           "localValMAE": 3.6733,
           "updateL2Norm": 4.055595,
-          "trainingSeconds": 71.096
+          "trainingSeconds": 71.096,
+          "round": 2,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -122,7 +158,13 @@
           "localTrainMAE": 3.323,
           "localValMAE": 3.2862,
           "updateL2Norm": 4.131251,
-          "trainingSeconds": 72.955
+          "trainingSeconds": 72.955,
+          "round": 2,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -130,7 +172,13 @@
           "localTrainMAE": 3.9412,
           "localValMAE": 3.4588,
           "updateL2Norm": 4.003947,
-          "trainingSeconds": 77.39
+          "trainingSeconds": 77.39,
+          "round": 2,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -139,8 +187,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 332.07,
@@ -171,7 +219,13 @@
           "localTrainMAE": 2.4398,
           "localValMAE": 2.3381,
           "updateL2Norm": 2.7402,
-          "trainingSeconds": 82.477
+          "trainingSeconds": 82.477,
+          "round": 3,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -179,7 +233,13 @@
           "localTrainMAE": 3.812,
           "localValMAE": 3.6595,
           "updateL2Norm": 3.00842,
-          "trainingSeconds": 91.08
+          "trainingSeconds": 91.08,
+          "round": 3,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -187,7 +247,13 @@
           "localTrainMAE": 3.2881,
           "localValMAE": 3.2246,
           "updateL2Norm": 2.946601,
-          "trainingSeconds": 86.797
+          "trainingSeconds": 86.797,
+          "round": 3,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -195,7 +261,13 @@
           "localTrainMAE": 3.8979,
           "localValMAE": 3.4213,
           "updateL2Norm": 3.323901,
-          "trainingSeconds": 81.921
+          "trainingSeconds": 81.921,
+          "round": 3,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -204,8 +276,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 373.83,
@@ -236,7 +308,13 @@
           "localTrainMAE": 2.4304,
           "localValMAE": 2.3369,
           "updateL2Norm": 2.661336,
-          "trainingSeconds": 82.481
+          "trainingSeconds": 82.481,
+          "round": 4,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -244,7 +322,13 @@
           "localTrainMAE": 3.7949,
           "localValMAE": 3.6467,
           "updateL2Norm": 2.810101,
-          "trainingSeconds": 86.6
+          "trainingSeconds": 86.6,
+          "round": 4,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -252,7 +336,13 @@
           "localTrainMAE": 3.2718,
           "localValMAE": 3.2085,
           "updateL2Norm": 2.739107,
-          "trainingSeconds": 91.608
+          "trainingSeconds": 91.608,
+          "round": 4,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -260,7 +350,13 @@
           "localTrainMAE": 3.8759,
           "localValMAE": 3.4088,
           "updateL2Norm": 3.09162,
-          "trainingSeconds": 80.24
+          "trainingSeconds": 80.24,
+          "round": 4,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -269,8 +365,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 370.64,
@@ -301,7 +397,13 @@
           "localTrainMAE": 2.4202,
           "localValMAE": 2.3253,
           "updateL2Norm": 2.809496,
-          "trainingSeconds": 81.556
+          "trainingSeconds": 81.556,
+          "round": 5,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -309,7 +411,13 @@
           "localTrainMAE": 3.7814,
           "localValMAE": 3.6296,
           "updateL2Norm": 2.786571,
-          "trainingSeconds": 86.177
+          "trainingSeconds": 86.177,
+          "round": 5,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -317,7 +425,13 @@
           "localTrainMAE": 3.257,
           "localValMAE": 3.2323,
           "updateL2Norm": 2.619956,
-          "trainingSeconds": 94.054
+          "trainingSeconds": 94.054,
+          "round": 5,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -325,7 +439,13 @@
           "localTrainMAE": 3.8625,
           "localValMAE": 3.4254,
           "updateL2Norm": 2.912874,
-          "trainingSeconds": 87.733
+          "trainingSeconds": 87.733,
+          "round": 5,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -334,8 +454,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 382.37,
@@ -366,7 +486,13 @@
           "localTrainMAE": 2.4148,
           "localValMAE": 2.3234,
           "updateL2Norm": 2.753532,
-          "trainingSeconds": 91.366
+          "trainingSeconds": 91.366,
+          "round": 6,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -374,7 +500,13 @@
           "localTrainMAE": 3.7723,
           "localValMAE": 3.6247,
           "updateL2Norm": 2.712753,
-          "trainingSeconds": 93.371
+          "trainingSeconds": 93.371,
+          "round": 6,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -382,7 +514,13 @@
           "localTrainMAE": 3.2494,
           "localValMAE": 3.1928,
           "updateL2Norm": 2.507169,
-          "trainingSeconds": 103.076
+          "trainingSeconds": 103.076,
+          "round": 6,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -390,7 +528,13 @@
           "localTrainMAE": 3.8501,
           "localValMAE": 3.3909,
           "updateL2Norm": 2.744732,
-          "trainingSeconds": 81.663
+          "trainingSeconds": 81.663,
+          "round": 6,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -399,8 +543,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 400.61,
@@ -431,7 +575,13 @@
           "localTrainMAE": 2.4093,
           "localValMAE": 2.3198,
           "updateL2Norm": 2.791515,
-          "trainingSeconds": 64.784
+          "trainingSeconds": 64.784,
+          "round": 7,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -439,7 +589,13 @@
           "localTrainMAE": 3.7645,
           "localValMAE": 3.6051,
           "updateL2Norm": 2.731657,
-          "trainingSeconds": 67.541
+          "trainingSeconds": 67.541,
+          "round": 7,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -447,7 +603,13 @@
           "localTrainMAE": 3.2398,
           "localValMAE": 3.1915,
           "updateL2Norm": 2.380844,
-          "trainingSeconds": 88.458
+          "trainingSeconds": 88.458,
+          "round": 7,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -455,7 +617,13 @@
           "localTrainMAE": 3.8386,
           "localValMAE": 3.3823,
           "updateL2Norm": 2.686074,
-          "trainingSeconds": 89.784
+          "trainingSeconds": 89.784,
+          "round": 7,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -464,8 +632,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 337.05,
@@ -496,7 +664,13 @@
           "localTrainMAE": 2.4068,
           "localValMAE": 2.3102,
           "updateL2Norm": 2.569552,
-          "trainingSeconds": 54.672
+          "trainingSeconds": 54.672,
+          "round": 8,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -504,7 +678,13 @@
           "localTrainMAE": 3.7574,
           "localValMAE": 3.6054,
           "updateL2Norm": 2.615687,
-          "trainingSeconds": 65.261
+          "trainingSeconds": 65.261,
+          "round": 8,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -512,7 +692,13 @@
           "localTrainMAE": 3.2339,
           "localValMAE": 3.1634,
           "updateL2Norm": 2.245911,
-          "trainingSeconds": 67.278
+          "trainingSeconds": 67.278,
+          "round": 8,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -520,7 +706,13 @@
           "localTrainMAE": 3.8319,
           "localValMAE": 3.3864,
           "updateL2Norm": 2.537162,
-          "trainingSeconds": 54.522
+          "trainingSeconds": 54.522,
+          "round": 8,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -529,8 +721,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 265.9,
@@ -561,7 +753,13 @@
           "localTrainMAE": 2.4041,
           "localValMAE": 2.3103,
           "updateL2Norm": 2.537493,
-          "trainingSeconds": 55.993
+          "trainingSeconds": 55.993,
+          "round": 9,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -569,7 +767,13 @@
           "localTrainMAE": 3.7529,
           "localValMAE": 3.6098,
           "updateL2Norm": 2.434733,
-          "trainingSeconds": 65.806
+          "trainingSeconds": 65.806,
+          "round": 9,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -577,7 +781,13 @@
           "localTrainMAE": 3.23,
           "localValMAE": 3.1669,
           "updateL2Norm": 2.229375,
-          "trainingSeconds": 67.578
+          "trainingSeconds": 67.578,
+          "round": 9,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -585,7 +795,13 @@
           "localTrainMAE": 3.8261,
           "localValMAE": 3.3777,
           "updateL2Norm": 2.504187,
-          "trainingSeconds": 55.914
+          "trainingSeconds": 55.914,
+          "round": 9,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -594,8 +810,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 270.38,
@@ -626,7 +842,13 @@
           "localTrainMAE": 2.4012,
           "localValMAE": 2.3089,
           "updateL2Norm": 2.554376,
-          "trainingSeconds": 58.876
+          "trainingSeconds": 58.876,
+          "round": 10,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -634,7 +856,13 @@
           "localTrainMAE": 3.7481,
           "localValMAE": 3.5929,
           "updateL2Norm": 2.384733,
-          "trainingSeconds": 69.436
+          "trainingSeconds": 69.436,
+          "round": 10,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -642,7 +870,13 @@
           "localTrainMAE": 3.2255,
           "localValMAE": 3.1678,
           "updateL2Norm": 2.173188,
-          "trainingSeconds": 70.878
+          "trainingSeconds": 70.878,
+          "round": 10,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -650,7 +884,13 @@
           "localTrainMAE": 3.8229,
           "localValMAE": 3.3775,
           "updateL2Norm": 2.456882,
-          "trainingSeconds": 55.558
+          "trainingSeconds": 55.558,
+          "round": 10,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -659,8 +899,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 280.55,
@@ -691,7 +931,13 @@
           "localTrainMAE": 2.3985,
           "localValMAE": 2.3022,
           "updateL2Norm": 2.486563,
-          "trainingSeconds": 56.148
+          "trainingSeconds": 56.148,
+          "round": 11,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -699,7 +945,13 @@
           "localTrainMAE": 3.7432,
           "localValMAE": 3.5924,
           "updateL2Norm": 2.353649,
-          "trainingSeconds": 68.312
+          "trainingSeconds": 68.312,
+          "round": 11,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -707,7 +959,13 @@
           "localTrainMAE": 3.2214,
           "localValMAE": 3.1741,
           "updateL2Norm": 2.197918,
-          "trainingSeconds": 67.743
+          "trainingSeconds": 67.743,
+          "round": 11,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -715,7 +973,13 @@
           "localTrainMAE": 3.8174,
           "localValMAE": 3.374,
           "updateL2Norm": 2.568285,
-          "trainingSeconds": 55.332
+          "trainingSeconds": 55.332,
+          "round": 11,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -724,8 +988,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 272.75,
@@ -756,7 +1020,13 @@
           "localTrainMAE": 2.3974,
           "localValMAE": 2.3011,
           "updateL2Norm": 2.485492,
-          "trainingSeconds": 55.776
+          "trainingSeconds": 55.776,
+          "round": 12,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -764,7 +1034,13 @@
           "localTrainMAE": 3.7396,
           "localValMAE": 3.5831,
           "updateL2Norm": 2.29749,
-          "trainingSeconds": 68.425
+          "trainingSeconds": 68.425,
+          "round": 12,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -772,7 +1048,13 @@
           "localTrainMAE": 3.2183,
           "localValMAE": 3.159,
           "updateL2Norm": 2.207514,
-          "trainingSeconds": 70.152
+          "trainingSeconds": 70.152,
+          "round": 12,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -780,7 +1062,13 @@
           "localTrainMAE": 3.8133,
           "localValMAE": 3.3618,
           "updateL2Norm": 2.578664,
-          "trainingSeconds": 49.915
+          "trainingSeconds": 49.915,
+          "round": 12,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -789,8 +1077,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 267.61,
@@ -821,7 +1109,13 @@
           "localTrainMAE": 2.3942,
           "localValMAE": 2.3036,
           "updateL2Norm": 2.555256,
-          "trainingSeconds": 51.728
+          "trainingSeconds": 51.728,
+          "round": 13,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_B",
@@ -829,7 +1123,13 @@
           "localTrainMAE": 3.7359,
           "localValMAE": 3.5883,
           "updateL2Norm": 2.323352,
-          "trainingSeconds": 63.419
+          "trainingSeconds": 63.419,
+          "round": 13,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_C",
@@ -837,7 +1137,13 @@
           "localTrainMAE": 3.215,
           "localValMAE": 3.1592,
           "updateL2Norm": 2.165032,
-          "trainingSeconds": 61.08
+          "trainingSeconds": 61.08,
+          "round": 13,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         },
         {
           "clientId": "CLIENT_D",
@@ -845,7 +1151,13 @@
           "localTrainMAE": 3.8076,
           "localValMAE": 3.3719,
           "updateL2Norm": 2.601402,
-          "trainingSeconds": 4922.413
+          "trainingSeconds": 4922.413,
+          "round": 13,
+          "downloadRawTensorBytes": 106384,
+          "downloadSerializedBytes": 110271,
+          "uploadRawTensorBytes": 106384,
+          "uploadSerializedBytes": 110271,
+          "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
         }
       ],
       "aggregationWeights": {
@@ -854,8 +1166,8 @@
         "CLIENT_C": 0.279458,
         "CLIENT_D": 0.214357
       },
-      "downloadRawTensorBytes": 106384,
-      "downloadSerializedStateBytes": 110271,
+      "downloadRawTensorBytes": 425536,
+      "downloadSerializedStateBytes": 441084,
       "uploadRawTensorBytes": 425536,
       "uploadSerializedStateBytes": 441084,
       "roundDurationSec": 5117.68,

@@ -234,13 +234,18 @@ def run_stage_8_2_fl_training(
                     "localTrainMAE": u["localTrainMAE"],
                     "localValMAE": u["localValMAE"],
                     "updateL2Norm": u["updateL2Norm"],
-                    "trainingSeconds": u["trainingSeconds"]
+                    "trainingSeconds": u["trainingSeconds"],
+                    "downloadRawTensorBytes": raw_bytes,
+                    "downloadSerializedBytes": ser_bytes,
+                    "uploadRawTensorBytes": raw_bytes,
+                    "uploadSerializedBytes": ser_bytes,
+                    "classification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES"
                 }
                 for u in client_updates
             ],
             "aggregationWeights": summary_rec["aggregationWeights"],
-            "downloadRawTensorBytes": raw_bytes,
-            "downloadSerializedStateBytes": ser_bytes,
+            "downloadRawTensorBytes": raw_bytes * 4,
+            "downloadSerializedStateBytes": ser_bytes * 4,
             "uploadRawTensorBytes": raw_bytes * 4,
             "uploadSerializedStateBytes": ser_bytes * 4,
             "roundDurationSec": round_duration,
@@ -290,10 +295,15 @@ def run_stage_8_2_fl_training(
     abs_diff = round(test_mae - cent_mae, 4)
     rel_diff_pct = round((abs_diff / cent_mae) * 100.0, 2)
 
-    # Cumulative Communication Accounting
+    # Cumulative Communication Accounting (4 downloads + 4 uploads per round)
     rounds_run = len(history)
-    cumulative_raw_bytes = (raw_bytes * 5) * rounds_run  # 1 download + 4 uploads per round
-    cumulative_ser_bytes = (ser_bytes * 5) * rounds_run
+    cumulative_raw_download = raw_bytes * 4 * rounds_run
+    cumulative_raw_upload = raw_bytes * 4 * rounds_run
+    total_raw_payload = cumulative_raw_download + cumulative_raw_upload
+
+    cumulative_ser_download = ser_bytes * 4 * rounds_run
+    cumulative_ser_upload = ser_bytes * 4 * rounds_run
+    total_ser_payload = cumulative_ser_download + cumulative_ser_upload
 
     summary_data = {
         "stage": "8.2",
@@ -309,8 +319,19 @@ def run_stage_8_2_fl_training(
         "modelParameterCount": 26596,
         "rawTensorBytesPerModel": raw_bytes,
         "serializedStateBytesPerModel": ser_bytes,
-        "cumulativeRawTensorBytes": cumulative_raw_bytes,
-        "cumulativeSerializedStateBytes": cumulative_ser_bytes,
+        "downloadsPerRound": 4,
+        "uploadsPerRound": 4,
+        "perRoundRawDownloadBytes": raw_bytes * 4,
+        "perRoundRawUploadBytes": raw_bytes * 4,
+        "perRoundSerializedDownloadBytes": ser_bytes * 4,
+        "perRoundSerializedUploadBytes": ser_bytes * 4,
+        "cumulativeRawDownloadBytes": cumulative_raw_download,
+        "cumulativeRawUploadBytes": cumulative_raw_upload,
+        "totalRawPayloadBytes": total_raw_payload,
+        "cumulativeSerializedDownloadBytes": cumulative_ser_download,
+        "cumulativeSerializedUploadBytes": cumulative_ser_upload,
+        "totalSerializedPayloadBytes": total_ser_payload,
+        "payloadClassification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES",
         "fedAvgWeights": {
             "CLIENT_A": 0.229069,
             "CLIENT_B": 0.277117,
@@ -331,7 +352,8 @@ def run_stage_8_2_fl_training(
             "flTestMAE": test_mae,
             "absoluteMAEDifferenceMph": abs_diff,
             "relativeMAEDifferencePercent": f"{rel_diff_pct:+.2f}%",
-            "interpretation": "Full-participation FedAvg FL model evaluated on 207-sensor test set against centralized baseline."
+            "referenceBaselineType": "centralized reference baseline",
+            "wording": f"Full-participation FedAvg achieved {test_mae:.4f} mph test MAE, {rel_diff_pct:+.2f}% higher than the frozen centralized Graph+LSTM reference baseline of {cent_mae:.4f} mph."
         },
         "checkpointPaths": {
             "globalRound000": os.path.join(processed_dir, "federated/checkpoints/global_round_000.pt"),

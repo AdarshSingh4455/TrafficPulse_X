@@ -118,6 +118,79 @@ def test_fl_checkpoints_and_artifacts_exist():
     assert "mae" in summary["finalFLTestMetrics"]["overall"]
 
 
+def test_four_uploads_and_downloads_per_round():
+    """Verify exactly four downloads and four uploads are counted per round."""
+    summary_file = FL_DIR / "fl_training_summary.json"
+    with open(summary_file, "r", encoding="utf-8") as f:
+        summary = json.load(f)
+        
+    assert summary["downloadsPerRound"] == 4, "Must record 4 client downloads per round"
+    assert summary["uploadsPerRound"] == 4, "Must record 4 client uploads per round"
+    assert summary["perRoundRawDownloadBytes"] == 4 * 106384
+    assert summary["perRoundRawUploadBytes"] == 4 * 106384
+
+
+def test_cumulative_byte_totals_and_label_separation():
+    """Verify cumulative byte calculations and strict separation of raw vs serialized labels."""
+    summary_file = FL_DIR / "fl_training_summary.json"
+    history_file = FL_DIR / "fl_history.json"
+    
+    with open(summary_file, "r", encoding="utf-8") as f:
+        summary = json.load(f)
+    with open(history_file, "r", encoding="utf-8") as f:
+        history = json.load(f)
+        
+    rounds_run = len(history["roundsHistory"])
+    assert rounds_run == 13
+    
+    raw_dl = summary["cumulativeRawDownloadBytes"]
+    raw_ul = summary["cumulativeRawUploadBytes"]
+    ser_dl = summary["cumulativeSerializedDownloadBytes"]
+    ser_ul = summary["cumulativeSerializedUploadBytes"]
+    
+    assert raw_dl == 13 * 4 * 106384, f"Expected 5,531,968 raw download bytes, got {raw_dl}"
+    assert raw_ul == 13 * 4 * 106384, f"Expected 5,531,968 raw upload bytes, got {raw_ul}"
+    assert summary["totalRawPayloadBytes"] == 11063936, f"Expected 11,063,936 total raw payload bytes, got {summary['totalRawPayloadBytes']}"
+    
+    assert ser_dl == 13 * 4 * summary["serializedStateBytesPerModel"]
+    assert ser_ul == 13 * 4 * summary["serializedStateBytesPerModel"]
+    assert summary["totalSerializedPayloadBytes"] == ser_dl + ser_ul
+    
+    # Verify raw tensor bytes are NOT mislabeled as serialized bytes
+    assert raw_dl != ser_dl, "Raw tensor bytes must not be identical to serialized application payload bytes"
+
+
+def test_no_communication_savings_claimed():
+    """Verify that Stage 8.2 communication optimization / savings are NOT claimed prematurely."""
+    summary_file = FL_DIR / "fl_training_summary.json"
+    with open(summary_file, "r", encoding="utf-8") as f:
+        summary = json.load(f)
+        
+    assert "communicationSavings" not in summary, "Stage 8.2 must NOT claim communication savings"
+    assert "bandwidthSavingsPercent" not in summary, "Stage 8.2 must NOT claim bandwidth savings"
+
+
+def test_stage_8_2_model_metrics_unchanged():
+    """Verify that Stage 8.2 training and evaluation metrics remain strictly immutable."""
+    summary_file = FL_DIR / "fl_training_summary.json"
+    with open(summary_file, "r", encoding="utf-8") as f:
+        summary = json.load(f)
+        
+    assert summary["bestRound"] == 8
+    assert summary["bestValidationMAE"] == pytest.approx(3.1536, abs=1e-4)
+    
+    test_m = summary["finalFLTestMetrics"]["overall"]
+    assert test_m["mae"] == pytest.approx(3.5322, abs=1e-4)
+    assert test_m["rmse"] == pytest.approx(7.0956, abs=1e-4)
+    assert test_m["mape"] == pytest.approx(9.99, abs=1e-2)
+    
+    horizons = summary["finalFLTestMetrics"]["byHorizon"]
+    assert horizons["5"] == pytest.approx(2.4121, abs=1e-4)
+    assert horizons["15"] == pytest.approx(3.0663, abs=1e-4)
+    assert horizons["30"] == pytest.approx(3.7698, abs=1e-4)
+    assert horizons["60"] == pytest.approx(4.8806, abs=1e-4)
+
+
 def test_immutability_phase_6_7_metrics():
     """Verify Phase 6 & Phase 7 frozen metrics remain unchanged."""
     phase_6_summary = PROJECT_ROOT / "data" / "processed" / "metr-la" / "models" / "final_prediction_summary.json"

@@ -44,11 +44,33 @@
     "flTestMAE": 3.5322,
     "absoluteMAEDifferenceMph": 0.0944,
     "relativeMAEDifferencePercent": "+2.75%",
-    "interpretation": "Full-participation FedAvg FL model evaluated on 207-sensor test set against centralized baseline."
+    "referenceBaselineType": "centralized reference baseline",
+    "wording": "Full-participation FedAvg achieved 3.5322 mph test MAE, 2.75% higher than the frozen centralized Graph+LSTM reference baseline of 3.4378 mph."
   },
   "checkpointPaths": {
     "globalRound000": "data/processed/metr-la\\federated/checkpoints/global_round_000.pt",
     "globalBest": "data/processed/metr-la\\federated/checkpoints/global_best.pt",
     "bestRoundCheckpoint": "data/processed/metr-la\\federated/checkpoints/global_round_008.pt"
+  },
+  "downloadsPerRound": 4,
+  "uploadsPerRound": 4,
+  "perRoundRawDownloadBytes": 425536,
+  "perRoundRawUploadBytes": 425536,
+  "perRoundSerializedDownloadBytes": 441084,
+  "perRoundSerializedUploadBytes": 441084,
+  "cumulativeRawDownloadBytes": 5531968,
+  "cumulativeRawUploadBytes": 5531968,
+  "totalRawPayloadBytes": 11063936,
+  "cumulativeSerializedDownloadBytes": 5734092,
+  "cumulativeSerializedUploadBytes": 5734092,
+  "totalSerializedPayloadBytes": 11468184,
+  "payloadClassification": "SERIALIZED_APPLICATION_PAYLOAD_BYTES",
+  "round13RuntimeAudit": {
+    "round13DurationSec": 5117.68,
+    "medianNormalRoundDurationSec": 306.35,
+    "meanNormalRoundDurationSec": 304.77,
+    "round13AnomalyRatio": 16.71,
+    "totalWallClockDurationSec": 8874.77,
+    "classification": "WALL_CLOCK_RUNTIME_WITH_EXTERNAL_DELAY / RESOURCE STALL"
   }
 }

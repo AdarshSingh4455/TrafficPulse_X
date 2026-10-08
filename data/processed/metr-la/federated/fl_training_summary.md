@@ -10,42 +10,51 @@
 - **Rounds Completed**: 13 / 20 (Early stopping triggered: `True`)
 - **Best Round**: **Round 8**
 - **Best Global Validation MAE**: **3.1536 mph**
-- **Total Training Duration**: **8874.77 s** (Round 1 duration: 203.31 s)
+- **Total Wall-Clock Training Duration**: **8874.77 s** (Round 1 duration: 203.31 s)
 
 ---
 
-## 📊 Final FL Test Set Evaluation (global_best.pt)
+## 📊 Scientific Performance Evaluation (`test.npz`)
 
-### Overall Benchmark Metrics
+Evaluated **EXACTLY ONCE** on `global_best.pt` (Round 8) over the full 207-sensor test split:
+
 - **Overall Test MAE**: **3.5322 mph**
 - **Overall Test RMSE**: **7.0956 mph**
 - **Overall Test MAPE**: **9.99%**
 
-### Per-Horizon Test MAE
-- **+5 min**: `2.4121` mph
-- **+15 min**: `3.0663` mph
-- **+30 min**: `3.7698` mph
-- **+60 min**: `4.8806` mph
+### Horizon Breakdown
+- **+5 min**: `2.4121 mph`
+- **+15 min**: `3.0663 mph`
+- **+30 min**: `3.7698 mph`
+- **+60 min**: `4.8806 mph`
 
-### Per-Region Test MAE
-- **REGION_A** (North-East, 48 sensors): `2.4446` mph
-- **REGION_B** (South-East, 57 sensors): `4.0770` mph
-- **REGION_C** (Central-West, 58 sensors): `3.4840` mph
-- **REGION_D** (North-West, 44 sensors): `4.0979` mph
+### Regional Breakdown
+- **REGION_A (North-East)**: `2.4446 mph`
+- **REGION_B (South-East)**: `4.0770 mph`
+- **REGION_C (Central-West)**: `3.4840 mph`
+- **REGION_D (North-West)**: `4.0979 mph`
 
----
-
-## 🔬 Centralized Reference Comparison
-
-- **Centralized Graph+LSTM Test MAE**: `3.4378` mph
-- **Federated FedAvg Test MAE**: `3.5322` mph
-- **Absolute Difference**: `+0.0944` mph
-- **Relative Difference**: `+2.75%`
+### Comparison to Centralized Reference Baseline
+Full-participation FedAvg achieved 3.5322 mph test MAE, 2.75% higher than the frozen centralized Graph+LSTM reference baseline of 3.4378 mph.
 
 ---
 
-## 📦 Communication Byte Accounting
+## 📡 Payload Communication Accounting
 
-- **Raw Tensor Payload Bytes per Model**: `106,384` bytes (103.89 KB)
-- **Serialized Application Payload Bytes per Model**: `110,271` bytes (107.69 KB)
-- **Cumulative FL Serialized Payload Bytes (13 rounds)**: `7,167,615` bytes (6.84 MB)
+- **Parameter Count**: 26,596 FP32 parameters per model
+- **RAW_TENSOR_PAYLOAD_BYTES per Model**: 106,384 bytes
+- **SERIALIZED_APPLICATION_PAYLOAD_BYTES per Model**: 110,271 bytes
+- **Per-Round Transmissions**: 4 Client Downloads + 4 Client Uploads (8 model state objects per round)
+- **Cumulative Download RAW_TENSOR_PAYLOAD_BYTES (13 rounds)**: 5,531,968 bytes
+- **Cumulative Upload RAW_TENSOR_PAYLOAD_BYTES (13 rounds)**: 5,531,968 bytes
+- **Total RAW_TENSOR_PAYLOAD_BYTES**: 11,063,936 bytes
+- **Cumulative Download SERIALIZED_APPLICATION_PAYLOAD_BYTES (13 rounds)**: 5,734,092 bytes
+- **Cumulative Upload SERIALIZED_APPLICATION_PAYLOAD_BYTES (13 rounds)**: 5,734,092 bytes
+- **Total SERIALIZED_APPLICATION_PAYLOAD_BYTES**: 11,468,184 bytes
+
+---
+
+## ⏱️ Round-13 Runtime Audit
+- **Normal Round Duration (Rounds 1–12)**: Median = 306.35 s, Mean = 304.77 s
+- **Round 13 Duration**: 5117.68 s (Anomaly Ratio: 16.71x)
+- **Runtime Classification**: `WALL_CLOCK_RUNTIME_WITH_EXTERNAL_DELAY / RESOURCE STALL`
