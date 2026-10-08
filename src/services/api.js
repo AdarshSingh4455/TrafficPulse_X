@@ -247,3 +247,45 @@ export async function fetchPredictionModels() {
   return await res.json();
 }
 
+// -------------------------------------------------------------
+// Stage 8.3 Federated Learning API Gateway Functions
+// -------------------------------------------------------------
+
+export async function fetchFederatedStatus() {
+  const res = await fetch(`${API_BASE}/federated/status`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Federated Status Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchFederatedClients() {
+  const res = await fetch(`${API_BASE}/federated/clients`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Federated Clients Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchFederatedRounds() {
+  const res = await fetch(`${API_BASE}/federated/rounds`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Federated Rounds Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchFederatedMetrics() {
+  const res = await fetch(`${API_BASE}/federated/metrics`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Federated Metrics Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchFederatedCommunication() {
+  const res = await fetch(`${API_BASE}/federated/communication`, { signal: AbortSignal.timeout(2500) });
+  if (!res.ok) throw new Error(`Federated Communication Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+// Aliases matching getFederated* naming requirement
+export const getFederatedStatus = fetchFederatedStatus;
+export const getFederatedClients = fetchFederatedClients;
+export const getFederatedRounds = fetchFederatedRounds;
+export const getFederatedMetrics = fetchFederatedMetrics;
+export const getFederatedCommunication = fetchFederatedCommunication;
+
+

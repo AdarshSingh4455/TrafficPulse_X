@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 from backend.data_source import DataSourceManager
 from backend.prediction import get_prediction_service
+from backend.federated import get_federated_service
 from backend.datasets.metr_la import (
     inspect_metr_la_dataset,
     get_real_sensor_canonical,
@@ -32,10 +33,12 @@ app.add_middleware(
 # Central Backend Data Source Manager Instance (Single Source of Truth)
 data_source_mgr = DataSourceManager()
 pred_service = get_prediction_service()
+fl_service = get_federated_service()
 
 
 class HeartbeatPayload(BaseModel):
     speed: float | None = None
+
 
 
 @app.get("/api/health")
@@ -323,4 +326,62 @@ def get_prediction_models():
         return pred_service.get_prediction_models()
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to load prediction models table: {str(e)}")
+
+
+# =============================================================================
+# Stage 8.3 Federated Learning Read-Only API Endpoints
+# =============================================================================
+
+@app.get("/api/federated/status")
+def get_federated_status():
+    """Returns overall Federated Learning status and checkpoint readiness."""
+    try:
+        return fl_service.get_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load federated status: {str(e)}")
+
+
+@app.get("/api/federated/clients")
+def get_federated_clients():
+    """Returns 4 regional FL client partitions and FedAvg aggregation weights."""
+    try:
+        return fl_service.get_clients()
+    except FileNotFoundError as fe:
+        raise HTTPException(status_code=404, detail=str(fe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load federated clients: {str(e)}")
+
+
+@app.get("/api/federated/rounds")
+def get_federated_rounds():
+    """Returns compact validation MAE history across all training rounds."""
+    try:
+        return fl_service.get_rounds()
+    except FileNotFoundError as fe:
+        raise HTTPException(status_code=404, detail=str(fe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load federated rounds: {str(e)}")
+
+
+@app.get("/api/federated/metrics")
+def get_federated_metrics():
+    """Returns final FL test metrics and comparison against centralized baseline."""
+    try:
+        return fl_service.get_metrics()
+    except FileNotFoundError as fe:
+        raise HTTPException(status_code=404, detail=str(fe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load federated metrics: {str(e)}")
+
+
+@app.get("/api/federated/communication")
+def get_federated_communication():
+    """Returns Stage 8.2 full-participation baseline communication payload accounting."""
+    try:
+        return fl_service.get_communication()
+    except FileNotFoundError as fe:
+        raise HTTPException(status_code=404, detail=str(fe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load federated communication: {str(e)}")
+
 

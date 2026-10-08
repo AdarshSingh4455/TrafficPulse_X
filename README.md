@@ -25,6 +25,10 @@
 | ↳ *Stage 6.7* | *Prediction Intelligence API & Dashboard Integration* | ✅ COMPLETE |
 | ↳ *Stage 6.8* | *Final Phase 6 Regression & Prediction System Freeze* | ✅ COMPLETE |
 | **Phase 7** | Prediction + Decision Intelligence Fusion | ✅ COMPLETE |
+| **Phase 8** | Federated Learning Simulation | ✅ COMPLETE |
+| ↳ *Stage 8.1* | *FL Client Partition & Training Contract* | ✅ COMPLETE |
+| ↳ *Stage 8.2* | *Full-Participation Federated Graph+LSTM Training* | ✅ COMPLETE |
+| ↳ *Stage 8.3* | *Federated Learning API & Dashboard Integration* | ✅ COMPLETE |
 
 ---
 
@@ -189,6 +193,18 @@ Phase 7 fuses the frozen Phase 6 `Graph+LSTM` prediction model (`PredictionServi
 - **Level-1 Application-Payload Accounting**: Application payload byte proxy accounting (4.2 KB per detailed query; excluding network protocol overhead).
 
 ---
+
+## 🌐 Phase 8 — Federated Learning Simulation over METR-LA Subgraphs
+
+Phase 8 implements decentralized spatio-temporal learning across 4 regional edge client partitions (`CLIENT_A`, `CLIENT_B`, `CLIENT_C`, `CLIENT_D`):
+
+- **Disjoint Regional Partitions**: 207 sensors partitioned into 4 disjoint geographic induced subgraphs (`REGION_A`: 48, `REGION_B`: 57, `REGION_C`: 58, `REGION_D`: 44 sensors).
+- **Full-Participation FedAvg Baseline**: 4 clients train 1 local epoch per round using Adam optimizer (`lr=1e-3`) and masked MAE loss in raw mph space.
+- **Validation-Selected Global Model**: Global model selection conducted strictly on `val.npz` (Best: **Round 8**, Best Validation MAE: **`3.1536 mph`**).
+- **Final FL Benchmark Performance**: Evaluated **once** on `test.npz` (`global_best.pt`): Overall Test MAE = **`3.5322 mph`**, RMSE = **`7.0956 mph`**, MAPE = **`9.99%`**.
+- **Centralized Baseline Comparison**: Full-participation FedAvg achieved 3.5322 mph test MAE, **`2.75%`** higher than the frozen centralized Graph+LSTM reference baseline (`3.4378 mph`).
+- **Read-Only API & Dashboard Integration**: Served by compact read-only endpoints (`/api/federated/status`, `clients`, `rounds`, `metrics`, `communication`) integrated into the compact React dashboard.
+
 
 ## 📁 Repository Structure
 
