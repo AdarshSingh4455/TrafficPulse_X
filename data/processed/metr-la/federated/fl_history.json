@@ -1,0 +1,866 @@
+{
+  "round0Baseline": {
+    "valMAE": 9.3064,
+    "valRMSE": 13.1171,
+    "valMAPE": 28.28,
+    "horizonValMAE": {
+      "5": 8.68,
+      "15": 9.4644,
+      "30": 9.093,
+      "60": 9.9882
+    },
+    "regionValMAE": {
+      "REGION_A": 7.2499,
+      "REGION_B": 11.1897,
+      "REGION_C": 9.2795,
+      "REGION_D": 9.1628
+    }
+  },
+  "roundsHistory": [
+    {
+      "round": 1,
+      "globalValidationMAE": 3.3097,
+      "globalValidationRMSE": 6.7689,
+      "globalValidationMAPE": 9.28,
+      "horizonValidationMAE": {
+        "5": 2.3486,
+        "15": 2.9279,
+        "30": 3.5041,
+        "60": 4.4582
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4216,
+        "REGION_B": 3.8415,
+        "REGION_C": 3.3484,
+        "REGION_D": 3.5482
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.6915,
+          "localValMAE": 2.383,
+          "updateL2Norm": 5.697766,
+          "trainingSeconds": 35.056
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 4.265,
+          "localValMAE": 3.7508,
+          "updateL2Norm": 5.286481,
+          "trainingSeconds": 48.997
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.6578,
+          "localValMAE": 3.2992,
+          "updateL2Norm": 5.961411,
+          "trainingSeconds": 52.794
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 4.2672,
+          "localValMAE": 3.5065,
+          "updateL2Norm": 5.351434,
+          "trainingSeconds": 44.758
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 203.31,
+      "isBestSoFar": true,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 2,
+      "globalValidationMAE": 3.2407,
+      "globalValidationRMSE": 6.6118,
+      "globalValidationMAPE": 9.12,
+      "horizonValidationMAE": {
+        "5": 2.2735,
+        "15": 2.8306,
+        "30": 3.4336,
+        "60": 4.4253
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3708,
+        "REGION_B": 3.7719,
+        "REGION_C": 3.2642,
+        "REGION_D": 3.4796
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.456,
+          "localValMAE": 2.3602,
+          "updateL2Norm": 3.745639,
+          "trainingSeconds": 82.236
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.8447,
+          "localValMAE": 3.6733,
+          "updateL2Norm": 4.055595,
+          "trainingSeconds": 71.096
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.323,
+          "localValMAE": 3.2862,
+          "updateL2Norm": 4.131251,
+          "trainingSeconds": 72.955
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.9412,
+          "localValMAE": 3.4588,
+          "updateL2Norm": 4.003947,
+          "trainingSeconds": 77.39
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 332.07,
+      "isBestSoFar": true,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 3,
+      "globalValidationMAE": 3.2056,
+      "globalValidationRMSE": 6.5998,
+      "globalValidationMAPE": 8.99,
+      "horizonValidationMAE": {
+        "5": 2.251,
+        "15": 2.8077,
+        "30": 3.4053,
+        "60": 4.3584
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3545,
+        "REGION_B": 3.718,
+        "REGION_C": 3.2349,
+        "REGION_D": 3.4407
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4398,
+          "localValMAE": 2.3381,
+          "updateL2Norm": 2.7402,
+          "trainingSeconds": 82.477
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.812,
+          "localValMAE": 3.6595,
+          "updateL2Norm": 3.00842,
+          "trainingSeconds": 91.08
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2881,
+          "localValMAE": 3.2246,
+          "updateL2Norm": 2.946601,
+          "trainingSeconds": 86.797
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8979,
+          "localValMAE": 3.4213,
+          "updateL2Norm": 3.323901,
+          "trainingSeconds": 81.921
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 373.83,
+      "isBestSoFar": true,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 4,
+      "globalValidationMAE": 3.192,
+      "globalValidationRMSE": 6.5761,
+      "globalValidationMAPE": 9.03,
+      "horizonValidationMAE": {
+        "5": 2.2412,
+        "15": 2.8002,
+        "30": 3.3951,
+        "60": 4.3313
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3462,
+        "REGION_B": 3.7045,
+        "REGION_C": 3.2138,
+        "REGION_D": 3.4307
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4304,
+          "localValMAE": 2.3369,
+          "updateL2Norm": 2.661336,
+          "trainingSeconds": 82.481
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7949,
+          "localValMAE": 3.6467,
+          "updateL2Norm": 2.810101,
+          "trainingSeconds": 86.6
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2718,
+          "localValMAE": 3.2085,
+          "updateL2Norm": 2.739107,
+          "trainingSeconds": 91.608
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8759,
+          "localValMAE": 3.4088,
+          "updateL2Norm": 3.09162,
+          "trainingSeconds": 80.24
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 370.64,
+      "isBestSoFar": true,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 5,
+      "globalValidationMAE": 3.2146,
+      "globalValidationRMSE": 6.5775,
+      "globalValidationMAPE": 9.26,
+      "horizonValidationMAE": {
+        "5": 2.2428,
+        "15": 2.7979,
+        "30": 3.414,
+        "60": 4.4035
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3365,
+        "REGION_B": 3.7716,
+        "REGION_C": 3.2155,
+        "REGION_D": 3.4582
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4202,
+          "localValMAE": 2.3253,
+          "updateL2Norm": 2.809496,
+          "trainingSeconds": 81.556
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7814,
+          "localValMAE": 3.6296,
+          "updateL2Norm": 2.786571,
+          "trainingSeconds": 86.177
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.257,
+          "localValMAE": 3.2323,
+          "updateL2Norm": 2.619956,
+          "trainingSeconds": 94.054
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8625,
+          "localValMAE": 3.4254,
+          "updateL2Norm": 2.912874,
+          "trainingSeconds": 87.733
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 382.37,
+      "isBestSoFar": false,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 6,
+      "globalValidationMAE": 3.1827,
+      "globalValidationRMSE": 6.544,
+      "globalValidationMAPE": 9.06,
+      "horizonValidationMAE": {
+        "5": 2.2341,
+        "15": 2.7891,
+        "30": 3.3872,
+        "60": 4.3203
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3358,
+        "REGION_B": 3.7121,
+        "REGION_C": 3.1899,
+        "REGION_D": 3.4197
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4148,
+          "localValMAE": 2.3234,
+          "updateL2Norm": 2.753532,
+          "trainingSeconds": 91.366
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7723,
+          "localValMAE": 3.6247,
+          "updateL2Norm": 2.712753,
+          "trainingSeconds": 93.371
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2494,
+          "localValMAE": 3.1928,
+          "updateL2Norm": 2.507169,
+          "trainingSeconds": 103.076
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8501,
+          "localValMAE": 3.3909,
+          "updateL2Norm": 2.744732,
+          "trainingSeconds": 81.663
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 400.61,
+      "isBestSoFar": true,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 7,
+      "globalValidationMAE": 3.1722,
+      "globalValidationRMSE": 6.5179,
+      "globalValidationMAPE": 8.96,
+      "horizonValidationMAE": {
+        "5": 2.2294,
+        "15": 2.7801,
+        "30": 3.376,
+        "60": 4.3031
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3368,
+        "REGION_B": 3.6895,
+        "REGION_C": 3.1803,
+        "REGION_D": 3.4107
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4093,
+          "localValMAE": 2.3198,
+          "updateL2Norm": 2.791515,
+          "trainingSeconds": 64.784
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7645,
+          "localValMAE": 3.6051,
+          "updateL2Norm": 2.731657,
+          "trainingSeconds": 67.541
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2398,
+          "localValMAE": 3.1915,
+          "updateL2Norm": 2.380844,
+          "trainingSeconds": 88.458
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8386,
+          "localValMAE": 3.3823,
+          "updateL2Norm": 2.686074,
+          "trainingSeconds": 89.784
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 337.05,
+      "isBestSoFar": true,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 8,
+      "globalValidationMAE": 3.1536,
+      "globalValidationRMSE": 6.522,
+      "globalValidationMAPE": 8.79,
+      "horizonValidationMAE": {
+        "5": 2.219,
+        "15": 2.7696,
+        "30": 3.3578,
+        "60": 4.2679
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3324,
+        "REGION_B": 3.6489,
+        "REGION_C": 3.1688,
+        "REGION_D": 3.396
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4068,
+          "localValMAE": 2.3102,
+          "updateL2Norm": 2.569552,
+          "trainingSeconds": 54.672
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7574,
+          "localValMAE": 3.6054,
+          "updateL2Norm": 2.615687,
+          "trainingSeconds": 65.261
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2339,
+          "localValMAE": 3.1634,
+          "updateL2Norm": 2.245911,
+          "trainingSeconds": 67.278
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8319,
+          "localValMAE": 3.3864,
+          "updateL2Norm": 2.537162,
+          "trainingSeconds": 54.522
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 265.9,
+      "isBestSoFar": true,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 9,
+      "globalValidationMAE": 3.1667,
+      "globalValidationRMSE": 6.5353,
+      "globalValidationMAPE": 9.0,
+      "horizonValidationMAE": {
+        "5": 2.2176,
+        "15": 2.7731,
+        "30": 3.3691,
+        "60": 4.307
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3248,
+        "REGION_B": 3.6902,
+        "REGION_C": 3.1689,
+        "REGION_D": 3.4124
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4041,
+          "localValMAE": 2.3103,
+          "updateL2Norm": 2.537493,
+          "trainingSeconds": 55.993
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7529,
+          "localValMAE": 3.6098,
+          "updateL2Norm": 2.434733,
+          "trainingSeconds": 65.806
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.23,
+          "localValMAE": 3.1669,
+          "updateL2Norm": 2.229375,
+          "trainingSeconds": 67.578
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8261,
+          "localValMAE": 3.3777,
+          "updateL2Norm": 2.504187,
+          "trainingSeconds": 55.914
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 270.38,
+      "isBestSoFar": false,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 10,
+      "globalValidationMAE": 3.1601,
+      "globalValidationRMSE": 6.5166,
+      "globalValidationMAPE": 8.94,
+      "horizonValidationMAE": {
+        "5": 2.2167,
+        "15": 2.7684,
+        "30": 3.3596,
+        "60": 4.2958
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3266,
+        "REGION_B": 3.6701,
+        "REGION_C": 3.1669,
+        "REGION_D": 3.4081
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.4012,
+          "localValMAE": 2.3089,
+          "updateL2Norm": 2.554376,
+          "trainingSeconds": 58.876
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7481,
+          "localValMAE": 3.5929,
+          "updateL2Norm": 2.384733,
+          "trainingSeconds": 69.436
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2255,
+          "localValMAE": 3.1678,
+          "updateL2Norm": 2.173188,
+          "trainingSeconds": 70.878
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8229,
+          "localValMAE": 3.3775,
+          "updateL2Norm": 2.456882,
+          "trainingSeconds": 55.558
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 280.55,
+      "isBestSoFar": false,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 11,
+      "globalValidationMAE": 3.1684,
+      "globalValidationRMSE": 6.505,
+      "globalValidationMAPE": 9.07,
+      "horizonValidationMAE": {
+        "5": 2.2132,
+        "15": 2.776,
+        "30": 3.3724,
+        "60": 4.3117
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3235,
+        "REGION_B": 3.6996,
+        "REGION_C": 3.1671,
+        "REGION_D": 3.4116
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.3985,
+          "localValMAE": 2.3022,
+          "updateL2Norm": 2.486563,
+          "trainingSeconds": 56.148
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7432,
+          "localValMAE": 3.5924,
+          "updateL2Norm": 2.353649,
+          "trainingSeconds": 68.312
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2214,
+          "localValMAE": 3.1741,
+          "updateL2Norm": 2.197918,
+          "trainingSeconds": 67.743
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8174,
+          "localValMAE": 3.374,
+          "updateL2Norm": 2.568285,
+          "trainingSeconds": 55.332
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 272.75,
+      "isBestSoFar": false,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 12,
+      "globalValidationMAE": 3.154,
+      "globalValidationRMSE": 6.5118,
+      "globalValidationMAPE": 8.94,
+      "horizonValidationMAE": {
+        "5": 2.2112,
+        "15": 2.7618,
+        "30": 3.3535,
+        "60": 4.2896
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3186,
+        "REGION_B": 3.6706,
+        "REGION_C": 3.1569,
+        "REGION_D": 3.4007
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.3974,
+          "localValMAE": 2.3011,
+          "updateL2Norm": 2.485492,
+          "trainingSeconds": 55.776
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7396,
+          "localValMAE": 3.5831,
+          "updateL2Norm": 2.29749,
+          "trainingSeconds": 68.425
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.2183,
+          "localValMAE": 3.159,
+          "updateL2Norm": 2.207514,
+          "trainingSeconds": 70.152
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8133,
+          "localValMAE": 3.3618,
+          "updateL2Norm": 2.578664,
+          "trainingSeconds": 49.915
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 267.61,
+      "isBestSoFar": false,
+      "rollbackExecuted": false
+    },
+    {
+      "round": 13,
+      "globalValidationMAE": 3.1583,
+      "globalValidationRMSE": 6.5451,
+      "globalValidationMAPE": 8.93,
+      "horizonValidationMAE": {
+        "5": 2.2116,
+        "15": 2.7679,
+        "30": 3.3618,
+        "60": 4.2918
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3204,
+        "REGION_B": 3.6748,
+        "REGION_C": 3.16,
+        "REGION_D": 3.4091
+      },
+      "clientMetrics": [
+        {
+          "clientId": "CLIENT_A",
+          "regionId": "REGION_A",
+          "localTrainMAE": 2.3942,
+          "localValMAE": 2.3036,
+          "updateL2Norm": 2.555256,
+          "trainingSeconds": 51.728
+        },
+        {
+          "clientId": "CLIENT_B",
+          "regionId": "REGION_B",
+          "localTrainMAE": 3.7359,
+          "localValMAE": 3.5883,
+          "updateL2Norm": 2.323352,
+          "trainingSeconds": 63.419
+        },
+        {
+          "clientId": "CLIENT_C",
+          "regionId": "REGION_C",
+          "localTrainMAE": 3.215,
+          "localValMAE": 3.1592,
+          "updateL2Norm": 2.165032,
+          "trainingSeconds": 61.08
+        },
+        {
+          "clientId": "CLIENT_D",
+          "regionId": "REGION_D",
+          "localTrainMAE": 3.8076,
+          "localValMAE": 3.3719,
+          "updateL2Norm": 2.601402,
+          "trainingSeconds": 4922.413
+        }
+      ],
+      "aggregationWeights": {
+        "CLIENT_A": 0.229069,
+        "CLIENT_B": 0.277117,
+        "CLIENT_C": 0.279458,
+        "CLIENT_D": 0.214357
+      },
+      "downloadRawTensorBytes": 106384,
+      "downloadSerializedStateBytes": 110271,
+      "uploadRawTensorBytes": 425536,
+      "uploadSerializedStateBytes": 441084,
+      "roundDurationSec": 5117.68,
+      "isBestSoFar": false,
+      "rollbackExecuted": false
+    }
+  ]
+}

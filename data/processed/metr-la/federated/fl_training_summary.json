@@ -1,0 +1,54 @@
+{
+  "stage": "8.2",
+  "flMode": "FULL_PARTICIPATION_FEDAVG_SIMULATION",
+  "initializationMethod": "Fresh deterministic seed=42 SpatialGraphLSTM",
+  "centralizedModelLoadedAsInit": false,
+  "roundsCompleted": 13,
+  "bestRound": 8,
+  "earlyStoppingTriggered": true,
+  "bestValidationMAE": 3.1536,
+  "totalTrainingDurationSec": 8874.77,
+  "round1DurationSec": 203.31,
+  "modelParameterCount": 26596,
+  "rawTensorBytesPerModel": 106384,
+  "serializedStateBytesPerModel": 110271,
+  "cumulativeRawTensorBytes": 6914960,
+  "cumulativeSerializedStateBytes": 7167615,
+  "fedAvgWeights": {
+    "CLIENT_A": 0.229069,
+    "CLIENT_B": 0.277117,
+    "CLIENT_C": 0.279458,
+    "CLIENT_D": 0.214357
+  },
+  "finalFLTestMetrics": {
+    "overall": {
+      "mae": 3.5322,
+      "rmse": 7.0956,
+      "mape": 9.99
+    },
+    "byHorizon": {
+      "5": 2.4121,
+      "15": 3.0663,
+      "30": 3.7698,
+      "60": 4.8806
+    },
+    "byRegion": {
+      "REGION_A": 2.4446,
+      "REGION_B": 4.077,
+      "REGION_C": 3.484,
+      "REGION_D": 4.0979
+    }
+  },
+  "centralizedReferenceComparison": {
+    "centralizedGraphLSTMTestMAE": 3.4378,
+    "flTestMAE": 3.5322,
+    "absoluteMAEDifferenceMph": 0.0944,
+    "relativeMAEDifferencePercent": "+2.75%",
+    "interpretation": "Full-participation FedAvg FL model evaluated on 207-sensor test set against centralized baseline."
+  },
+  "checkpointPaths": {
+    "globalRound000": "data/processed/metr-la\\federated/checkpoints/global_round_000.pt",
+    "globalBest": "data/processed/metr-la\\federated/checkpoints/global_best.pt",
+    "bestRoundCheckpoint": "data/processed/metr-la\\federated/checkpoints/global_round_008.pt"
+  }
+}
