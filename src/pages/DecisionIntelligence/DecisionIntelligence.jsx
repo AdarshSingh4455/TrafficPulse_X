@@ -17,8 +17,7 @@ import {
   executeQuery,
   fetchSensorJury,
   fetchPhysicsGate,
-  fetchCoverageCertificate,
-  fetchMinimumEvidenceSet
+  fetchMetrRepresentatives
 } from '../../services/api';
 
 export default function DecisionIntelligence() {
@@ -31,23 +30,32 @@ export default function DecisionIntelligence() {
   const [coverageData, setCoverageData] = useState(null);
   const [juryData, setJuryData] = useState(null);
   const [physicsData, setPhysicsData] = useState(null);
-  const [certificateData, setCertificateData] = useState(null);
-  const [minEvidenceData, setMinEvidenceData] = useState(null);
+  const [representativeSensors, setRepresentativeSensors] = useState(["773869", "773975", "717458", "765171"]);
 
-  // Load general candidates & coverage on mount
+  // Load general candidates, coverage, & representative sensors on mount
   useEffect(() => {
     let isMounted = true;
     async function loadGlobals() {
       try {
-        const [cands, cov, spatial] = await Promise.all([
+        const [cands, cov, spatial, reps] = await Promise.all([
           fetchQueryCandidates(),
           fetchBlindSpots(),
-          fetchSpatialSpeedConsistency("773869", "767541")
+          fetchSpatialSpeedConsistency("773869", "767541"),
+          fetchMetrRepresentatives().catch(() => null)
         ]);
         if (isMounted) {
           if (cands) setCandidates(cands);
           if (cov) setCoverageData(cov);
           if (spatial) setSpatialConsistencyData(spatial);
+          if (reps && typeof reps === 'object') {
+            const flatReps = [
+              reps.REGION_C?.[0] || "773869",
+              reps.REGION_A?.[0] || "773975",
+              reps.REGION_B?.[0] || "717458",
+              reps.REGION_D?.[0] || "765171"
+            ];
+            setRepresentativeSensors(flatReps);
+          }
         }
       } catch (err) {
         console.error("Decision intelligence load error:", err);
@@ -110,10 +118,8 @@ export default function DecisionIntelligence() {
     { id: "coverage", label: "Knowledge Coverage", value: `${coverageData?.coveragePercent || 85}%`, subtext: `${coverageData?.coveredRoads || 176} covered sensors`, isTrendUp: true, variant: "cyan", iconType: "accuracy" },
     { id: "blindspots", label: "Regional Blind Spots", value: `${coverageData?.blindSpots || 0}`, subtext: "Coverage gap risks", isTrendUp: false, variant: "rose", iconType: "alert" },
     { id: "activequeries", label: "Query Candidates", value: `${candidates ? candidates.length : 207}`, subtext: "Ranked by information utility", isBullet: true, variant: "blue", iconType: "sensor" },
-    { id: "commsaved", label: "Communication Saved", value: "78.2%", subtext: "Selective bandwidth preservation", isTrendUp: true, variant: "purple", iconType: "layers" }
+    { id: "min-evidence", label: "Min Evidence Set", value: "5 / region", subtext: "Topological sensor coverage", isTrendUp: true, variant: "purple", iconType: "layers" }
   ];
-
-  const representativeSensors = ["773869", "767541", "717445", "717816", "765171"];
 
   return (
     <div className="space-y-6 pb-12">
@@ -129,7 +135,7 @@ export default function DecisionIntelligence() {
 
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex items-center gap-1.5 border-slate-300 dark:border-slate-800">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">Target Sensor:</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">Canonical Representatives:</span>
             <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#131d36] p-1 rounded-lg border border-slate-200 dark:border-slate-800">
               {representativeSensors.map((id) => (
                 <button

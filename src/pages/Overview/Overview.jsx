@@ -5,17 +5,13 @@ import PerformanceChart from '../../components/charts/PerformanceChart';
 import TrafficDistributionChart from '../../components/charts/TrafficDistributionChart';
 import CongestionTable from '../../components/common/CongestionTable';
 import EventFeed from '../../components/common/EventFeed';
-import CoverageCard from '../../components/common/CoverageCard';
 import TrafficHeatmap from '../../components/charts/TrafficHeatmap';
-import NextQueryTable from '../../components/common/NextQueryTable';
 import RealTrafficMap from '../../components/traffic/RealTrafficMap';
-import { fetchQueryCandidates, fetchBlindSpots, executeQuery, fetchMetrSnapshot, fetchEvents } from '../../services/api';
+import { fetchMetrSnapshot, fetchEvents } from '../../services/api';
 import { AlertTriangle } from 'lucide-react';
 
 export default function Overview() {
   const [selectedSensor, setSelectedSensor] = useState(null);
-  const [candidates, setCandidates] = useState(null);
-  const [coverageData, setCoverageData] = useState(null);
   const [realSensors, setRealSensors] = useState([]);
   const [events, setEvents] = useState([]);
   const [fetchError, setFetchError] = useState(null);
@@ -24,15 +20,11 @@ export default function Overview() {
     let isMounted = true;
     async function loadData() {
       try {
-        const [candRes, covRes, snapRes, evRes] = await Promise.all([
-          fetchQueryCandidates(),
-          fetchBlindSpots(),
+        const [snapRes, evRes] = await Promise.all([
           fetchMetrSnapshot(0, 'ALL', true),
           fetchEvents()
         ]);
         if (isMounted) {
-          if (candRes) setCandidates(candRes.slice(0, 5));
-          if (covRes) setCoverageData(covRes);
           if (snapRes && snapRes.sensors) setRealSensors(snapRes.sensors);
           if (evRes) setEvents(evRes);
           setFetchError(null);
@@ -49,12 +41,6 @@ export default function Overview() {
 
   const handleSelectSensor = (sensor) => {
     setSelectedSensor(sensor);
-  };
-
-  const handleQuery = async (queryItem) => {
-    const sid = queryItem.sensor || queryItem.sensorId;
-    const res = await executeQuery(sid);
-    alert(`Evidence-on-Demand Query executed for ${sid}!\nStatus: ${res.status || 'Success'}\nBytes Transferred: ${res.bytesTransferred || queryItem.expectedBytes}\nEstimated Benefit: ${res.expectedBenefit || queryItem.expectedBenefit}`);
   };
 
   const metricCardsData = [
@@ -93,15 +79,6 @@ export default function Overview() {
       isTrendUp: true,
       variant: "rose",
       iconType: "alert"
-    },
-    {
-      id: "comm-saved",
-      label: "Bandwidth Saved",
-      value: "78.2%",
-      subtext: "Selective communication",
-      isTrendUp: true,
-      variant: "purple",
-      iconType: "layers"
     }
   ];
 
@@ -118,7 +95,7 @@ export default function Overview() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {metricCardsData.map((card) => (
           <MetricCard
             key={card.id}
@@ -158,15 +135,9 @@ export default function Overview() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 items-stretch pt-2">
-        <div className="lg:col-span-4">
-          <CoverageCard data={coverageData} />
-        </div>
-        <div className="lg:col-span-4">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch pt-2">
+        <div className="lg:col-span-12">
           <TrafficHeatmap />
-        </div>
-        <div className="lg:col-span-4">
-          <NextQueryTable onQuery={handleQuery} data={candidates} />
         </div>
       </div>
     </div>

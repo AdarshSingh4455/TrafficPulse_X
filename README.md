@@ -30,6 +30,8 @@
 | ↳ *Stage 8.2* | *Full-Participation Federated Graph+LSTM Training* | ✅ COMPLETE |
 | ↳ *Stage 8.3* | *Federated Learning API & Dashboard Integration* | ✅ COMPLETE |
 | ↳ *Stage 8.4* | *Final Federated Learning Audit & System Freeze* | ✅ COMPLETE |
+| **Phase 9** | Communication Intelligence & Optimization | ⏳ NOT STARTED |
+| **Phase 10** | Experiments & Final System Synthesis | ⏳ NOT STARTED |
 
 ---
 
@@ -46,7 +48,7 @@ TrafficPulse-X is evaluated exclusively on the **METR-LA Real Benchmark** datase
 - **Unavailable Telemetry**: Volume flow, lane occupancy, hardware health *(explicitly set to `false` availability; no dummy values fabricated)*
 
 > [!NOTE]
-> TrafficPulse-X operates strictly on **HISTORICAL REPLAY** mode using benchmark telemetry, not present-day live sensor feeds.
+> TrafficPulse-X operates strictly on **HISTORICAL REPLAY** mode using benchmark telemetry, not present-day live sensor feeds. Real traffic data integration is complete via historical METR-LA replay; live present-day streaming is not connected.
 
 ---
 
@@ -66,7 +68,7 @@ SensorStateManager         FastAPI Endpoints (backend/main.py)
   │                    src/services/api.js
   └──────────────┬──────────────┘
                  ▼
-          React Frontend
+           React Frontend
 ```
 
 - **Single Source of Truth**: `DataSourceManager` owns all base sensor state (speed, location, region, validity). `SensorStateManager` manages derived decision states (need scores, query history, information debt).
@@ -78,7 +80,7 @@ SensorStateManager         FastAPI Endpoints (backend/main.py)
 ## 🌐 Graph Topology & Spatial Regions
 
 - **Sensors**: 207 real loop detectors
-- **Adjacency Matrix**: 207×207 distance-based Gaussian threshold graph
+- **Adjacency Matrix**: 207×207 weighted symmetrically normalized adjacency with self-loops ($\tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2}$)
 - **Spatial Segmentation**: 4 deterministic geographic regions:
   - `REGION_A`: 48 sensors (North-East)
   - `REGION_B`: 57 sensors (South-East)
@@ -91,10 +93,12 @@ SensorStateManager         FastAPI Endpoints (backend/main.py)
 
 ## 📈 Forecasting Contract & Evaluated Baselines
 
-- **Input History**: 12 historical steps (60 minutes) of speed telemetry ($X \in \mathbb{R}^{12 \times 207 \times 2}$)
+- **Input History**: 12 historical steps (60 minutes) of speed telemetry + binary validity mask ($X \in \mathbb{R}^{12 \times 207 \times 2}$)
+  - **Channel 1**: Normalized speed
+  - **Channel 2**: Binary validity mask (`1.0` for valid, `0.0` for benchmark-masked)
 - **Target Horizons**: 4 evaluation horizons: `+5 min` (step 1), `+15 min` (step 3), `+30 min` (step 6), `+60 min` (step 12)
 - **Train-Only Standardization**: `mean = 58.584258 mph`, `std = 12.822883 mph` computed strictly on training split
-- **Masking Contract**: Invalid target speeds (`0.0 mph`) are masked out (`y_mask = 0`) and excluded from evaluation metrics.
+- **Masking Contract**: Invalid target speeds (`0.0 mph`) are masked out (`y_mask = 0`). Metrics are computed only on valid `y_mask` targets; benchmark-masked zero readings are excluded.
 
 ### Authoritative Model Performance (Raw mph Space)
 
@@ -103,13 +107,13 @@ SensorStateManager         FastAPI Endpoints (backend/main.py)
 | **Classical Baseline** | Last Value | 3.9839 | 7.6411 | 10.15% | 2.8158 | 3.5045 | 4.2166 | 5.3987 |
 | **Classical Baseline** | Historical Average | 4.1930 | 7.8618 | 13.06% | 4.1928 | 4.1928 | 4.1929 | **4.1934** 🏆 |
 | **Linear Baseline** | Linear Regression | 3.9763 | 7.2053 | 11.14% | 2.6763 | 3.4026 | 4.2384 | 5.5879 |
-| **Temporal Model** | GRU | 3.5669 | 7.0734 | 10.14% | 2.4349 | 3.0976 | 3.8068 | 4.9284 |
-| **Temporal Model** | LSTM | 3.5613 | 7.0673 | 10.11% | 2.4372 | 3.0940 | 3.7984 | 4.9156 |
+| **Temporal Model** | GRU | 3.5669 | 7.2345 | 10.03% | 2.4349 | 3.0976 | 3.8068 | 4.9284 |
+| **Temporal Model** | LSTM | 3.5613 | 7.2420 | 9.93% | 2.4372 | 3.0940 | 3.7984 | 4.9156 |
 | **Spatial Graph Model** | Spatial GCN | 5.4604 | 8.9625 | 15.67% | 4.7139 | 5.1138 | 5.5939 | 6.4201 |
 | **Spatio-Temporal Model** | **Graph+LSTM** 🏆 | **3.4378** 🏆 | **6.8873** 🏆 | **9.57%** 🏆 | **2.3648** 🏆 | **3.0007** 🏆 | **3.6699** 🏆 | 4.7158 |
 
 > [!IMPORTANT]
-> **Graph+LSTM** (`SpatialGraphLSTM`) achieves the lowest overall test MAE (**3.4378 mph**) and is frozen as the **Primary Centralized Prediction Model**. Historical Average remains the benchmark winner at `+60 min` (`4.1934 mph`).
+> **Graph+LSTM** (`SpatialGraphLSTM`) is the best overall and strongest short-to-medium horizon model (**3.4378 mph** MAE) and is frozen as the **Primary Centralized Prediction Model**. Historical Average remains the benchmark winner at `+60 min` (`4.1934 mph`).
 
 ---
 
@@ -124,12 +128,28 @@ SensorStateManager         FastAPI Endpoints (backend/main.py)
 
 ## 🎯 Decision Intelligence Engine
 
-TrafficPulse-X implements Evidence-on-Demand decision capabilities to minimize sensor communication bandwidth while preserving situational awareness:
+TrafficPulse-X implements Evidence-on-Demand decision capabilities:
 
-- **Need Score Calculation**: Dynamically ranks sensor priority based on variance, spatial speed disagreement, query staleness, and geographic criticality.
+- **Need Score Calculation**: Deterministic composite score (`DERIVED`) combining 9 decision factors (spatial influence, residual prediction uncertainty, spatial disagreement, speed drift, freshness, information debt, coverage need, telemetry data quality, and redundancy penalty).
 - **Counterfactual Next-Query Planning**: Evaluates expected information gain vs byte payload costs before initiating telemetry pulls.
-- **Spatial Speed Consistency**: Replaces volume flow conservation by checking speed agreement across adjacent graph nodes.
-- **Bandwidth Reduction**: Achieves ~78.2% reduction in bandwidth consumption compared to continuous full-grid polling.
+- **Spatial Speed Consistency**: Evaluates speed agreement across adjacent graph nodes.
+- **Coverage Verification Records**: Algorithmic region coverage certificates validating topological coverage without claiming digital cryptographic signatures.
+
+---
+
+## 🌐 Phase 8 — Federated Learning Simulation over METR-LA Subgraphs
+
+Phase 8 implements a federated learning simulation across 4 regional FL client partitions (`CLIENT_A`, `CLIENT_B`, `CLIENT_C`, `CLIENT_D`):
+
+- **Disjoint Regional Partitions**: 207 sensors partitioned into 4 disjoint geographic subgraphs (`REGION_A`: 48, `REGION_B`: 57, `REGION_C`: 58, `REGION_D`: 44 sensors).
+- **Full-Participation FedAvg Baseline**: 4 clients train 1 local epoch per round using Adam optimizer (`lr=1e-3`) and masked MAE loss in raw mph space.
+- **Validation-Selected Global Model**: Global model selection conducted strictly on `val.npz` (Best: **Round 8**, Best Validation MAE: **`3.1536 mph`**).
+- **Final FL Benchmark Performance**: Evaluated **once** on `test.npz` (`global_best.pt`): Overall Test MAE = **`3.5322 mph`**, RMSE = **`7.0956 mph`**, MAPE = **`9.99%`**.
+- **Centralized Baseline Comparison**: Full-participation FedAvg achieved 3.5322 mph test MAE, **`2.75%`** higher than the frozen centralized Graph+LSTM reference baseline (`3.4378 mph`).
+- **Baseline Application Payload Accounting**: Level 2 FL state dict updates transfer 106,384 raw tensor bytes ($26,596 \times 4$) and 110,271 serialized bytes per state update (11.47 MB cumulative total across 13 rounds). Protocol overhead is excluded.
+
+> [!NOTE]
+> Phase 8 is an **in-process simulation** over regional partitions. Selective client participation and communication optimization belong to Phase 9 (Not Yet Evaluated).
 
 ---
 
@@ -164,75 +184,6 @@ python -m pytest backend -v
 ### 4. Build Frontend Production Bundle
 ```bash
 npm run build
-```
-
-### 5. Reproduce Machine Learning Benchmark Results
-```bash
-# Evaluate Linear Regression Baseline
-python -m ml.baselines.evaluate_linear
-
-# Train Temporal GRU Model
-python -m ml.temporal.train --model gru
-
-# Train Temporal LSTM Model
-python -m ml.temporal.train --model lstm
-
-# Evaluate Temporal Models ONCE on Test Set
-python -m ml.temporal.evaluate_temporal
-```
-
----
-
-## 🧩 Phase 7 — Prediction + Decision Intelligence Fusion
-
-Phase 7 fuses the frozen Phase 6 `Graph+LSTM` prediction model (`PredictionService`) directly into the Decision Intelligence engine (`backend/decision/`):
-
-- **Validation-Calibrated Residual Uncertainty**: Empirical residual uncertainty derived strictly from `val.npz` validation residuals without test set leakage (+5 min: 2.19 mph, +15 min: 2.72 mph, +30 min: 3.28 mph, +60 min: 4.14 mph MAE). Categorized into validation-quantile `HIGH`, `MEDIUM`, and `LOW` confidence levels.
-- **Prediction-Aware Need Score**: 9 inspectable decision factors (`spatialInfluence`, `uncertaintyProxy`, `spatialSpeedDisagreement`, `trafficDrift`, `freshness`, `informationDebt`, `coverageNeed`, `sensorHealth`, `redundancyPenalty`) with zero fake hardware health.
-- **Next-Best Sensor Query Planner**: Dynamic counterfactual query selection maximizing informational utility and evidence gain.
-- **Coverage Certificates & Minimum Evidence Set**: Algorithmic region coverage certificates and "minimum selected evidence set under the current heuristic".
-- **Level-1 Application-Payload Accounting**: Application payload byte proxy accounting (4.2 KB per detailed query; excluding network protocol overhead).
-
----
-
-## 🌐 Phase 8 — Federated Learning Simulation over METR-LA Subgraphs
-
-Phase 8 implements decentralized spatio-temporal learning across 4 regional edge client partitions (`CLIENT_A`, `CLIENT_B`, `CLIENT_C`, `CLIENT_D`):
-
-- **Disjoint Regional Partitions**: 207 sensors partitioned into 4 disjoint geographic induced subgraphs (`REGION_A`: 48, `REGION_B`: 57, `REGION_C`: 58, `REGION_D`: 44 sensors).
-- **Full-Participation FedAvg Baseline**: 4 clients train 1 local epoch per round using Adam optimizer (`lr=1e-3`) and masked MAE loss in raw mph space.
-- **Validation-Selected Global Model**: Global model selection conducted strictly on `val.npz` (Best: **Round 8**, Best Validation MAE: **`3.1536 mph`**).
-- **Final FL Benchmark Performance**: Evaluated **once** on `test.npz` (`global_best.pt`): Overall Test MAE = **`3.5322 mph`**, RMSE = **`7.0956 mph`**, MAPE = **`9.99%`**.
-- **Centralized Baseline Comparison**: Full-participation FedAvg achieved 3.5322 mph test MAE, **`2.75%`** higher than the frozen centralized Graph+LSTM reference baseline (`3.4378 mph`).
-- **Read-Only API & Dashboard Integration**: Served by compact read-only endpoints (`/api/federated/status`, `clients`, `rounds`, `metrics`, `communication`) integrated into the compact React dashboard.
-
-
-## 📁 Repository Structure
-
-```
-TrafficPulse_X/
-├── backend/                  # FastAPI single-source-of-truth backend
-│   ├── datasets/             # METR-LA dataset loader & preparation
-│   ├── decision/             # Need score, coverage, evidence & state engine
-│   ├── data_source.py        # Central DataSourceManager
-│   ├── graph.py              # Spatial 207x207 graph & spatial speed consistency
-│   ├── main.py               # Production FastAPI entrypoint
-│   └── test_*.py             # Comprehensive Pytest regression suite
-├── data/
-│   ├── processed/metr-la/    # Sensor indices, regions, scalers & frozen results
-│   └── raw/metr-la/          # METR-LA raw metadata (HDF5 binaries ignored by Git)
-├── ml/                       # Machine Learning codebase
-│   ├── baselines/            # Last Value, HA & Linear Regression implementations
-│   └── temporal/             # PyTorch GRU & LSTM models, train & eval scripts
-├── src/                      # React frontend dashboard application
-│   ├── app/                  # App routes & main layout
-│   ├── components/           # UI components (Traffic Network, Decision Intelligence)
-│   ├── pages/                # Overview, Network, Decision & Prediction views
-│   └── services/api.js       # HTTP API client gateway
-├── index.html                # Entry HTML document
-├── package.json              # Frontend dependencies & scripts
-├── vite.config.js            # Vite build configuration
-└── README.md                 # Authoritative project documentation
 ```
 
 ---
