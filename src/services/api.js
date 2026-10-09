@@ -15,42 +15,60 @@ const factorNames = {
   redundancyPenalty: "Redundancy Penalty"
 };
 
+/**
+ * Centralized fetch wrapper with robust timeout error handling.
+ */
+async function apiFetch(url, options = {}) {
+  try {
+    const res = await fetch(url, {
+      ...options,
+      signal: options.signal || AbortSignal.timeout(TIMEOUT_MS)
+    });
+    return res;
+  } catch (err) {
+    if (err.name === 'TimeoutError' || err.name === 'AbortError' || err.message?.includes('timed out')) {
+      throw new Error(`Connection timed out (${TIMEOUT_MS / 1000}s)`);
+    }
+    throw err;
+  }
+}
+
 export async function fetchHealth() {
-  const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/health`);
   if (!res.ok) throw new Error(`Backend Health Check Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchDashboard(timeIndex = 0) {
   const url = `${API_BASE}/dashboard?time_index=${timeIndex}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(url);
   if (!res.ok) throw new Error(`Dashboard Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchSensors(timeIndex = 0) {
   const url = `${API_BASE}/sensors?time_index=${timeIndex}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(url);
   if (!res.ok) throw new Error(`Sensors Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchSensorById(sensorId, timeIndex = 0) {
   const url = `${API_BASE}/sensors/${sensorId}?time_index=${timeIndex}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(url);
   if (!res.ok) throw new Error(`Sensor Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchNetworkTopology() {
   const url = `${API_BASE}/network`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(url);
   if (!res.ok) throw new Error(`Network Topology Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchSpatialSpeedConsistency(fromId = "773869", toId = "767541") {
-  const res = await fetch(`${API_BASE}/network/spatial-consistency?from_id=${fromId}&to_id=${toId}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/network/spatial-consistency?from_id=${fromId}&to_id=${toId}`);
   if (!res.ok) throw new Error(`Spatial Speed Consistency Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
@@ -61,7 +79,7 @@ export async function fetchFlowConservation(fromId = "773869", toId = "767541") 
 }
 
 export async function fetchEvents() {
-  const res = await fetch(`${API_BASE}/events`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/events`);
   if (!res.ok) throw new Error(`Events Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
@@ -71,7 +89,7 @@ export async function fetchEvents() {
 // -------------------------------------------------------------
 
 export async function fetchNeedScore(sensorId = "773869") {
-  const res = await fetch(`${API_BASE}/decision/sensors/${sensorId}/need-score`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/sensors/${sensorId}/need-score`);
   if (!res.ok) throw new Error(`Need Score Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   const data = await res.json();
 
@@ -101,20 +119,20 @@ export async function fetchNeedScore(sensorId = "773869") {
 }
 
 export async function fetchQueryCandidates() {
-  const res = await fetch(`${API_BASE}/decision/query-candidates`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/query-candidates`);
   if (!res.ok) throw new Error(`Query Candidates Fetch Failed: ${res.status} ${res.statusText}`);
   const data = await res.json();
   return Array.isArray(data) ? data : (data.candidates || []);
 }
 
 export async function fetchCounterfactual(sensorId = "773869") {
-  const res = await fetch(`${API_BASE}/decision/counterfactual/${sensorId}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/counterfactual/${sensorId}`);
   if (!res.ok) throw new Error(`Counterfactual Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchBlindSpots() {
-  const res = await fetch(`${API_BASE}/decision/blind-spots`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/blind-spots`);
   if (!res.ok) throw new Error(`Blind Spots Fetch Failed: ${res.status} ${res.statusText}`);
   const data = await res.json();
   return {
@@ -127,52 +145,50 @@ export async function fetchBlindSpots() {
 }
 
 export async function fetchEvidenceChain(sensorId = "773869") {
-  const res = await fetch(`${API_BASE}/decision/evidence/${sensorId}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/evidence/${sensorId}`);
   if (!res.ok) throw new Error(`Evidence Chain Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function executeQuery(sensorId) {
-  const res = await fetch(`${API_BASE}/query/${sensorId}`, {
+  const res = await apiFetch(`${API_BASE}/query/${sensorId}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    signal: AbortSignal.timeout(TIMEOUT_MS)
+    headers: { "Content-Type": "application/json" }
   });
   if (!res.ok) throw new Error(`Query Execution Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function sendHeartbeat(sensorId, telemetry = {}) {
-  const res = await fetch(`${API_BASE}/sensors/${sensorId}/heartbeat`, {
+  const res = await apiFetch(`${API_BASE}/sensors/${sensorId}/heartbeat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(telemetry),
-    signal: AbortSignal.timeout(TIMEOUT_MS)
+    body: JSON.stringify(telemetry)
   });
   if (!res.ok) throw new Error(`Heartbeat Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchCoverageCertificate(regionId = "REGION_A") {
-  const res = await fetch(`${API_BASE}/decision/certificate/${regionId}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/certificate/${regionId}`);
   if (!res.ok) throw new Error(`Coverage Certificate Fetch Failed for '${regionId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchSensorJury(sensorId = "773869", timeIndex = 0) {
-  const res = await fetch(`${API_BASE}/decision/jury/${sensorId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/jury/${sensorId}?time_index=${timeIndex}`);
   if (!res.ok) throw new Error(`Sensor Jury Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchPhysicsGate(sensorId = "773869", timeIndex = 0) {
-  const res = await fetch(`${API_BASE}/decision/physics-gate/${sensorId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/physics-gate/${sensorId}?time_index=${timeIndex}`);
   if (!res.ok) throw new Error(`Physics Gate Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchMinimumEvidenceSet(regionId = "REGION_A", timeIndex = 0) {
-  const res = await fetch(`${API_BASE}/decision/minimum-evidence/${regionId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/decision/minimum-evidence/${regionId}?time_index=${timeIndex}`);
   if (!res.ok) throw new Error(`Minimum Evidence Set Fetch Failed for '${regionId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
@@ -182,32 +198,32 @@ export async function fetchMinimumEvidenceSet(regionId = "REGION_A", timeIndex =
 // -------------------------------------------------------------
 
 export async function fetchMetrStatus() {
-  const res = await fetch(`${API_BASE}/datasets/status`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/datasets/status`);
   if (!res.ok) throw new Error(`Dataset Status Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchMetrRegions() {
-  const res = await fetch(`${API_BASE}/datasets/metr-la/regions`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/datasets/metr-la/regions`);
   if (!res.ok) throw new Error(`Regions Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchMetrRepresentatives() {
-  const res = await fetch(`${API_BASE}/datasets/metr-la/representatives`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/datasets/metr-la/representatives`);
   if (!res.ok) throw new Error(`Representatives Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchMetrSnapshot(timeIndex = 0, regionId = "ALL", repsOnly = true) {
   const url = `${API_BASE}/datasets/metr-la/snapshot?time_index=${timeIndex}&region_id=${regionId}&representatives_only=${repsOnly}`;
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(url);
   if (!res.ok) throw new Error(`Snapshot Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchMetrSensor(sensorId, timeIndex = 0) {
-  const res = await fetch(`${API_BASE}/datasets/metr-la/sensors/${sensorId}?time_index=${timeIndex}`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/datasets/metr-la/sensors/${sensorId}?time_index=${timeIndex}`);
   if (!res.ok) throw new Error(`METR Sensor Fetch Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
 }
@@ -217,7 +233,7 @@ export async function fetchMetrSensor(sensorId, timeIndex = 0) {
 // -------------------------------------------------------------
 
 export async function fetchPredictionStatus() {
-  const res = await fetch(`${API_BASE}/prediction/status`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/prediction/status`);
   if (!res.ok) throw new Error(`Prediction Status Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
@@ -227,7 +243,7 @@ export async function fetchForecast(timeIndex = 12, sensorId = null, regionId = 
   if (sensorId) url += `&sensor_id=${encodeURIComponent(sensorId)}`;
   if (regionId) url += `&region_id=${encodeURIComponent(regionId)}`;
 
-  const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(url);
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
     const detail = errData.detail || `Prediction Forecast Failed: ${res.status} ${res.statusText}`;
@@ -237,13 +253,13 @@ export async function fetchForecast(timeIndex = 12, sensorId = null, regionId = 
 }
 
 export async function fetchPredictionMetrics() {
-  const res = await fetch(`${API_BASE}/prediction/metrics`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/prediction/metrics`);
   if (!res.ok) throw new Error(`Prediction Metrics Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchPredictionModels() {
-  const res = await fetch(`${API_BASE}/prediction/models`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/prediction/models`);
   if (!res.ok) throw new Error(`Prediction Models Table Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
@@ -253,31 +269,31 @@ export async function fetchPredictionModels() {
 // -------------------------------------------------------------
 
 export async function fetchFederatedStatus() {
-  const res = await fetch(`${API_BASE}/federated/status`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/federated/status`);
   if (!res.ok) throw new Error(`Federated Status Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchFederatedClients() {
-  const res = await fetch(`${API_BASE}/federated/clients`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/federated/clients`);
   if (!res.ok) throw new Error(`Federated Clients Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchFederatedRounds() {
-  const res = await fetch(`${API_BASE}/federated/rounds`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/federated/rounds`);
   if (!res.ok) throw new Error(`Federated Rounds Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchFederatedMetrics() {
-  const res = await fetch(`${API_BASE}/federated/metrics`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/federated/metrics`);
   if (!res.ok) throw new Error(`Federated Metrics Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }
 
 export async function fetchFederatedCommunication() {
-  const res = await fetch(`${API_BASE}/federated/communication`, { signal: AbortSignal.timeout(TIMEOUT_MS) });
+  const res = await apiFetch(`${API_BASE}/federated/communication`);
   if (!res.ok) throw new Error(`Federated Communication Fetch Failed: ${res.status} ${res.statusText}`);
   return await res.json();
 }

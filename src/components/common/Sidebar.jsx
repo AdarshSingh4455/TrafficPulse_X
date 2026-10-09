@@ -8,10 +8,7 @@ import {
   Cpu, 
   GitFork, 
   Layers, 
-  Bell,
-  CheckCircle2,
-  Clock,
-  CircleDot
+  Bell
 } from 'lucide-react';
 
 export default function Sidebar({ onCloseMobile }) {
@@ -74,56 +71,6 @@ export default function Sidebar({ onCloseMobile }) {
             );
           })}
         </nav>
-      </div>
-
-      {/* Bottom Section: Compact Project Status */}
-      <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80">
-        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/90 border border-slate-200/80 dark:border-slate-800/80 space-y-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              System Lifecycle
-            </span>
-            <span className="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              v1.0-RC
-            </span>
-          </div>
-
-          <div className="space-y-1.5 text-[11px] font-mono">
-            {/* Phase 1-8 */}
-            <div className="flex items-center justify-between py-0.5">
-              <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
-                <span>Phase 1–8:</span>
-              </div>
-              <span className="px-1.5 py-0.5 text-[10px] rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold">
-                COMPLETE / FROZEN
-              </span>
-            </div>
-
-            {/* Phase 9 */}
-            <div className="flex items-center justify-between py-0.5">
-              <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-                <Clock className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 animate-spin" style={{ animationDuration: '6s' }} />
-                <span>Phase 9:</span>
-              </div>
-              <span className="px-1.5 py-0.5 text-[10px] rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-semibold">
-                IN PROGRESS
-              </span>
-            </div>
-
-            {/* Phase 10 */}
-            <div className="flex items-center justify-between py-0.5">
-              <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
-                <CircleDot className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-                <span>Phase 10:</span>
-              </div>
-              <span className="px-1.5 py-0.5 text-[10px] rounded bg-slate-200/50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-300/40 dark:border-slate-700 font-medium">
-                PENDING
-              </span>
-            </div>
-          </div>
-        </div>
       </div>
     </aside>
   );
