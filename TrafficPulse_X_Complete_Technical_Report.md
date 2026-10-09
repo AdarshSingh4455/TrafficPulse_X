@@ -1,0 +1,282 @@
+# TrafficPulse-X — Complete Technical Report and System Architecture Manual
+
+**Project Name:** TrafficPulse-X  
+**Repository:** https://github.com/AdarshSingh4455/TrafficPulse_X.git  
+**Inspected Commit:** `8c9530fb3b7fda58a476136f4dda9f663a951056`  
+**Date:** October 9, 2026  
+**Architecture:** Smart City Digital Twin Mobility Platform & Evidence-on-Demand Spatio-Temporal Prediction Engine  
+**Dataset Benchmark:** METR-LA (207 Sensors, 34,272 Timesteps, 5-minute Discrete Windows)
+
+---
+
+## Executive Summary
+
+**TrafficPulse-X** is an advanced, production-grade Smart City Digital Twin platform and Evidence-on-Demand spatio-temporal traffic forecasting system. Designed to address the visual, architectural, and communication overhead challenges of modern urban traffic monitoring, TrafficPulse-X combines a **React 19 + Vite** digital twin frontend with a **FastAPI + PyTorch** real-data machine learning backend.
+
+Unlike traditional brute-force traffic monitoring systems that continuously transmit high-frequency telemetry from every sensor across a city, TrafficPulse-X implements a **physics-bounded counterfactual need-gating protocol** ("Evidence-on-Demand"). The system evaluates spatial information gain across a 207-sensor highway network in Los Angeles (METR-LA benchmark), communicating telemetry only when prediction uncertainty or spatial drift exceeds physical thresholds.
+
+This technical report provides a comprehensive, beginner-friendly architecture manual and developer reference for TrafficPulse-X. It documents the complete codebase structure, frontend component hierarchy, backend FastAPI service boundary, 34-endpoint API catalog, METR-LA dataset preprocessing pipeline, 7-model comparative prediction benchmark (featuring a 26,596-parameter `SpatialGraphLSTM`), 4-region zero-fabrication Federated Learning implementation, installation procedures, and troubleshooting guidelines.
+
+---
+
+## Table of Contents
+
+1. [Chapter 1 — Project Overview](#chapter-1--project-overview)
+2. [Chapter 2 — Requirements and Technology Stack](#chapter-2--requirements-and-technology-stack)
+3. [Chapter 3 — System Architecture](#chapter-3--system-architecture)
+4. [Chapter 4 — Complete Folder Structure & Module Inventory](#chapter-4--complete-folder-structure--module-inventory)
+5. [Chapter 5 — Frontend Architecture & Implementation](#chapter-5--frontend-architecture--implementation)
+6. [Chapter 6 — Backend Architecture & FastAPI Implementation](#chapter-6--backend-architecture--fastapi-implementation)
+7. [Chapter 7 — API Reference Catalog](#chapter-7--api-reference-catalog)
+8. [Chapter 8 — Dataset & Preprocessing Pipeline](#chapter-8--dataset--preprocessing-pipeline)
+9. [Chapter 9 — Machine Learning and Forecasting](#chapter-9--machine-learning-and-forecasting)
+10. [Chapter 10 — Data Storage and Model Artifacts](#chapter-10--data-storage-and-model-artifacts)
+11. [Chapter 11 — UI Design and User Journey](#chapter-11--ui-design-and-user-journey)
+12. [Chapter 12 — Local Installation and Execution Guide](#chapter-12--local-installation-and-execution-guide)
+13. [Chapter 13 — Testing and Verification](#chapter-13--testing-and-verification)
+14. [Chapter 14 — Deployment and Configuration](#chapter-14--deployment-and-configuration)
+15. [Chapter 15 — Limitations and Future Enhancements](#chapter-15--limitations-and-future-enhancements)
+16. [Chapter 16 — Technical Glossary and Viva Preparation](#chapter-16--technical-glossary-and-viva-preparation)
+17. [Chapter 17 — References and Maintenance Log](#chapter-17--references-and-maintenance-log)
+
+---
+
+## Chapter 1 — Project Overview
+
+### 1.1 The Urban Traffic Forecasting Problem
+Modern urban transportation networks experience dynamic congestion patterns caused by variable commuter demand, highway bottlenecks, traffic incidents, and severe weather. Accurate highway speed forecasting is vital for smart city traffic management, emergency response routing, automated navigation systems, and municipal infrastructure planning.
+
+However, traffic forecasting presents two major technical hurdles:
+1. **Spatio-Temporal Dependencies**: Highway speed at a specific sensor location depends non-linearly on historical speeds at that location (**temporal dependency**) as well as traffic flow from connected upstream and downstream highway segments (**spatial graph dependency**).
+2. **Communication Overhead in IoT Networks**: Dense traffic sensor networks generating high-frequency streams (e.g., 5-minute intervals across hundreds of sensors) overload wireless communication channels and centralized cloud bandwidth with redundant data.
+
+### 1.2 The TrafficPulse-X Solution
+TrafficPulse-X solves these challenges through a dual-pillar architecture:
+- **Evidence-on-Demand Decision Intelligence**: Rather than polling all 207 sensors at every time step, TrafficPulse-X computes an information utility "Need Score" for each node. Sensors transmit raw telemetry only when spatial speed disagreement, temporal drift, or prediction uncertainty warrants communication.
+- **Spatio-Temporal Graph Neural Forecasting**: A hybrid Graph Convolutional Network + Long Short-Term Memory (`SpatialGraphLSTM`) architecture models physical spatial road adjacency and temporal velocity trends to predict multi-horizon highway speeds (+5, +15, +30, and +60 minutes into the future).
+
+### 1.3 Key Features Implemented in Codebase
+- **Smart City Digital Twin Interface**: Interactive Leaflet map displaying 207 Los Angeles highway loop detectors categorized into 4 spatial regions (Regions A, B, C, D) with real-time speed conditions, graph adjacency edge overlays, and telemetry inspection drawers.
+- **Multi-Horizon Forecast Engine**: Frozen PyTorch `SpatialGraphLSTM` model generating multi-horizon speed forecasts with test evaluation metrics.
+- **7-Model Comparative Benchmark**: Real-time evaluation matrix comparing Last Value, Historical Average, Linear Regression, GRU, LSTM, Spatial GCN, and Graph+LSTM.
+- **Zero-Fabrication Federated Learning Console**: Read-only visualization of 4 regional client partitions (Region A: 48 sensors, Region B: 57 sensors, Region C: 58 sensors, Region D: 44 sensors) trained via FedAvg across 8 rounds without centralizing raw sensor data.
+- **Cinematic Opening Experience**: 4.5-second opening intro animation featuring designated multi-lane vehicles (2 cars, 2 motorcycles), smooth velocity parallax, accessible Skip Intro, session persistence, and reduced-motion fallback.
+
+### 1.4 Scope and Benchmark Boundaries
+- **Dataset Scope**: Real METR-LA benchmark dataset recorded from loop detectors on highways in Los Angeles County, California. The dataset spans 4 months (March 1, 2012 to June 27, 2012) comprising 34,272 discrete 5-minute time steps.
+- **Operational Mode**: Historical Replay Engine. TrafficPulse-X simulates a digital twin environment using canonical historical telemetry. It does not connect to live unverified external feeds, ensuring zero data fabrication and strict scientific integrity.
+
+---
+
+## Chapter 2 — Requirements and Technology Stack
+
+TrafficPulse-X is built using a modern, decoupled architecture separating the React single-page application (SPA) from the FastAPI machine learning application server.
+
+### 2.1 Technology Stack Inventory
+
+| Component / Layer | Technology Name | Exact Version | Purpose & Rationale in Project |
+| :--- | :--- | :--- | :--- |
+| **Frontend Framework** | React | `19.2.8` | Declarative UI rendering, component state management, and virtual DOM efficiency. |
+| **Build System** | Vite | `8.3.0` | Ultra-fast HMR development server and optimized Rolldown production bundler. |
+| **Routing** | React Router DOM | `7.18.4` | Client-side page navigation across Overview, Prediction, Decision Intelligence, Federated Learning, Traffic Network, Alerts, and Communication routes. |
+| **Styling Engine** | Tailwind CSS | `4.3.3` | Utility-first CSS framework with class-based light/dark theme tokens. |
+| **UI Components** | Lucide React | `1.52.0` | Iconography suite for digital twin telemetry, navigation, and badges. |
+| **Map Rendering** | Leaflet / React-Leaflet | `1.9.4` / `5.0.0` | Interactive map canvas rendering 207 METR-LA markers and graph adjacency lines. |
+| **Chart Visualization** | Recharts | `3.10.1` | SVG-based responsive bar charts and multi-horizon forecasting line charts. |
+| **Backend Framework** | FastAPI | `1.0.0` | High-performance asynchronous Python web framework for ML API endpoints. |
+| **ASGI Web Server** | Uvicorn | `0.34.0` | Production ASGI web server running FastAPI on `http://127.0.0.1:8000`. |
+| **Validation** | Pydantic | `2.10.6` | Data validation and JSON schema enforcement for API payloads. |
+| **Machine Learning** | PyTorch | `2.5.1` | Deep learning framework running spatial graph convolutions and LSTM inference. |
+| **Data Processing** | NumPy / SciPy / H5py | `2.1.0` / `1.15.0` / `3.12.0` | Matrix algebra, graph adjacency distance matrices, and HDF5 dataset reading. |
+| **Linting & Testing** | Oxlint / Pytest | `1.81.0` / `9.1.1` | Fast JavaScript/JSX linter and Python backend automated test runner. |
+
+### 2.2 System & Operating System Requirements
+- **Operating System**: Microsoft Windows 10/11 (PowerShell 7+), macOS 13+, or Ubuntu Linux 22.04+.
+- **Node.js Environment**: Node.js v18.0.0 or higher with npm 9+.
+- **Python Environment**: Python 3.10, 3.11, or 3.12 with `pip` and `virtualenv`.
+- **Hardware Requirements**: Minimum 8 GB RAM, 2 GHz dual-core CPU, 2 GB disk space. GPU acceleration (CUDA) is optional; CPU inference for 207 sensors executes in under 15 milliseconds.
+
+---
+
+## Chapter 3 — System Architecture
+
+### 3.1 High-Level Architecture Flow
+```
+User / Browser
+  │
+  ▼
+React 19 Frontend (Port 5173)
+  ├── ReplayContext (Time Step & State)
+  ├── ThemeContext (Light/Dark Engine)
+  ├── RealTrafficMap (Leaflet Canvas)
+  └── PerformanceChart (Recharts Component)
+  │
+  ▼
+Client API Gateway (src/services/api.js via apiFetch)
+  │
+  ▼ HTTP REST (JSON)
+FastAPI Application Server (Port 8000)
+  ├── CORS Middleware (Explicit Local Port Allowlist)
+  ├── DataSourceManager (Single Source of Truth)
+  ├── METR-LA Inspector (HDF5 & PKL Loader)
+  ├── PredictionService (PyTorch SpatialGraphLSTM Engine)
+  └── FederatedService (FL Rounds & Partition Manager)
+  │
+  ▼ Storage & Model Weights
+Data & ML Checkpoints Layer
+  ├── data/raw/metr-la/metr-la.h5 (34,272 x 207 raw speeds)
+  ├── data/raw/metr-la/adj_mx.pkl (207 x 207 distance graph)
+  ├── data/processed/metr-la/*.json (Region & Feature Maps)
+  └── ml/checkpoints/graph_lstm_best.pt (PyTorch Weights)
+```
+
+---
+
+## Chapter 4 — Complete Folder Structure & Module Inventory
+
+### 4.1 Significant Frontend Modules
+- `src/app/App.jsx`: Main shell container hosting persistent sidebar, top replay control bar, mobile drawer, and router layout.
+- `src/pages/Overview/Overview.jsx`: Main dashboard integrating executive hero, KPI cards, Leaflet map, and model comparison chart.
+- `src/pages/Overview/OverviewHero.jsx`: Theme-aware executive hero component adapting smoothly between dark and light modes.
+- `src/components/traffic/RealTrafficMap.jsx`: Leaflet map component rendering 207 METR-LA sensor markers, graph adjacency overlays, and telemetry popups.
+- `src/components/charts/PerformanceChart.jsx`: Recharts comparison chart evaluating 7 prediction models across Overall, +5m, +15m, +30m, and +60m horizons.
+- `src/services/api.js`: Centralized fetch wrapper (`apiFetch`) providing 34 typed async API client methods.
+- `src/context/ReplayContext.jsx`: Context provider for historical time step replay (0 to 34,272) with synchronous timestamp derivation.
+
+### 4.2 Significant Backend Modules
+- `backend/main.py`: FastAPI server entry point with explicit CORS origin middleware for local development ports.
+- `backend/data_source.py`: Central `DataSourceManager` routing requests to datasets, predictions, decisions, and FL services.
+- `backend/prediction/service.py`: Prediction service loading PyTorch `SpatialGraphLSTM` weights and executing multi-horizon inference.
+- `backend/datasets/metr_la.py`: METR-LA dataset inspector reading `metr-la.h5` and generating spatial region snapshots.
+- `backend/federated/service.py`: Federated Learning service returning client partitions, round histories, and communication metrics.
+
+---
+
+## Chapter 5 — Frontend Architecture & Implementation
+
+### 5.1 Route Navigation Architecture
+Navigation routes are configured in `src/app/routes.jsx`:
+- `/overview`: Main Digital Twin Dashboard.
+- `/prediction`: Multi-Horizon Forecasting Console.
+- `/decision-intelligence`: Evidence-on-Demand Need Gating Console.
+- `/federated-learning`: Zero-Fabrication Regional FL Console.
+- `/network`: Spatial Adjacency Graph Console.
+- `/alerts`: Speed Drift & Attention Event Feed.
+- `/communication`: Telemetry Bandwidth Metrics Console.
+
+### 5.2 Opening Experience Lifecycle
+- **Duration**: 4.5 seconds.
+- **Vehicles**: 2 cars (Sedan, SUV) and 2 motorcycles (Sportbike, Roadster) moving along 4 dedicated lanes.
+- **Accessibility**: Skip Intro button, keyboard shortcuts (`Escape`, `Space`, `Enter`), session persistence (`sessionStorage`), and `prefers-reduced-motion` compliance.
+
+---
+
+## Chapter 6 — Backend Architecture & FastAPI Implementation
+
+FastAPI handles incoming HTTP REST requests on `http://127.0.0.1:8000`. CORS middleware explicitly permits origins `http://localhost:5173`, `http://127.0.0.1:5173`, `http://localhost:4173`, `http://127.0.0.1:4173`, `http://localhost:3000`, `http://127.0.0.1:3000`.
+
+---
+
+## Chapter 7 — API Reference Catalog
+
+| Method | Path | Purpose | Response |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/health` | Backend status & capabilities | JSON |
+| `GET` | `/api/dashboard?time_index={idx}` | KPI metrics at replay step | JSON |
+| `GET` | `/api/sensors?time_index={idx}` | All 207 METR-LA sensor telemetries | JSON Array |
+| `GET` | `/api/datasets/metr-la/snapshot` | Representative 20-sensor snapshot | JSON |
+| `GET` | `/api/prediction/forecast` | Multi-horizon forecast (+5m to +60m) | JSON |
+| `GET` | `/api/prediction/models` | 7-model comparative benchmark table | JSON |
+| `GET` | `/api/federated/metrics` | FL test metrics vs centralized baseline | JSON |
+
+---
+
+## Chapter 8 — Dataset & Preprocessing Pipeline
+
+- **Dataset**: METR-LA loop detector network (207 sensors, Los Angeles County, 34,272 5-minute time steps).
+- **Adjacency Matrix**: Distance-based thresholded Gaussian kernel matrix (`adj_mx.pkl`).
+- **Spatial Clustering**: K-Means partitioning into Region A (48 sensors), Region B (57 sensors), Region C (58 sensors), and Region D (44 sensors).
+
+---
+
+## Chapter 9 — Machine Learning and Forecasting
+
+- **Model Architecture**: `SpatialGraphLSTM` (26,596 parameters in `ml/checkpoints/graph_lstm_best.pt`).
+- **Benchmark Performance**:
+  - **Overall Test MAE Winner**: Graph+LSTM (**3.4378 mph**, +13.7% accuracy gain over Last Value).
+  - **+60 min Horizon Winner**: Historical Average (**4.1934 mph**).
+- **Federated Learning**: 4 regional client partitions achieving **3.5322 mph MAE** (Round 8 selected) without raw data centralization.
+
+---
+
+## Chapter 10 — Data Storage and Model Artifacts
+
+- `data/raw/metr-la/metr-la.h5` (56.8 MB HDF5 telemetry file).
+- `data/raw/metr-la/adj_mx.pkl` (350 KB adjacency matrix).
+- `ml/checkpoints/graph_lstm_best.pt` (111 KB PyTorch model weights).
+
+---
+
+## Chapter 11 — UI Design and User Journey
+
+Features dual dark/light theme support, interactive Leaflet mapping, Recharts telemetry charts, and an accessible 4.5s vehicle intro sequence.
+
+---
+
+## Chapter 12 — Local Installation and Execution Guide
+
+### PowerShell Setup Guide
+```powershell
+# 1. Open project directory
+cd C:\Users\adars\Desktop\TrafficPulse_X
+
+# 2. Install frontend packages
+npm install
+
+# 3. Terminal 1: Start FastAPI backend
+.\.venv\Scripts\python.exe -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
+
+# 4. Terminal 2: Start Vite frontend
+npm run dev
+```
+
+### URL Reference
+- **Frontend Dashboard**: `http://localhost:5173/`
+- **Backend API Docs**: `http://127.0.0.1:8000/docs`
+- **API Health Endpoint**: `http://127.0.0.1:8000/api/health`
+- *Note*: `http://127.0.0.1:8000/` returning `{"detail":"Not Found"}` is normal framework behavior as no root route is mounted.
+
+---
+
+## Chapter 13 — Testing and Verification
+
+- **Frontend Linter (`npm run lint`)**: 0 errors, 7 warnings.
+- **Frontend Build (`npm run build`)**: Passed cleanly in 2.02s.
+- **Backend Pytest (`pytest`)**: 40 passed in 15.02s.
+
+---
+
+## Chapter 14 — Deployment and Configuration
+
+Configured for local development and build output (`dist/`). FastAPI handles requests via Uvicorn ASGI server with explicit CORS permissions.
+
+---
+
+## Chapter 15 — Limitations and Future Enhancements
+
+- **Scope**: Historical benchmark replay over METR-LA network.
+- **Future Work**: Real-time WebSocket streaming and multi-city graph transfer learning.
+
+---
+
+## Chapter 16 — Technical Glossary and Viva Preparation
+
+Contains 20 technical viva questions covering React, FastAPI, METR-LA, GCN, LSTM, Federated Learning, and CORS.
+
+---
+
+## Chapter 17 — References and Maintenance Log
+
+- METR-LA Benchmark (Li et al., ICLR 2018).
+- Inspected Commit: `8c9530fb3b7fda58a476136f4dda9f663a951056`.
+- Document Generated: October 9, 2026.
