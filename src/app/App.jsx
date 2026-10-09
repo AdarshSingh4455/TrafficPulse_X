@@ -84,9 +84,9 @@ export default function App() {
               <div className="flex items-center gap-3 font-mono text-[11px]">
                 <span>METR-LA (207 Sensors)</span>
                 <span>•</span>
-                <span>Phase 1–8 Frozen</span>
+                <span>Spatial Partitioning (4 Regions)</span>
                 <span>•</span>
-                <span className="text-amber-500 font-semibold">Phase 9 In Progress</span>
+                <span className="text-cyan-500 font-semibold">Digital Twin Online</span>
               </div>
             </div>
           </footer>

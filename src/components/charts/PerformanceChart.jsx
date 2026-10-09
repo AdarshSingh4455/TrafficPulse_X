@@ -151,13 +151,13 @@ export default function PerformanceChart() {
               />
               <XAxis 
                 dataKey="name" 
-                stroke="#64748b" 
+                stroke={isDark ? "#94a3b8" : "#64748b"} 
                 fontSize={10} 
                 tickLine={false}
                 axisLine={{ stroke: isDark ? '#1e293b' : '#cbd5e1' }}
               />
               <YAxis 
-                stroke="#64748b" 
+                stroke={isDark ? "#94a3b8" : "#64748b"} 
                 fontSize={10} 
                 domain={[0, 7]} 
                 ticks={[0, 2, 4, 6]}
@@ -169,24 +169,24 @@ export default function PerformanceChart() {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs font-mono shadow-xl">
-                        <div className="font-bold flex items-center gap-1.5 text-slate-200">
-                          {data.isWinner && <Trophy className="w-3 h-3 text-amber-400" />}
+                      <div className="p-2.5 rounded-xl bg-slate-900/95 dark:bg-[#0c162c] border border-slate-700 text-white text-xs font-mono shadow-xl backdrop-blur-md space-y-1">
+                        <div className="font-bold flex items-center gap-1.5 text-slate-100">
+                          {data.isWinner && <Trophy className="w-3.5 h-3.5 text-amber-400" />}
                           <span>{data.name}</span>
                         </div>
-                        <div className="text-emerald-400 mt-1">MAE: {data.mae.toFixed(4)} mph</div>
-                        {data.isWinner && <div className="text-amber-400 text-[10px] mt-0.5">Top Performer</div>}
+                        <div className="text-cyan-400 font-semibold">Test MAE: {data.mae.toFixed(4)} mph</div>
+                        {data.isWinner && <div className="text-amber-400 text-[10px] font-sans font-medium">★ Top Performing Architecture</div>}
                       </div>
                     );
                   }
                   return null;
                 }}
               />
-              <Bar dataKey="mae" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="mae" radius={[6, 6, 0, 0]}>
                 {currentList.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={entry.isWinner ? '#059669' : (isDark ? '#334155' : '#94a3b8')} 
+                    fill={entry.isWinner ? (isDark ? '#06b6d4' : '#0284c7') : (isDark ? '#334155' : '#cbd5e1')} 
                   />
                 ))}
               </Bar>
@@ -195,9 +195,9 @@ export default function PerformanceChart() {
         </div>
 
         {/* Winner Strip highlighting Overall & +60 split */}
-        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-[11px] grid grid-cols-2 gap-2">
+        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-[11px] grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
             <span className="text-slate-600 dark:text-slate-400">
               Overall / +5 / +15 / +30: <strong className="text-slate-900 dark:text-white">Graph+LSTM</strong> (3.4378 mph)
             </span>
@@ -213,3 +213,4 @@ export default function PerformanceChart() {
     </SectionCard>
   );
 }
+

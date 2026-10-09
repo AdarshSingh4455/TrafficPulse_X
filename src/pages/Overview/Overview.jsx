@@ -3,11 +3,12 @@ import OverviewHero from './OverviewHero';
 import MetricCard from '../../components/common/MetricCard';
 import PerformanceChart from '../../components/charts/PerformanceChart';
 import RealTrafficMap from '../../components/traffic/RealTrafficMap';
+import SensorDetailPanel from '../../components/traffic/SensorDetailPanel';
 import EventFeed from '../../components/common/EventFeed';
 import ScientificBadge from '../../components/common/ScientificBadge';
 import { fetchMetrSnapshot, fetchEvents } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, X } from 'lucide-react';
 
 export default function Overview() {
   const { timeIndex, timestampStr } = useReplay();
@@ -77,8 +78,8 @@ export default function Overview() {
       label: "Dataset Benchmark",
       value: "METR-LA",
       subtext: "2012-03-01 → 06-27 (5-min)",
-      iconType: "signal",
-      variant: "blue"
+      iconType: "database",
+      variant: "teal"
     }
   ];
 
@@ -111,14 +112,28 @@ export default function Overview() {
         ))}
       </div>
 
-      {/* Main Row: Map Left (60%) + Model Benchmark Tabs Right (40%) */}
+      {/* Main Row: Map Left (7 cols) + Model Benchmark Tabs Right (5 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        <div className="lg:col-span-7">
+        <div className="lg:col-span-7 flex flex-col gap-4">
           <RealTrafficMap
             sensors={realSensors}
             selectedSensor={selectedSensor}
             onSelectSensor={(s) => setSelectedSensor(s)}
           />
+
+          {/* Interactive Sensor Telemetry Panel when Selected */}
+          {selectedSensor && (
+            <div className="relative">
+              <button
+                onClick={() => setSelectedSensor(null)}
+                className="absolute top-3 right-3 z-10 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
+                title="Deselect Sensor"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <SensorDetailPanel sensor={selectedSensor} />
+            </div>
+          )}
         </div>
         <div className="lg:col-span-5">
           <PerformanceChart />
