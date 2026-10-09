@@ -8,15 +8,22 @@ export default function SensorTable({ sensors, selectedSensorId, onSelectSensor 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
 
-  const filteredSensors = sensors.filter((sensor) => {
+  const filteredSensors = (sensors || []).filter((sensor) => {
+    if (!sensor) return false;
+    const term = String(searchTerm || '').toLowerCase();
+    const sensorId = String(sensor.id || '').toLowerCase();
+    const sensorRoad = String(sensor.road || '').toLowerCase();
+    const sensorSector = String(sensor.sector || '').toLowerCase();
+    const sensorStatus = String(sensor.status || '').toLowerCase();
+
     const matchesSearch = 
-      sensor.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sensor.road.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sensor.sector.toLowerCase().includes(searchTerm.toLowerCase());
+      sensorId.includes(term) ||
+      sensorRoad.includes(term) ||
+      sensorSector.includes(term);
 
     const matchesStatus = 
       statusFilter === 'All' || 
-      sensor.status.toLowerCase() === statusFilter.toLowerCase();
+      sensorStatus === statusFilter.toLowerCase();
 
     return matchesSearch && matchesStatus;
   });
