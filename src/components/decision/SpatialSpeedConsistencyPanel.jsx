@@ -53,7 +53,7 @@ export default function SpatialSpeedConsistencyPanel({ data }) {
               ? "bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-300 dark:border-rose-500/30"
               : "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/30"
           }`}>
-            &Delta; {speedDifferenceMph !== None && speedDifferenceMph !== undefined ? `${speedDifferenceMph} mph` : "N/A"}
+            &Delta; {speedDifferenceMph !== null && speedDifferenceMph !== undefined ? `${speedDifferenceMph} mph` : "N/A"}
           </span>
         </div>
 
@@ -64,7 +64,7 @@ export default function SpatialSpeedConsistencyPanel({ data }) {
               {fromSensor}
             </span>
             <span className="text-xs text-slate-600 dark:text-slate-400">
-              Speed: <b className="text-slate-900 dark:text-white font-mono">{fromSpeedMph !== None ? `${fromSpeedMph} mph` : "N/A"}</b>
+              Speed: <b className="text-slate-900 dark:text-white font-mono">{fromSpeedMph !== null && fromSpeedMph !== undefined ? `${fromSpeedMph} mph` : "N/A"}</b>
             </span>
           </div>
 
@@ -75,7 +75,7 @@ export default function SpatialSpeedConsistencyPanel({ data }) {
 
           <div className="flex items-center gap-2">
             <span className="text-xs text-slate-600 dark:text-slate-400">
-              Speed: <b className="text-slate-900 dark:text-white font-mono">{toSpeedMph !== None ? `${toSpeedMph} mph` : "N/A"}</b>
+              Speed: <b className="text-slate-900 dark:text-white font-mono">{toSpeedMph !== null && toSpeedMph !== undefined ? `${toSpeedMph} mph` : "N/A"}</b>
             </span>
             <span className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-950/60 border border-blue-400 dark:border-blue-500/40 text-blue-800 dark:text-blue-300 flex items-center justify-center font-mono font-bold text-xs">
               {toSensor}
@@ -92,7 +92,7 @@ export default function SpatialSpeedConsistencyPanel({ data }) {
           </div>
           <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
             <span className="text-[10px] text-slate-500 block">Speed Difference</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">{speedDifferenceMph !== None ? `${speedDifferenceMph} mph` : "N/A"}</span>
+            <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">{speedDifferenceMph !== null && speedDifferenceMph !== undefined ? `${speedDifferenceMph} mph` : "N/A"}</span>
             <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">Absolute delta</span>
           </div>
           <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
