@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, Polygon, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Layers, Eye, ShieldAlert, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 
 // Custom Marker Colors based on Speed Condition
 const CONDITION_COLORS = {

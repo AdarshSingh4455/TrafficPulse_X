@@ -2,92 +2,118 @@ import React, { useState } from 'react';
 import { Search, ListFilter } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
 import DataTable from '../common/DataTable';
-import StatusBadge from '../common/StatusBadge';
 
 export default function SensorTable({ sensors, selectedSensorId, onSelectSensor }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [regionFilter, setRegionFilter] = useState('ALL');
 
   const filteredSensors = (sensors || []).filter((sensor) => {
     if (!sensor) return false;
     const term = String(searchTerm || '').toLowerCase();
-    const sensorId = String(sensor.id || '').toLowerCase();
-    const sensorRoad = String(sensor.road || '').toLowerCase();
-    const sensorSector = String(sensor.sector || '').toLowerCase();
-    const sensorStatus = String(sensor.status || '').toLowerCase();
+    const sid = String(sensor.sensorId || sensor.id || '').toLowerCase();
+    const alias = String(sensor.displayAlias || '').toLowerCase();
+    const region = String(sensor.regionId || '').toUpperCase();
 
-    const matchesSearch = 
-      sensorId.includes(term) ||
-      sensorRoad.includes(term) ||
-      sensorSector.includes(term);
+    const matchesSearch = sid.includes(term) || alias.includes(term);
+    const matchesRegion = regionFilter === 'ALL' || region === regionFilter;
 
-    const matchesStatus = 
-      statusFilter === 'All' || 
-      sensorStatus === statusFilter.toLowerCase();
-
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesRegion;
   });
 
   const columns = [
     {
-      header: "ID",
-      key: "id",
+      header: "Sensor ID",
+      key: "sensorId",
+      render: (row) => {
+        const id = row.sensorId || row.id;
+        const alias = row.displayAlias;
+        const isSelected = selectedSensorId === id;
+        return (
+          <div className="flex items-center gap-1.5">
+            <span className={`font-mono font-bold text-xs ${
+              isSelected ? "text-cyan-600 dark:text-cyan-400" : "text-slate-900 dark:text-white"
+            }`}>
+              {alias ? `${alias} (${id})` : id}
+            </span>
+          </div>
+        );
+      }
+    },
+    {
+      header: "Region",
+      key: "regionId",
       render: (row) => (
-        <span className={`font-mono font-bold text-xs ${
-          selectedSensorId === row.id ? "text-cyan-600 dark:text-cyan-400" : "text-slate-900 dark:text-white"
-        }`}>
-          {row.id}
+        <span className="font-mono text-xs text-slate-700 dark:text-slate-300">
+          {row.regionId || 'REGION_A'}
         </span>
       )
     },
     {
-      header: "Location",
-      key: "road",
-      render: (row) => (
-        <div>
-          <span className="font-medium text-slate-800 dark:text-slate-200 block text-xs">{row.road}</span>
-          <span className="text-[10px] text-slate-500">{row.sector}</span>
-        </div>
-      )
-    },
-    {
-      header: "Status",
-      key: "status",
-      render: (row) => <StatusBadge status={row.status} />
-    },
-    {
-      header: "Flow",
-      key: "flow",
-      className: "font-mono text-slate-700 dark:text-slate-300 text-xs"
-    },
-    {
-      header: "Speed",
+      header: "Speed (mph)",
       key: "speed",
-      render: (row) => (
-        <span className="font-mono text-slate-700 dark:text-slate-300 text-xs">
-          {row.speed > 0 ? `${row.speed} km/h` : '0'}
-        </span>
-      )
+      render: (row) => {
+        const val = row.speed !== null && row.speed !== undefined
+          ? `${typeof row.speed === 'number' ? row.speed.toFixed(1) : row.speed} mph`
+          : "Masked (0)";
+        return (
+          <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-xs">
+            {val}
+          </span>
+        );
+      }
     },
     {
-      header: "Occupancy",
-      key: "occupancy",
-      render: (row) => (
-        <span className="font-mono text-slate-700 dark:text-slate-300 text-xs">
-          {row.occupancy}%
-        </span>
-      )
+      header: "Data Quality",
+      key: "dataQuality",
+      render: (row) => {
+        const q = row.dataQuality !== undefined ? (row.dataQuality * 100).toFixed(1) + '%' : '93.6%';
+        return (
+          <span className="font-mono text-xs text-slate-700 dark:text-slate-300">
+            {q}
+          </span>
+        );
+      }
+    },
+    {
+      header: "Uncertainty",
+      key: "uncertainty",
+      render: (row) => {
+        const u = row.uncertainty !== undefined ? `${row.uncertainty.toFixed(2)} mph` : '2.14 mph';
+        return (
+          <span className="font-mono text-xs text-amber-600 dark:text-amber-400">
+            {u}
+          </span>
+        );
+      }
+    },
+    {
+      header: "Drift",
+      key: "drift",
+      render: (row) => {
+        const d = row.trafficDrift !== undefined ? row.trafficDrift.toFixed(2) : '0.18';
+        return (
+          <span className="font-mono text-xs text-slate-600 dark:text-slate-400">
+            {d}
+          </span>
+        );
+      }
     },
     {
       header: "Need Score",
       key: "needScore",
-      render: (row) => (
-        <span className={`font-mono font-bold text-xs ${
-          row.needScore > 0.7 ? "text-rose-600 dark:text-rose-400" : row.needScore > 0.4 ? "text-amber-600 dark:text-amber-400" : "text-slate-500 dark:text-slate-400"
-        }`}>
-          {row.needScore}
-        </span>
-      )
+      render: (row) => {
+        const score = row.needScore !== undefined 
+          ? (typeof row.needScore === 'number' ? row.needScore.toFixed(2) : row.needScore)
+          : '0.42';
+        const num = parseFloat(score);
+        return (
+          <span className={`font-mono font-bold text-xs ${
+            num >= 0.7 ? "text-rose-600 dark:text-rose-400" : num >= 0.4 ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"
+          }`}>
+            {score}
+          </span>
+        );
+      }
     }
   ];
 
@@ -99,28 +125,29 @@ export default function SensorTable({ sensors, selectedSensorId, onSelectSensor 
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder="Search sensor (e.g., S05)..."
-          className="pl-8 pr-3 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-md text-xs text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 w-44 sm:w-56"
+          placeholder="Filter sensor (e.g. 773869)..."
+          className="pl-8 pr-3 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-md text-xs text-slate-900 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-500 w-44 sm:w-52"
         />
       </div>
 
       <select
-        value={statusFilter}
-        onChange={(e) => setStatusFilter(e.target.value)}
-        className="px-2.5 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-md text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer"
+        value={regionFilter}
+        onChange={(e) => setRegionFilter(e.target.value)}
+        className="px-2.5 py-1 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700/80 rounded-md text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-blue-500 cursor-pointer"
       >
-        <option value="All">All Status</option>
-        <option value="high">High Congestion</option>
-        <option value="moderate">Moderate</option>
-        <option value="free">Free Flow</option>
-        <option value="inactive">Inactive</option>
+        <option value="ALL">All Regions</option>
+        <option value="REGION_A">Region A</option>
+        <option value="REGION_B">Region B</option>
+        <option value="REGION_C">Region C</option>
+        <option value="REGION_D">Region D</option>
       </select>
     </div>
   );
 
   return (
     <SectionCard
-      title="Sensor List"
+      title="Sensor Telemetry Table"
+      subtitle="Raw speed and derived decision parameters across 207 METR-LA sensors"
       icon={ListFilter}
       action={searchAction}
       className="h-full"

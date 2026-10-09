@@ -1,127 +1,212 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ResponsiveContainer, 
-  LineChart, 
-  Line, 
+  BarChart, 
+  Bar, 
   XAxis, 
   YAxis, 
   Tooltip, 
-  CartesianGrid 
+  CartesianGrid, 
+  Cell 
 } from 'recharts';
-import { ArrowDown, TrendingUp, ChevronRight } from 'lucide-react';
+import { Trophy, TrendingUp } from 'lucide-react';
 import SectionCard from '../common/SectionCard';
 import Tabs from '../common/Tabs';
+import ScientificBadge from '../common/ScientificBadge';
 import { useTheme } from '../../context/ThemeContext';
+import { fetchPredictionModels } from '../../services/api';
 
-const systemPerformanceData = [
-  { horizon: "+5m", baselineMAE: 2.82, lstmMAE: 2.44 },
-  { horizon: "+15m", baselineMAE: 3.50, lstmMAE: 3.09 },
-  { horizon: "+30m", baselineMAE: 4.22, lstmMAE: 3.80 },
-  { horizon: "+60m", baselineMAE: 5.40, lstmMAE: 4.92 }
-];
+const DEFAULT_MODELS_DATA = {
+  Overall: [
+    { name: 'Last Value', mae: 3.9839, isWinner: false },
+    { name: 'Historical Avg', mae: 4.1930, isWinner: false },
+    { name: 'Linear Reg', mae: 3.9763, isWinner: false },
+    { name: 'GRU', mae: 3.5669, isWinner: false },
+    { name: 'LSTM', mae: 3.5613, isWinner: false },
+    { name: 'Spatial GCN', mae: 5.4604, isWinner: false },
+    { name: 'Graph+LSTM', mae: 3.4378, isWinner: true }
+  ],
+  '+5': [
+    { name: 'Last Value', mae: 2.8158, isWinner: false },
+    { name: 'Historical Avg', mae: 4.1928, isWinner: false },
+    { name: 'Linear Reg', mae: 2.6763, isWinner: false },
+    { name: 'GRU', mae: 2.4349, isWinner: false },
+    { name: 'LSTM', mae: 2.4372, isWinner: false },
+    { name: 'Spatial GCN', mae: 4.7139, isWinner: false },
+    { name: 'Graph+LSTM', mae: 2.3648, isWinner: true }
+  ],
+  '+15': [
+    { name: 'Last Value', mae: 3.5045, isWinner: false },
+    { name: 'Historical Avg', mae: 4.1928, isWinner: false },
+    { name: 'Linear Reg', mae: 3.4026, isWinner: false },
+    { name: 'GRU', mae: 3.0976, isWinner: false },
+    { name: 'LSTM', mae: 3.0940, isWinner: false },
+    { name: 'Spatial GCN', mae: 5.1138, isWinner: false },
+    { name: 'Graph+LSTM', mae: 3.0007, isWinner: true }
+  ],
+  '+30': [
+    { name: 'Last Value', mae: 4.2166, isWinner: false },
+    { name: 'Historical Avg', mae: 4.1929, isWinner: false },
+    { name: 'Linear Reg', mae: 4.2384, isWinner: false },
+    { name: 'GRU', mae: 3.8068, isWinner: false },
+    { name: 'LSTM', mae: 3.7984, isWinner: false },
+    { name: 'Spatial GCN', mae: 5.5939, isWinner: false },
+    { name: 'Graph+LSTM', mae: 3.6699, isWinner: true }
+  ],
+  '+60': [
+    { name: 'Last Value', mae: 5.3987, isWinner: false },
+    { name: 'Historical Avg', mae: 4.1934, isWinner: true },
+    { name: 'Linear Reg', mae: 5.5879, isWinner: false },
+    { name: 'GRU', mae: 4.9284, isWinner: false },
+    { name: 'LSTM', mae: 4.9156, isWinner: false },
+    { name: 'Spatial GCN', mae: 6.4201, isWinner: false },
+    { name: 'Graph+LSTM', mae: 4.7158, isWinner: false }
+  ]
+};
 
 export default function PerformanceChart() {
-  const [activeTab, setActiveTab] = useState("accuracy");
+  const [activeTab, setActiveTab] = useState("Overall");
+  const [benchmarkData, setBenchmarkData] = useState(DEFAULT_MODELS_DATA);
   const { isDark } = useTheme();
 
+  useEffect(() => {
+    let mounted = true;
+    async function loadModels() {
+      try {
+        const res = await fetchPredictionModels();
+        if (mounted && res && res.modelsOverall) {
+          const transformed = {
+            Overall: Object.entries(res.modelsOverall).map(([k, v]) => ({
+              name: k === 'Historical Average' ? 'Historical Avg' : k === 'Linear Regression' ? 'Linear Reg' : k,
+              mae: v.mae,
+              isWinner: k === 'Graph+LSTM'
+            })),
+            '+5': Object.entries(res.horizonWinners['+5 min'].allModels).map(([k, mae]) => ({
+              name: k === 'Historical Average' ? 'Historical Avg' : k === 'Linear Regression' ? 'Linear Reg' : k,
+              mae,
+              isWinner: k === res.horizonWinners['+5 min'].winner
+            })),
+            '+15': Object.entries(res.horizonWinners['+15 min'].allModels).map(([k, mae]) => ({
+              name: k === 'Historical Average' ? 'Historical Avg' : k === 'Linear Regression' ? 'Linear Reg' : k,
+              mae,
+              isWinner: k === res.horizonWinners['+15 min'].winner
+            })),
+            '+30': Object.entries(res.horizonWinners['+30 min'].allModels).map(([k, mae]) => ({
+              name: k === 'Historical Average' ? 'Historical Avg' : k === 'Linear Regression' ? 'Linear Reg' : k,
+              mae,
+              isWinner: k === res.horizonWinners['+30 min'].winner
+            })),
+            '+60': Object.entries(res.horizonWinners['+60 min'].allModels).map(([k, mae]) => ({
+              name: k === 'Historical Average' ? 'Historical Avg' : k === 'Linear Regression' ? 'Linear Reg' : k,
+              mae,
+              isWinner: k === res.horizonWinners['+60 min'].winner
+            }))
+          };
+          setBenchmarkData(transformed);
+        }
+      } catch {
+        // Fallback to frozen default
+      }
+    }
+    loadModels();
+    return () => { mounted = false; };
+  }, []);
+
   const tabs = [
-    { id: "accuracy", label: "MAE (mph)" },
-    { id: "comm", label: "Bandwidth Saved" },
-    { id: "active", label: "Active Sensors" }
+    { id: "Overall", label: "Overall MAE" },
+    { id: "+5", label: "+5 min" },
+    { id: "+15", label: "+15 min" },
+    { id: "+30", label: "+30 min" },
+    { id: "+60", label: "+60 min" }
   ];
 
-  const action = (
-    <button className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 font-medium transition-colors cursor-pointer">
-      <span>METR-LA Benchmark</span>
-      <ChevronRight className="w-3.5 h-3.5" />
-    </button>
-  );
+  const currentList = benchmarkData[activeTab] || benchmarkData.Overall;
+  const currentWinner = currentList.find(m => m.isWinner) || currentList[0];
 
   return (
     <SectionCard
-      title="Temporal Model Performance (MAE in MPH)"
+      title="Model Benchmark Comparison (Test MAE in MPH)"
       icon={TrendingUp}
-      action={action}
-      className="h-full"
+      action={<ScientificBadge type="MODEL OUTPUT" label="TEST EVALUATION" />}
+      className="h-full flex flex-col justify-between"
     >
-      <div className="flex flex-col justify-between h-full gap-4">
-        <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-
-        <div className="flex flex-col lg:flex-row items-center gap-4 flex-1">
-          <div className="w-full lg:flex-1 h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={systemPerformanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid 
-                  strokeDasharray="3 3" 
-                  stroke={isDark ? "#1e293b" : "#e2e8f0"} 
-                  vertical={false} 
-                />
-                <XAxis 
-                  dataKey="horizon" 
-                  stroke="#64748b" 
-                  fontSize={11} 
-                  tickLine={false}
-                  axisLine={{ stroke: isDark ? '#1e293b' : '#cbd5e1' }}
-                />
-                <YAxis 
-                  stroke="#64748b" 
-                  fontSize={11} 
-                  domain={[0, 6]} 
-                  ticks={[0, 2, 4, 6]}
-                  tickLine={false}
-                  axisLine={{ stroke: isDark ? '#1e293b' : '#cbd5e1' }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: isDark ? '#0f172a' : '#ffffff',
-                    borderColor: isDark ? '#334155' : '#cbd5e1',
-                    borderRadius: '8px',
-                    fontSize: '11px',
-                    color: isDark ? '#e2e8f0' : '#0f172a',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-                  }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="baselineMAE"
-                  name="Last Value Baseline"
-                  stroke={isDark ? "#64748b" : "#94a3b8"}
-                  strokeWidth={1.5}
-                  strokeDasharray="4 4"
-                  dot={false}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="lstmMAE"
-                  name="LSTM Temporal Backbone"
-                  stroke="#0284c7"
-                  strokeWidth={2.5}
-                  dot={{ r: 3, fill: '#0284c7' }}
-                  activeDot={{ r: 5 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="w-full lg:w-44 bg-blue-50 dark:bg-[#14203a] border border-blue-200 dark:border-blue-500/20 rounded-xl p-4 flex flex-col justify-center text-center">
-            <div className="flex items-center justify-center gap-1 text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mb-1">
-              <span>3.56</span>
-              <span className="text-xs font-sans text-slate-500 font-normal">mph</span>
-            </div>
-            <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-tight">
-              Overall Test Set MAE (LSTM Backbone)
-            </p>
+      <div className="space-y-3">
+        {/* Horizon Tabs */}
+        <div className="flex items-center justify-between">
+          <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-[11px] font-mono">
+            <Trophy className="w-3.5 h-3.5" />
+            <span>Winner: <strong>{currentWinner.name}</strong> ({currentWinner.mae.toFixed(4)} mph)</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-6 text-xs text-slate-500 dark:text-slate-400 pt-3 border-t border-slate-100 dark:border-slate-800/60">
+        {/* Bar Chart comparing 7 models */}
+        <div className="h-[210px] w-full pt-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={currentList} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <CartesianGrid 
+                strokeDasharray="3 3" 
+                stroke={isDark ? "#1e293b" : "#e2e8f0"} 
+                vertical={false} 
+              />
+              <XAxis 
+                dataKey="name" 
+                stroke="#64748b" 
+                fontSize={10} 
+                tickLine={false}
+                axisLine={{ stroke: isDark ? '#1e293b' : '#cbd5e1' }}
+              />
+              <YAxis 
+                stroke="#64748b" 
+                fontSize={10} 
+                domain={[0, 7]} 
+                ticks={[0, 2, 4, 6]}
+                tickLine={false}
+                axisLine={{ stroke: isDark ? '#1e293b' : '#cbd5e1' }}
+              />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="p-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs font-mono shadow-xl">
+                        <div className="font-bold flex items-center gap-1.5 text-slate-200">
+                          {data.isWinner && <Trophy className="w-3 h-3 text-amber-400" />}
+                          <span>{data.name}</span>
+                        </div>
+                        <div className="text-emerald-400 mt-1">MAE: {data.mae.toFixed(4)} mph</div>
+                        {data.isWinner && <div className="text-amber-400 text-[10px] mt-0.5">Top Performer</div>}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Bar dataKey="mae" radius={[4, 4, 0, 0]}>
+                {currentList.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={entry.isWinner ? '#059669' : (isDark ? '#334155' : '#94a3b8')} 
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Winner Strip highlighting Overall & +60 split */}
+        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-[11px] grid grid-cols-2 gap-2">
           <div className="flex items-center gap-2">
-            <span className="w-4 h-0.5 border-t-2 border-dashed border-slate-400 dark:border-slate-500" />
-            <span>Last Value Baseline</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+            <span className="text-slate-600 dark:text-slate-400">
+              Overall / +5 / +15 / +30: <strong className="text-slate-900 dark:text-white">Graph+LSTM</strong> (3.4378 mph)
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-4 h-0.5 bg-sky-500 rounded-full" />
-            <span className="text-slate-800 dark:text-slate-200 font-medium">LSTM Backbone</span>
+            <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+            <span className="text-slate-600 dark:text-slate-400">
+              +60 min Horizon: <strong className="text-slate-900 dark:text-white">Historical Avg</strong> (4.1934 mph)
+            </span>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, SkipBack, SkipForward, Clock, Calendar } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Clock } from 'lucide-react';
 
 export default function HistoricalReplayBar({
   timeIndex = 0,
