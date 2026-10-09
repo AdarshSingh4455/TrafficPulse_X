@@ -1,0 +1,249 @@
+/* TrafficPulse-X Opening Experience Styles */
+
+.tp-intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: radial-gradient(circle at 50% 30%, #0d172e 0%, #070b16 55%, #03060c 100%);
+  color: #f1f5f9;
+  overflow: hidden;
+  user-select: none;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tp-intro-overlay.tp-intro-exit {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.02);
+}
+
+/* Skip Button */
+.tp-skip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  color: #94a3b8;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.tp-skip-btn:hover,
+.tp-skip-btn:focus-visible {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(56, 189, 248, 0.6);
+  color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+}
+
+/* Background Cyber Grid */
+.tp-bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(14, 165, 233, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 165, 233, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+/* Skyline Glow */
+.tp-skyline-glow {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90vw;
+  max-width: 1200px;
+  height: 280px;
+  background: radial-gradient(ellipse at center, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0) 70%);
+  pointer-events: none;
+}
+
+/* Roadway Container */
+.tp-roadway {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  background: linear-gradient(180deg, #090e1a 0%, #111827 50%, #0a0f1d 100%);
+  border-top: 2px solid rgba(56, 189, 248, 0.3);
+  border-bottom: 2px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 0 30px rgba(14, 165, 233, 0.1), inset 0 0 40px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+/* Moving Lane Markings */
+.tp-lane-divider {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(241, 245, 249, 0.35) 0px,
+    rgba(241, 245, 249, 0.35) 40px,
+    transparent 40px,
+    transparent 75px
+  );
+  animation: tpMoveLanes 0.8s linear infinite;
+}
+
+.tp-lane-divider.divider-1 { top: 25%; }
+.tp-lane-divider.divider-2 { top: 50%; }
+.tp-lane-divider.divider-3 { top: 75%; }
+
+@keyframes tpMoveLanes {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-75px); }
+}
+
+/* Road Edge Lines */
+.tp-road-edge-top,
+.tp-road-edge-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, rgba(245, 158, 11, 0.7), rgba(56, 189, 248, 0.8), rgba(245, 158, 11, 0.7));
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+.tp-road-edge-top { top: 0; }
+.tp-road-edge-bottom { bottom: 0; }
+
+/* Subtle Sensing Pulse Gate */
+.tp-sensor-gate {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0) 0%, rgba(56, 189, 248, 0.8) 50%, rgba(56, 189, 248, 0) 100%);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+  pointer-events: none;
+}
+
+.tp-sensor-gate.gate-1 { left: 35%; animation: tpGatePulse 2s ease-in-out infinite; }
+.tp-sensor-gate.gate-2 { left: 70%; animation: tpGatePulse 2.3s ease-in-out infinite 0.4s; }
+
+@keyframes tpGatePulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
+}
+
+/* Vehicle Containers in Distinct Lanes */
+.tp-vehicle-lane {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.tp-vehicle-lane.lane-1 { top: 2%; height: 23%; }
+.tp-vehicle-lane.lane-2 { top: 26%; height: 23%; }
+.tp-vehicle-lane.lane-3 { top: 51%; height: 23%; }
+.tp-vehicle-lane.lane-4 { top: 76%; height: 23%; }
+
+/* Vehicle Animations with Natural Speeds */
+.tp-vehicle {
+  position: absolute;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+/* Car 1: Lane 1 (Fast Sedan) */
+.tp-car-1 {
+  animation: tpDriveCar1 2.7s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
+@keyframes tpDriveCar1 {
+  0% { transform: translateX(-160px); opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 60px)); opacity: 1; }
+}
+
+/* Motorcycle 1: Lane 2 (Agile Sportbike) */
+.tp-moto-1 {
+  animation: tpDriveMoto1 2.5s cubic-bezier(0.15, 0.05, 0.2, 1) 0.1s forwards;
+}
+
+@keyframes tpDriveMoto1 {
+  0% { transform: translateX(-120px); opacity: 0; }
+  6% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 70px)); opacity: 1; }
+}
+
+/* Car 2: Lane 3 (Electric SUV) */
+.tp-car-2 {
+  animation: tpDriveCar2 2.8s cubic-bezier(0.3, 0.1, 0.3, 1) 0.05s forwards;
+}
+
+@keyframes tpDriveCar2 {
+  0% { transform: translateX(-180px); opacity: 0; }
+  10% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 50px)); opacity: 1; }
+}
+
+/* Motorcycle 2: Lane 4 (Urban Roadster) */
+.tp-moto-2 {
+  animation: tpDriveMoto2 2.65s cubic-bezier(0.2, 0.1, 0.25, 1) 0.15s forwards;
+}
+
+@keyframes tpDriveMoto2 {
+  0% { transform: translateX(-140px); opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { transform: translateX(calc(100vw + 60px)); opacity: 1; }
+}
+
+/* Progress Line at Bottom */
+.tp-progress-bar {
+  height: 2px;
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8, #f59e0b);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
+  width: 0%;
+  animation: tpProgressFill 2.6s linear forwards;
+}
+
+@keyframes tpProgressFill {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* Accessible Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .tp-lane-divider {
+    animation: none !important;
+  }
+  .tp-car-1,
+  .tp-car-2,
+  .tp-moto-1,
+  .tp-moto-2 {
+    animation: none !important;
+    transform: translateX(45vw) !important;
+    opacity: 0.9 !important;
+  }
+  .tp-progress-bar {
+    animation: none !important;
+    width: 100% !important;
+  }
+  .tp-sensor-gate {
+    animation: none !important;
+    opacity: 0.5 !important;
+  }
+}

@@ -3,13 +3,34 @@ import Sidebar from '../components/common/Sidebar';
 import TopReplayBar from '../components/common/TopReplayBar';
 import AppRoutes from './routes';
 import { ReplayProvider } from '../context/ReplayContext';
+import OpeningExperience from '../components/intro/OpeningExperience';
 import { X } from 'lucide-react';
 
 export default function App() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [showIntro, setShowIntro] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('replay_intro') === 'true') return true;
+    try {
+      return !sessionStorage.getItem('tp_intro_completed');
+    } catch {
+      return false;
+    }
+  });
+
+  const handleIntroComplete = () => {
+    try {
+      sessionStorage.setItem('tp_intro_completed', 'true');
+    } catch {
+      // Safe fallback for restricted browsing environments
+    }
+    setShowIntro(false);
+  };
 
   return (
     <ReplayProvider>
+      {showIntro && <OpeningExperience onComplete={handleIntroComplete} />}
       <div className="min-h-screen bg-slate-50 dark:bg-[#080d19] text-slate-900 dark:text-slate-100 flex font-sans selection:bg-blue-600 selection:text-white transition-colors duration-150">
         {/* Desktop Persistent Left Sidebar */}
         <div className="hidden lg:block w-64 flex-shrink-0 sticky top-0 h-screen overflow-y-auto z-30">
