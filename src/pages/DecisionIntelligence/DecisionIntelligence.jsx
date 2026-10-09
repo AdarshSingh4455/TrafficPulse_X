@@ -48,11 +48,18 @@ export default function DecisionIntelligence() {
           if (cov) setCoverageData(cov);
           if (spatial) setSpatialConsistencyData(spatial);
           if (reps && typeof reps === 'object') {
+            const getSensorId = (item, fallback) => {
+              if (!item) return fallback;
+              if (typeof item === 'string') return item;
+              if (typeof item === 'object' && item.sensorId) return String(item.sensorId);
+              return fallback;
+            };
+
             const flatReps = [
-              reps.REGION_C?.[0] || "773869",
-              reps.REGION_A?.[0] || "773975",
-              reps.REGION_B?.[0] || "717458",
-              reps.REGION_D?.[0] || "765171"
+              getSensorId(reps.REGION_C?.[0], "773869"),
+              getSensorId(reps.REGION_A?.[0], "773975"),
+              getSensorId(reps.REGION_B?.[0], "717458"),
+              getSensorId(reps.REGION_D?.[0], "765171")
             ];
             setRepresentativeSensors(flatReps);
           }
