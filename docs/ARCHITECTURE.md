@@ -140,15 +140,15 @@ Phase 9 introduces selective client participation under constrained communicatio
         |                               |                               |
         v                               v                               v
 +-----------------------+     +-------------------+     +-----------------------+
-| Spatial Variance      |     | Model Divergence  |     | Information Debt      |
-| Regional Dynamics     |     | Weight Delta L2   |     | Counter (No Starve)   |
+| Sensor Share Factor   |     | Regional Drift    |     | Information Debt      |
+| s_k = |S_k| / 207     |     | Proxy d_k [0, 1]  |     | tau_k (Skipped Rounds)|
 +-----------------------+     +-------------------+     +-----------------------+
         \                               |                               /
          -----------------------+-------+-------------------------------
                                 |
                                 v
 +-------------------------------------------------------------------------------+
-| Client Communication Value (CCV) = w_var*Var + w_div*Div + w_debt*Debt        |
+| Client Communication Value (CCV_k) = 1.0*s_k + 0.5*d_k + 0.15*tau_k           |
 +-------------------------------------------------------------------------------+
                                 |
                                 v

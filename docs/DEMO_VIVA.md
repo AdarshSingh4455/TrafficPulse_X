@@ -45,7 +45,7 @@ This document provides the authoritative demonstration sequence, scientific conc
 ### Key Mathematical Findings
 1. **Pareto Dominance**: In the dual-objective space $(\min(\text{payload}), \min(\text{test\_MAE}))$, CCV 2/4 achieves both strictly lower payload ($5.73\text{ MB} < 8.60\text{ MB}$) and lower error ($3.6448 < 3.6530\text{ mph}$) than CCV 3/4. Therefore, **CCV 3/4 is strictly Pareto-dominated** and cannot be labeled Pareto-optimal.
 2. **Best Balanced Trade-off**: Under the chosen decision criterion, CCV 2/4 provided the best observed trade-off, cutting serialized application payload by **50.00%** while achieving **3.6448 mph** test MAE.
-3. **Starvation Observation**: *"No starvation observed during the evaluated 13-round run."* Information debt accumulated during skipped rounds guaranteed that every client participated within bounded intervals.
+3. **Starvation Observation**: *"No starvation observed during the evaluated 13-round run."* Information debt is a DERIVED_STATE counter that increases a skipped client's future selection priority.
 
 ---
 
@@ -114,7 +114,7 @@ Pareto Frontier: 2/4 & 1/4
 > **Answer**: Traffic networks exhibit both spatial dependencies (topology along freeway corridors) and temporal autocorrelation (rush hour trends). Pure GCN lacks sequential temporal memory (5.4604 mph MAE), while temporal LSTM ignores spatial graph topology (3.5613 mph MAE). `Graph+LSTM` combines weighted symmetrically normalized graph convolutions ($\tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2}$) with 2-layer LSTM temporal units, achieving the best overall test MAE of **3.4378 mph**.
 
 **Q5: Why does Historical Average outperform deep learning at the +60 minute horizon?**
-> **Answer**: At distant forecasting horizons (+60 minutes), traffic dynamics exhibit high stochastic variance. Autoregressive neural models suffer from error compounding over 12 steps, whereas Historical Average computes a time-of-week expectation that acts as a robust variance-smoothing estimator (**4.1934 mph** vs Graph+LSTM's 4.7158 mph at +60m).
+> **Answer**: Historical Average achieved the lowest observed +60-minute MAE (**4.1934 mph**) in the evaluated benchmark, while Graph+LSTM achieved 4.7158 mph at that horizon. The architecture uses direct multi-horizon projection offsets ($[1, 3, 6, 12]$ for $+5, +15, +30, +60$ minutes) rather than recursive sequence feeding. The experiment establishes this empirical difference but does not by itself establish a causal mechanism.
 
 **Q6: What scaler parameters are used for runtime inference?**
 > **Answer**: The model uses a z-score standard scaler fitted strictly on training and validation splits: mean $\mu = \mathbf{58.584258\text{ mph}}$ and standard deviation $\sigma = \mathbf{12.822883\text{ mph}}$. Descriptive full-dataset values (e.g. 53.72, 20.31) are never used during inference.
@@ -138,9 +138,9 @@ Pareto Frontier: 2/4 & 1/4
 
 ### Communication Intelligence & Pareto Analysis
 **Q10: What is Client Communication Value (CCV)?**
-> **Answer**: CCV is a derived client utility metric combining three factors:
-> $$\text{CCV}_k = w_{\text{var}} \cdot \text{Var}_k + w_{\text{div}} \cdot \text{Div}_k + w_{\text{debt}} \cdot \text{Debt}_k$$
-> It prioritizes clients with dynamic local traffic variance and model divergence while monotonically increasing the priority of skipped clients via Information Debt to prevent starvation.
+> **Answer**: CCV is a derived client utility metric combining regional sensor share, regional traffic drift, and information debt:
+> $$\text{CCV}_k = 1.0 \cdot s_k + 0.5 \cdot d_k + 0.15 \cdot \tau_k$$
+> where $s_k = |S_k|/207$ is the static regional sensor-share factor (`DERIVED_HEURISTIC`), $d_k$ is the regional speed drift proxy relative to baseline (`CALIBRATED_PROXY`, $[0, 1]$), and $\tau_k$ is the consecutive skipped rounds counter (`DERIVED_STATE`). Information debt increases a skipped client's future selection priority. No starvation was observed during the evaluated 13-round runs.
 
 **Q11: Why is policy CCV 3/4 mathematically Pareto-dominated?**
 > **Answer**: In multi-objective optimization minimizing payload and error, policy CCV 2/4 achieves both **lower application payload** ($5,734,092\text{ B} < 8,601,138\text{ B}$) and **lower test MAE** ($3.6448 < 3.6530\text{ mph}$) compared to CCV 3/4. Because CCV 2/4 is strictly superior in both dimensions, CCV 3/4 is strictly dominated and cannot be part of the Pareto frontier.

@@ -292,7 +292,7 @@ Contains 20 technical viva questions covering React, FastAPI, METR-LA, GCN, LSTM
 ## Chapter 18 — Phase 9: Selective Federated Communication Optimization
 
 ### 18.1 Overview & Architecture
-Phase 9 introduces selective federated client participation under constrained communication budgets. Clients compute a Client Communication Value (CCV) combining regional data variability, model divergence, and an information debt counter that prevents client starvation.
+Phase 9 introduces selective federated client participation under constrained communication budgets. Regional client utility is computed using the Client Communication Value (CCV) formula combining regional sensor-share factor ($s_k$), regional speed drift proxy ($d_k$), and an information debt accumulator ($\tau_k$): $\text{CCV}_k = 1.0 \cdot s_k + 0.5 \cdot d_k + 0.15 \cdot \tau_k$. During the evaluated 13-round runs, no client starvation was observed.
 
 ### 18.2 Two Distinct Baselines Contract
 To maintain scientific rigor, two baselines are strictly distinguished:

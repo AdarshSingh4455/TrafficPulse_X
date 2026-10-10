@@ -114,7 +114,7 @@ Evaluated across the 6,832 test set samples:
 ## 7. Phase 9: Selective Federated Communication Optimization Contract
 
 ### 7.1 Protocol & Baselines Contract
-- **Optimization Strategy**: Client Communication Value (CCV) combining regional data variability, model divergence, and an information debt accumulator preventing starvation.
+- **Optimization Strategy**: Client Communication Value (CCV) combining regional sensor-share factor ($s_k$), regional speed drift proxy ($d_k$), and an information debt accumulator ($\tau_k$): $\text{CCV}_k = 1.0 \cdot s_k + 0.5 \cdot d_k + 0.15 \cdot \tau_k$.
 - **Matched Protocol**: `max_batches=30`, batch size 64, Adam optimizer (lr=0.001), seed 42, 13 rounds across all selective policies and matched controlled 4/4 baseline.
 - **Two Distinct Baselines Contract**:
   - `FROZEN_STAGE_8_FEDAVG_REFERENCE`: Historical full-epoch Stage 8.2 FedAvg benchmark (Test MAE: **3.5322 mph**, Best round: 8). Immutable historical reference; NOT the matched Phase-9 comparison denominator.
@@ -140,7 +140,7 @@ Under the objective space $(\min(\text{payload}), \min(\text{MAE}))$:
 
 ### 7.4 Starvation Observation
 - Rigorous observation: **"No starvation observed during the evaluated 13-round run."**
-- Maximum consecutive skipped rounds remained bounded across all clients.
+- Information debt is a `DERIVED_STATE` counter that increases a skipped client's future selection priority; maximum consecutive skipped rounds remained bounded across all clients.
 
 ### 7.5 Sensor-Share Factor vs Canonical FedAvg Weight
 - Regional sensor-share factors ($A=48/207 \approx 0.2319$, $B=57/207 \approx 0.2754$, $C=58/207 \approx 0.2802$, $D=44/207 \approx 0.2126$) are **DERIVED / HEURISTIC** spatial parameters used only in CCV weighting.
