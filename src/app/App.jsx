@@ -52,9 +52,7 @@ export default function App() {
             <div className="flex items-center gap-3 font-mono text-[11px]">
               <span>METR-LA (207 Sensors)</span>
               <span>•</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Phases 1–8 Frozen</span>
-              <span>•</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Phase 9 Complete</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Phases 1–10 Complete & Frozen</span>
             </div>
           </div>
         </footer>

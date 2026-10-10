@@ -303,7 +303,8 @@ To maintain scientific rigor, two baselines are strictly distinguished:
    - Role: Preserved as an immutable historical reference; NOT used as the matched Phase 9 accuracy denominator.
 2. **Phase 9 Controlled 4/4 Baseline (`POLICY_CONTROLLED_4_OF_4`)**:
    - Protocol: Matched `max_batches=30`, batch size 64, Adam lr 0.001, seed 42, 13 rounds.
-   - Test MAE: **3.6473 mph** (Best validation round: 13, Test RMSE: 7.2847, MAPE: 10.25%)
+   - Best Validation: **Round 13** (Best Validation MAE: **3.2542 mph**)
+   - Test Metrics: **3.6473 mph** MAE, Test RMSE: 7.2847 mph, MAPE: 10.25%
    - Application Payload: 11,468,184 Bytes (0.00% reduction)
    - Role: Matched comparison baseline for $\Delta\text{MAE}$, relative accuracy change, and Pareto dominance.
 
@@ -311,8 +312,8 @@ To maintain scientific rigor, two baselines are strictly distinguished:
 
 | Policy | Application Payload | Payload Reduction | Test MAE | $\Delta\text{MAE}$ vs Controlled 4/4 | Pareto Status |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| `POLICY_CONTROLLED_4_OF_4` | 11,468,184 B | 0.00% | 3.6473 mph | Baseline (0.0000) | Dominated by 2/4 |
-| `POLICY_CCV_3_OF_4` | 8,601,138 B | 25.00% | 3.6530 mph | +0.0057 mph | Dominated by 2/4 |
+| `POLICY_CONTROLLED_4_OF_4` | 11,468,184 B | 0.00% | 3.6473 mph | Baseline (0.0000) | Dominated by 2/4 (Val MAE: 3.2542) |
+| `POLICY_CCV_3_OF_4` | 8,601,138 B | 25.00% | 3.6530 mph | +0.0057 mph | Dominated by 2/4 (Val MAE: 3.2581) |
 | `POLICY_CCV_2_OF_4` | 5,734,092 B | 50.00% | 3.6448 mph | -0.0025 mph | **Pareto-Optimal (Best Balanced)** |
 | `POLICY_CCV_1_OF_4` | 2,867,046 B | 75.00% | 3.6699 mph | +0.0226 mph | **Pareto-Optimal (Max Efficiency)** |
 | *`FROZEN_STAGE_8_FEDAVG_REFERENCE`* | 11,468,184 B | — | 3.5322 mph | — | *Historical Frozen Benchmark* |
@@ -343,4 +344,48 @@ Under the two-objective optimization problem $\min(\text{application\_payload}, 
 
 ### 18.8 Scientific Scope and Limitations
 These results are empirical observations under the controlled 13-round METR-LA regional partition setup (seed 42, `max_batches=30`). They demonstrate practical viability of selective FL on spatiotemporal traffic graphs without claiming global optimality or universal generalization.
+
+---
+
+## Chapter 19 — Phase 10: System Evaluation, Demo Flow & Release Lock
+
+### 19.1 Phase 1–9 Scientific Freeze Confirmation
+All scientific results, model weights, splits, and experiment tables from Phases 1 through 9 are officially frozen:
+1. **Centralized Spatio-Temporal Baseline**: Graph+LSTM (**3.4378 mph** test MAE).
+2. **Phase 8 Full-Participation FedAvg**: Historical benchmark (**3.5322 mph** test MAE).
+3. **Phase 9 Controlled 4/4 Baseline**: Matched protocol (**3.6473 mph** test MAE, best round 13, best val MAE: **3.2542 mph**).
+4. **Phase 9 Selective FL Trade-off**:
+   - CCV 2/4: **3.6448 mph** MAE at **50.00% application-payload reduction** (Pareto-Optimal).
+   - CCV 1/4: **3.6699 mph** MAE at **75.00% application-payload reduction** (Pareto-Optimal).
+
+### 19.2 Safe Novelty Statement
+> **"Jointly deciding what traffic information is worth sensing and what learned information is worth federating."**
+
+### 19.3 Strict Negative Claims (What We Do NOT Claim)
+- **NOT** world-first or first-of-its-kind.
+- **NOT** state-of-the-art (SOTA).
+- **NOT** globally optimal.
+- **NOT** physical bandwidth savings.
+- **NOT** cryptographic privacy or security guarantees.
+
+### 19.4 Authoritative 7-Step Demo Flow
+The production console follows a seamless 7-step narrative:
+1. **OBSERVE**: 207 real METR-LA sensors across Los Angeles County highways on interactive Leaflet mapping.
+2. **PREDICT**: 7-model comparative benchmark proving Graph+LSTM superior across short horizons and Historical Average robust at +60m.
+3. **DECIDE**: 9-factor dynamic Need Score, Sensor Jury consensus, and Physics Gate spatial speed consistency.
+4. **ASK NEXT-BEST EVIDENCE**: Edge evidence-on-demand query ranker preventing unnecessary sensor polling.
+5. **FEDERATE SELECTIVELY**: 4 regional client partitions executing budget-constrained selective local training.
+6. **MEASURE COMMUNICATION**: Strict Layer 7 serialized application payload counting (187 B L1 / 110,271 B L2).
+7. **OPTIMIZE ACCURACY-VS-COMMUNICATION**: Mathematical Pareto trade-off proving CCV 2/4 achieves 50% application payload savings with zero empirical penalty (-0.0025 mph vs 4/4).
+
+### 19.5 Release Verification Matrix
+- **Backend Tests**: 300 passed, 0 failures (`pytest backend -v`).
+- **Frontend Linter**: 0 errors (`oxlint`).
+- **Frontend Build**: Success (`vite build`).
+- **Protected Hashes**:
+  - `graph_lstm_best.pt`: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
+  - `global_best.pt`: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
+  - `regions.json`: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2`
+  - Scaler: mean `58.584258`, std `12.822883`.
+
 

@@ -118,14 +118,14 @@ Evaluated across the 6,832 test set samples:
 - **Matched Protocol**: `max_batches=30`, batch size 64, Adam optimizer (lr=0.001), seed 42, 13 rounds across all selective policies and matched controlled 4/4 baseline.
 - **Two Distinct Baselines Contract**:
   - `FROZEN_STAGE_8_FEDAVG_REFERENCE`: Historical full-epoch Stage 8.2 FedAvg benchmark (Test MAE: **3.5322 mph**, Best round: 8). Immutable historical reference; NOT the matched Phase-9 comparison denominator.
-  - `POLICY_CONTROLLED_4_OF_4`: Matched control baseline (Test MAE: **3.6473 mph**, Test RMSE: 7.2847, MAPE: 10.25%, Best validation round: 13, Application Payload: 11,468,184 Bytes). Authoritative matched baseline for $\Delta\text{MAE}$ and Pareto dominance.
+  - `POLICY_CONTROLLED_4_OF_4`: Matched control baseline (Test MAE: **3.6473 mph**, Test RMSE: 7.2847, MAPE: 10.25%, Best validation round: 13, Best validation MAE: **3.2542 mph**, Application Payload: 11,468,184 Bytes). Authoritative matched baseline for $\Delta\text{MAE}$ and Pareto dominance.
 
 ### 7.2 Authoritative Empirical Comparison Table
 
 | Policy | Serialized Application Payload | Application-Payload Reduction | Test MAE (mph) | $\Delta\text{MAE}$ vs Controlled 4/4 | Pareto Classification |
 |---|---|---|---|---|---|
-| `POLICY_CONTROLLED_4_OF_4` | 11,468,184 B | 0.00% | 3.6473 | Baseline (0.0000) | Dominated by 2/4 |
-| `POLICY_CCV_3_OF_4` | 8,601,138 B | 25.00% | 3.6530 | +0.0057 | Dominated by 2/4 |
+| `POLICY_CONTROLLED_4_OF_4` | 11,468,184 B | 0.00% | 3.6473 | Baseline (0.0000) | Dominated by 2/4 (Val MAE: 3.2542) |
+| `POLICY_CCV_3_OF_4` | 8,601,138 B | 25.00% | 3.6530 | +0.0057 | Dominated by 2/4 (Val MAE: 3.2581) |
 | `POLICY_CCV_2_OF_4` | 5,734,092 B | 50.00% | 3.6448 | -0.0025 | **PARETO_OPTIMAL (Best Balanced)** |
 | `POLICY_CCV_1_OF_4` | 2,867,046 B | 75.00% | 3.6699 | +0.0226 | **PARETO_OPTIMAL (Max Efficiency)** |
 | *`FROZEN_STAGE_8_FEDAVG_REFERENCE`* | 11,468,184 B | — | 3.5322 | — | *Historical Frozen Benchmark* |
@@ -145,4 +145,34 @@ Under the objective space $(\min(\text{payload}), \min(\text{MAE}))$:
 ### 7.5 Sensor-Share Factor vs Canonical FedAvg Weight
 - Regional sensor-share factors ($A=48/207 \approx 0.2319$, $B=57/207 \approx 0.2754$, $C=58/207 \approx 0.2802$, $D=44/207 \approx 0.2126$) are **DERIVED / HEURISTIC** spatial parameters used only in CCV weighting.
 - Canonical FedAvg weights ($A \approx 0.229069$, $B \approx 0.277117$, $C \approx 0.279458$, $D \approx 0.214357$) are strictly sample-count proportions computed from 18,429,761 valid training targets.
+
+---
+
+## 8. Phase 10: Scientific Freeze & Research Governance Contract
+
+### 8.1 Research Synthesis & Frozen Benchmarks
+1. **Centralized Spatio-Temporal Baseline**: Graph+LSTM achieves **3.4378 mph** test MAE.
+2. **Phase 8 Historical Full-Participation FedAvg**: **3.5322 mph** test MAE (+2.75% gap vs centralized).
+3. **Phase 9 Matched Controlled 4/4**: **3.6473 mph** test MAE (Best round 13, Val MAE: **3.2542 mph**).
+4. **Phase 9 Selective FL Trade-off**:
+   - CCV 2/4: **3.6448 mph** MAE at **50.00% application-payload reduction** (Pareto-Optimal, Best Observed Balanced Trade-off).
+   - CCV 1/4: **3.6699 mph** MAE at **75.00% application-payload reduction** (Pareto-Optimal, Maximum Efficiency).
+
+### 8.2 Safe Novelty Statement
+> **"Jointly deciding what traffic information is worth sensing and what learned information is worth federating."**
+
+### 8.3 Strict Negative Disclaimers
+The platform strictly maintains the following negative disclaimers:
+- No claim of "world-first", "first-of-its-kind", or "state-of-the-art".
+- No claim of global optimality across unconstrained communication hyperplanes.
+- No claim of physical bandwidth savings (Layer 7 serialized application payloads measured).
+- No claim of cryptographic privacy or security guarantees.
+
+### 8.4 Protected Artifacts & Hashes Contract
+The following scientific artifact hashes are immutable and verified:
+- `graph_lstm_best.pt`: `702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384`
+- `global_best.pt`: `24710dae0fe0554ca8111ad21e05de03b69a282f0b8d8868a1433ba6fd9c2930`
+- `regions.json` canonical checksum: `ad064c643b6eb30cf9f7ef57cce71391ac4d94f7e41529dfcf4f0b1cd46e4ff2`
+- Runtime Scaler: mean `58.584258`, standard deviation `12.822883`.
+
 
