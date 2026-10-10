@@ -107,4 +107,42 @@ Evaluated across the 6,832 test set samples:
 - `predictions`: MODEL_OUTPUT (Inferred via Graph+LSTM)
 - `uncertaintyProxy`: CALIBRATED_PROXY (Calibrated against `val.npz` residual errors)
 - `Need Score`: DERIVED (Deterministic 9-factor combination)
-- `Phase 9 Communication Optimization`: NOT_STARTED / NOT_EVALUATED
+- `Phase 9 Communication Optimization`: COMPLETE & EVALUATED
+
+---
+
+## 7. Phase 9: Selective Federated Communication Optimization Contract
+
+### 7.1 Protocol & Baselines Contract
+- **Optimization Strategy**: Client Communication Value (CCV) combining regional data variability, model divergence, and an information debt accumulator preventing starvation.
+- **Matched Protocol**: `max_batches=30`, batch size 64, Adam optimizer (lr=0.001), seed 42, 13 rounds across all selective policies and matched controlled 4/4 baseline.
+- **Two Distinct Baselines Contract**:
+  - `FROZEN_STAGE_8_FEDAVG_REFERENCE`: Historical full-epoch Stage 8.2 FedAvg benchmark (Test MAE: **3.5322 mph**, Best round: 8). Immutable historical reference; NOT the matched Phase-9 comparison denominator.
+  - `POLICY_CONTROLLED_4_OF_4`: Matched control baseline (Test MAE: **3.6473 mph**, Test RMSE: 7.2847, MAPE: 10.25%, Best validation round: 13, Application Payload: 11,468,184 Bytes). Authoritative matched baseline for $\Delta\text{MAE}$ and Pareto dominance.
+
+### 7.2 Authoritative Empirical Comparison Table
+
+| Policy | Serialized Application Payload | Application-Payload Reduction | Test MAE (mph) | $\Delta\text{MAE}$ vs Controlled 4/4 | Pareto Classification |
+|---|---|---|---|---|---|
+| `POLICY_CONTROLLED_4_OF_4` | 11,468,184 B | 0.00% | 3.6473 | Baseline (0.0000) | Dominated by 2/4 |
+| `POLICY_CCV_3_OF_4` | 8,601,138 B | 25.00% | 3.6530 | +0.0057 | Dominated by 2/4 |
+| `POLICY_CCV_2_OF_4` | 5,734,092 B | 50.00% | 3.6448 | -0.0025 | **PARETO_OPTIMAL (Best Balanced)** |
+| `POLICY_CCV_1_OF_4` | 2,867,046 B | 75.00% | 3.6699 | +0.0226 | **PARETO_OPTIMAL (Max Efficiency)** |
+| *`FROZEN_STAGE_8_FEDAVG_REFERENCE`* | 11,468,184 B | — | 3.5322 | — | *Historical Frozen Benchmark* |
+
+### 7.3 Mathematical Pareto Dominance
+Under the objective space $(\min(\text{payload}), \min(\text{MAE}))$:
+- `POLICY_CCV_2_OF_4` strictly dominates `POLICY_CCV_3_OF_4` ($5,734,092\text{ B} < 8,601,138\text{ B}$ and $3.6448 < 3.6530\text{ mph}$).
+- Therefore, `POLICY_CCV_3_OF_4` is **PARETO_DOMINATED** and must NEVER be labeled Pareto-optimal.
+- `POLICY_CCV_2_OF_4` also strictly dominates `POLICY_CONTROLLED_4_OF_4` ($5,734,092\text{ B} < 11,468,184\text{ B}$ and $3.6448 < 3.6473\text{ mph}$).
+- **Pareto-Relevant Policies**: `POLICY_CCV_2_OF_4` and `POLICY_CCV_1_OF_4`.
+- **Best Observed Balanced Policy**: `POLICY_CCV_2_OF_4` achieves 50.00% serialized application payload reduction with 3.6448 mph test MAE.
+
+### 7.4 Starvation Observation
+- Rigorous observation: **"No starvation observed during the evaluated 13-round run."**
+- Maximum consecutive skipped rounds remained bounded across all clients.
+
+### 7.5 Sensor-Share Factor vs Canonical FedAvg Weight
+- Regional sensor-share factors ($A=48/207 \approx 0.2319$, $B=57/207 \approx 0.2754$, $C=58/207 \approx 0.2802$, $D=44/207 \approx 0.2126$) are **DERIVED / HEURISTIC** spatial parameters used only in CCV weighting.
+- Canonical FedAvg weights ($A \approx 0.229069$, $B \approx 0.277117$, $C \approx 0.279458$, $D \approx 0.214357$) are strictly sample-count proportions computed from 18,429,761 valid training targets.
+

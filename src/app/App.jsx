@@ -54,7 +54,7 @@ export default function App() {
               <span>•</span>
               <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Phases 1–8 Frozen</span>
               <span>•</span>
-              <span className="text-amber-500 font-semibold">Phase 9 In Progress</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Phase 9 Complete</span>
             </div>
           </div>
         </footer>

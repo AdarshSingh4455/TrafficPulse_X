@@ -1,0 +1,64 @@
+{
+  "policy": "POLICY_BASELINE_4_OF_4",
+  "budget": "4/4",
+  "clientsPerRound": 4,
+  "totalRoundsEvaluated": 13,
+  "bestRound": 8,
+  "bestValidationMAE": 3.1536,
+  "evaluationState": "EVALUATED_MEASURED",
+  "scientificClassification": "MEASURED_EXPERIMENT_RESULT",
+  "payloadClassification": "MEASURED_SERIALIZED_APPLICATION_PAYLOAD",
+  "communicationMetrics": {
+    "perRoundDownloadBytes": 441084,
+    "perRoundUploadBytes": 441084,
+    "totalApplicationBytes": 11468184,
+    "baselineTotalBytes": 11468184,
+    "applicationPayloadReductionBytes": 0,
+    "applicationPayloadReductionPercent": 0.0,
+    "downloadsCount": 52,
+    "uploadsCount": 52,
+    "transfersCount": 104
+  },
+  "accuracyMetrics": {
+    "testMAE": 3.5322,
+    "testRMSE": 7.0956,
+    "testMAPE": 9.99,
+    "deltaMAEvsFullFedAvg": 0.0,
+    "relativeMAEChangePercent": 0.0,
+    "byHorizon": {
+      "5": 2.4121,
+      "15": 3.0663,
+      "30": 3.7698,
+      "60": 4.8806
+    },
+    "byRegion": {
+      "REGION_A": 2.4446,
+      "REGION_B": 4.077,
+      "REGION_C": 3.484,
+      "REGION_D": 4.0979
+    }
+  },
+  "starvationAudit": {
+    "maxConsecutiveSkippedRounds": {
+      "REGION_A": 0,
+      "REGION_B": 0,
+      "REGION_C": 0,
+      "REGION_D": 0
+    },
+    "participationCounts": {
+      "REGION_A": 13,
+      "REGION_B": 13,
+      "REGION_C": 13,
+      "REGION_D": 13
+    },
+    "finalInformationDebt": {
+      "REGION_A": 0,
+      "REGION_B": 0,
+      "REGION_C": 0,
+      "REGION_D": 0
+    },
+    "starvationDetected": false
+  },
+  "roundsHistory": [],
+  "runtimeSec": 8874.77
+}

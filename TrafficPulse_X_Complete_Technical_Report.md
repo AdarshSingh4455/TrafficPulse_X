@@ -188,6 +188,12 @@ FastAPI handles incoming HTTP REST requests on `http://127.0.0.1:8000`. CORS mid
 | `GET` | `/api/prediction/forecast` | Multi-horizon forecast (+5m to +60m) | JSON |
 | `GET` | `/api/prediction/models` | 7-model comparative benchmark table | JSON |
 | `GET` | `/api/federated/metrics` | FL test metrics vs centralized baseline | JSON |
+| `GET` | `/api/communication/phase9/status` | Phase 9 status and baseline configuration | JSON |
+| `GET` | `/api/communication/phase9/client-values` | Client communication utility & information debt | JSON |
+| `GET` | `/api/communication/phase9/select?budget={tier}` | Client selection simulation under budget tier | JSON |
+| `GET` | `/api/communication/phase9/experiments` | Empirical Phase 9 policy comparison table | JSON |
+| `GET` | `/api/communication/phase9/tradeoff` | Communication-accuracy trade-off metrics | JSON |
+| `GET` | `/api/communication/phase9/rounds/{policy}` | Per-round metrics for evaluated policy | JSON |
 
 ---
 
@@ -250,9 +256,9 @@ npm run dev
 
 ## Chapter 13 — Testing and Verification
 
-- **Frontend Linter (`npm run lint`)**: 0 errors, 7 warnings.
-- **Frontend Build (`npm run build`)**: Passed cleanly in 2.02s.
-- **Backend Pytest (`pytest`)**: 40 passed in 15.02s.
+- **Frontend Linter (`npm run lint`)**: 0 errors, 8 warnings (oxlint).
+- **Frontend Build (`npm run build`)**: Passed cleanly in 2.44s (`dist/` generated).
+- **Backend Pytest (`python -m pytest backend -v`)**: 300 passed, 0 failures across all Stage 6, 7, 8, Phase 9.1, and Phase 9.2 test suites.
 
 ---
 
@@ -279,4 +285,62 @@ Contains 20 technical viva questions covering React, FastAPI, METR-LA, GCN, LSTM
 
 - METR-LA Benchmark (Li et al., ICLR 2018).
 - Inspected Commit: `8c9530fb3b7fda58a476136f4dda9f663a951056`.
-- Document Generated: October 9, 2026.
+- Document Generated: October 10, 2026.
+
+---
+
+## Chapter 18 — Phase 9: Selective Federated Communication Optimization
+
+### 18.1 Overview & Architecture
+Phase 9 introduces selective federated client participation under constrained communication budgets. Clients compute a Client Communication Value (CCV) combining regional data variability, model divergence, and an information debt counter that prevents client starvation.
+
+### 18.2 Two Distinct Baselines Contract
+To maintain scientific rigor, two baselines are strictly distinguished:
+1. **Historical Frozen Reference (`FROZEN_STAGE_8_FEDAVG_REFERENCE`)**:
+   - Training Mode: Full-epoch Stage 8.2 FedAvg (8,874s unconstrained runtime)
+   - Test MAE: **3.5322 mph** (Best round: 8)
+   - Application Payload: 11,468,184 Bytes
+   - Role: Preserved as an immutable historical reference; NOT used as the matched Phase 9 accuracy denominator.
+2. **Phase 9 Controlled 4/4 Baseline (`POLICY_CONTROLLED_4_OF_4`)**:
+   - Protocol: Matched `max_batches=30`, batch size 64, Adam lr 0.001, seed 42, 13 rounds.
+   - Test MAE: **3.6473 mph** (Best validation round: 13, Test RMSE: 7.2847, MAPE: 10.25%)
+   - Application Payload: 11,468,184 Bytes (0.00% reduction)
+   - Role: Matched comparison baseline for $\Delta\text{MAE}$, relative accuracy change, and Pareto dominance.
+
+### 18.3 Empirical Policy Comparison Table
+
+| Policy | Application Payload | Payload Reduction | Test MAE | $\Delta\text{MAE}$ vs Controlled 4/4 | Pareto Status |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| `POLICY_CONTROLLED_4_OF_4` | 11,468,184 B | 0.00% | 3.6473 mph | Baseline (0.0000) | Dominated by 2/4 |
+| `POLICY_CCV_3_OF_4` | 8,601,138 B | 25.00% | 3.6530 mph | +0.0057 mph | Dominated by 2/4 |
+| `POLICY_CCV_2_OF_4` | 5,734,092 B | 50.00% | 3.6448 mph | -0.0025 mph | **Pareto-Optimal (Best Balanced)** |
+| `POLICY_CCV_1_OF_4` | 2,867,046 B | 75.00% | 3.6699 mph | +0.0226 mph | **Pareto-Optimal (Max Efficiency)** |
+| *`FROZEN_STAGE_8_FEDAVG_REFERENCE`* | 11,468,184 B | — | 3.5322 mph | — | *Historical Frozen Benchmark* |
+
+### 18.4 Mathematical Pareto Dominance Analysis
+Under the two-objective optimization problem $\min(\text{application\_payload}, \text{test\_MAE})$:
+- `POLICY_CCV_2_OF_4` achieves both lower payload ($5,734,092\text{ B} < 8,601,138\text{ B}$) and lower MAE ($3.6448 < 3.6530$) than `POLICY_CCV_3_OF_4`.
+- Consequently, **`POLICY_CCV_3_OF_4` is mathematically strictly dominated** by `POLICY_CCV_2_OF_4` and must NEVER be described as Pareto-optimal.
+- Furthermore, `POLICY_CCV_2_OF_4` strictly dominates `POLICY_CONTROLLED_4_OF_4` ($5,734,092\text{ B} < 11,468,184\text{ B}$ and $3.6448 < 3.6473$).
+- **Pareto-relevant policies under the evaluated matched Phase-9 setup**: `POLICY_CCV_2_OF_4` and `POLICY_CCV_1_OF_4`.
+- **Best observed balanced trade-off**: Under the chosen balanced decision criterion, CCV 2/4 provided the best observed trade-off, reducing serialized application payload by **50.00%** while achieving **3.6448 mph** test MAE.
+
+### 18.5 Starvation Observation
+- Rigorous observation: **"No starvation observed during the evaluated 13-round run."**
+- All 4 clients participated across the 13-round schedule under all selective policies. Information debt grew during skipped rounds and successfully triggered priority participation in subsequent rounds.
+
+### 18.6 Communication Payload Accounting
+- **L1 Compact Numeric**: 32 B raw float64 (`NUMERIC_FIELD_RAW_BYTES`: 4 $\times$ float64 fields: speedMph, timestampEpoch, dataQuality, needScore).
+- **L1 Serialized**: 187 B (`MEASURED_SERIALIZED_APPLICATION_PAYLOAD`).
+- **L1 Detailed Query**: 4,301 B / ~4.2 KB (12-step historical telemetry query proxy).
+- **L2 Raw Tensor**: 106,384 B (`RAW_TENSOR_PAYLOAD_BYTES`).
+- **L2 Serialized**: 110,271 B (`MEASURED_SERIALIZED_APPLICATION_PAYLOAD`).
+- **Reduction Metric**: Explicitly documented as **Application-Payload Reduction**, not physical bandwidth saved.
+
+### 18.7 Sensor Share vs FedAvg Aggregation Weights
+- Regional Sensor-Share Factors ($A=48/207 \approx 0.2319$, $B=57/207 \approx 0.2754$, $C=58/207 \approx 0.2802$, $D=44/207 \approx 0.2126$) are **DERIVED / HEURISTIC** spatial proportions used exclusively in CCV client weighting.
+- Canonical FedAvg aggregation weights ($A \approx 0.229069$, $B \approx 0.277117$, $C \approx 0.279458$, $D \approx 0.214357$) are strictly sample-count proportions computed from 18,429,761 valid training targets.
+
+### 18.8 Scientific Scope and Limitations
+These results are empirical observations under the controlled 13-round METR-LA regional partition setup (seed 42, `max_batches=30`). They demonstrate practical viability of selective FL on spatiotemporal traffic graphs without claiming global optimality or universal generalization.
+

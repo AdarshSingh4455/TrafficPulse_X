@@ -1,0 +1,1287 @@
+{
+  "policy": "POLICY_CCV_1_OF_4",
+  "budget": "1/4",
+  "clientsPerRound": 1,
+  "totalRoundsEvaluated": 13,
+  "bestRound": 13,
+  "bestValidationMAE": 3.2761,
+  "evaluationState": "EVALUATED_MEASURED",
+  "scientificClassification": "MEASURED_EXPERIMENT_RESULT",
+  "payloadClassification": "MEASURED_SERIALIZED_APPLICATION_PAYLOAD",
+  "communicationMetrics": {
+    "perRoundDownloadBytes": 110271,
+    "perRoundUploadBytes": 110271,
+    "totalApplicationBytes": 2867046,
+    "baselineTotalBytes": 11468184,
+    "applicationPayloadReductionBytes": 8601138,
+    "applicationPayloadReductionPercent": 75.0,
+    "downloadsCount": 13,
+    "uploadsCount": 13,
+    "transfersCount": 26
+  },
+  "accuracyMetrics": {
+    "testMAE": 3.6699,
+    "testRMSE": 7.3084,
+    "testMAPE": 10.44,
+    "deltaMAEvsFullFedAvg": 0.1377,
+    "relativeMAEChangePercent": 3.9,
+    "byHorizon": {
+      "5": 2.5324,
+      "15": 3.1917,
+      "30": 3.8917,
+      "60": 5.064
+    },
+    "byRegion": {
+      "REGION_A": 2.5221,
+      "REGION_B": 4.2586,
+      "REGION_C": 3.6197,
+      "REGION_D": 4.2484
+    }
+  },
+  "starvationAudit": {
+    "maxConsecutiveSkippedRounds": {
+      "REGION_A": 3,
+      "REGION_B": 3,
+      "REGION_C": 3,
+      "REGION_D": 3
+    },
+    "participationCounts": {
+      "REGION_A": 3,
+      "REGION_B": 3,
+      "REGION_C": 4,
+      "REGION_D": 3
+    },
+    "finalInformationDebt": {
+      "REGION_A": 2,
+      "REGION_B": 3,
+      "REGION_C": 0,
+      "REGION_D": 1
+    },
+    "starvationDetected": false
+  },
+  "roundsHistory": [
+    {
+      "round": 1,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_C"
+      ],
+      "skippedClients": [
+        "REGION_B",
+        "REGION_A",
+        "REGION_D"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 0,
+          "utilityScore": 0.3219,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 0,
+          "utilityScore": 0.3354,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 0,
+          "utilityScore": 0.3902,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 0,
+          "utilityScore": 0.2876,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 0,
+        "REGION_B": 0,
+        "REGION_C": 0,
+        "REGION_D": 0
+      },
+      "debtsAfter": {
+        "REGION_A": 1,
+        "REGION_B": 1,
+        "REGION_C": 0,
+        "REGION_D": 1
+      },
+      "aggregationWeights": {
+        "CLIENT_C": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 220542,
+      "globalValidationMAE": 4.6768,
+      "globalValidationRMSE": 8.8476,
+      "globalValidationMAPE": 17.35,
+      "horizonValidationMAE": {
+        "5": 4.0321,
+        "15": 4.3161,
+        "30": 4.7022,
+        "60": 5.657
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.824,
+        "REGION_B": 6.1404,
+        "REGION_C": 4.6416,
+        "REGION_D": 4.8648
+      },
+      "isBestSoFar": true,
+      "durationSec": 24.6
+    },
+    {
+      "round": 2,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_B"
+      ],
+      "skippedClients": [
+        "REGION_A",
+        "REGION_D",
+        "REGION_C"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 1,
+          "utilityScore": 0.4719,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 1,
+          "utilityScore": 0.4854,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 0,
+          "utilityScore": 0.3902,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 1,
+          "utilityScore": 0.4376,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 1,
+        "REGION_B": 1,
+        "REGION_C": 0,
+        "REGION_D": 1
+      },
+      "debtsAfter": {
+        "REGION_A": 2,
+        "REGION_B": 0,
+        "REGION_C": 1,
+        "REGION_D": 2
+      },
+      "aggregationWeights": {
+        "CLIENT_B": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 441084,
+      "globalValidationMAE": 3.4972,
+      "globalValidationRMSE": 6.8759,
+      "globalValidationMAPE": 10.05,
+      "horizonValidationMAE": {
+        "5": 2.5324,
+        "15": 3.0907,
+        "30": 3.6975,
+        "60": 4.6682
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.5673,
+        "REGION_B": 4.0273,
+        "REGION_C": 3.5861,
+        "REGION_D": 3.719
+      },
+      "isBestSoFar": true,
+      "durationSec": 27.04
+    },
+    {
+      "round": 3,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_A"
+      ],
+      "skippedClients": [
+        "REGION_D",
+        "REGION_C",
+        "REGION_B"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 2,
+          "utilityScore": 0.6219,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 0,
+          "utilityScore": 0.3354,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 1,
+          "utilityScore": 0.5402,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 2,
+          "utilityScore": 0.5876,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 2,
+        "REGION_B": 0,
+        "REGION_C": 1,
+        "REGION_D": 2
+      },
+      "debtsAfter": {
+        "REGION_A": 0,
+        "REGION_B": 1,
+        "REGION_C": 2,
+        "REGION_D": 3
+      },
+      "aggregationWeights": {
+        "CLIENT_A": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 661626,
+      "globalValidationMAE": 3.5831,
+      "globalValidationRMSE": 6.9129,
+      "globalValidationMAPE": 11.32,
+      "horizonValidationMAE": {
+        "5": 2.5503,
+        "15": 3.1195,
+        "30": 3.837,
+        "60": 4.8255
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4802,
+        "REGION_B": 4.3552,
+        "REGION_C": 3.6069,
+        "REGION_D": 3.7657
+      },
+      "isBestSoFar": false,
+      "durationSec": 26.19
+    },
+    {
+      "round": 4,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_D"
+      ],
+      "skippedClients": [
+        "REGION_C",
+        "REGION_B",
+        "REGION_A"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 0,
+          "utilityScore": 0.3219,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 1,
+          "utilityScore": 0.4854,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 2,
+          "utilityScore": 0.6902,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 3,
+          "utilityScore": 0.7376,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 0,
+        "REGION_B": 1,
+        "REGION_C": 2,
+        "REGION_D": 3
+      },
+      "debtsAfter": {
+        "REGION_A": 1,
+        "REGION_B": 2,
+        "REGION_C": 3,
+        "REGION_D": 0
+      },
+      "aggregationWeights": {
+        "CLIENT_D": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 882168,
+      "globalValidationMAE": 3.3303,
+      "globalValidationRMSE": 6.7578,
+      "globalValidationMAPE": 9.21,
+      "horizonValidationMAE": {
+        "5": 2.3662,
+        "15": 2.9253,
+        "30": 3.5285,
+        "60": 4.5013
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4566,
+        "REGION_B": 3.8397,
+        "REGION_C": 3.3864,
+        "REGION_D": 3.5595
+      },
+      "isBestSoFar": true,
+      "durationSec": 24.75
+    },
+    {
+      "round": 5,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_C"
+      ],
+      "skippedClients": [
+        "REGION_B",
+        "REGION_A",
+        "REGION_D"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 1,
+          "utilityScore": 0.4719,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 2,
+          "utilityScore": 0.6354,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 3,
+          "utilityScore": 0.8402,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 0,
+          "utilityScore": 0.2876,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 1,
+        "REGION_B": 2,
+        "REGION_C": 3,
+        "REGION_D": 0
+      },
+      "debtsAfter": {
+        "REGION_A": 2,
+        "REGION_B": 3,
+        "REGION_C": 0,
+        "REGION_D": 1
+      },
+      "aggregationWeights": {
+        "CLIENT_C": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 1102710,
+      "globalValidationMAE": 3.32,
+      "globalValidationRMSE": 6.7613,
+      "globalValidationMAPE": 9.17,
+      "horizonValidationMAE": {
+        "5": 2.3589,
+        "15": 2.9151,
+        "30": 3.5077,
+        "60": 4.4984
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4436,
+        "REGION_B": 3.8433,
+        "REGION_C": 3.3617,
+        "REGION_D": 3.5529
+      },
+      "isBestSoFar": true,
+      "durationSec": 23.21
+    },
+    {
+      "round": 6,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_B"
+      ],
+      "skippedClients": [
+        "REGION_A",
+        "REGION_D",
+        "REGION_C"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 2,
+          "utilityScore": 0.6219,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 3,
+          "utilityScore": 0.7854,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 0,
+          "utilityScore": 0.3902,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 1,
+          "utilityScore": 0.4376,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 2,
+        "REGION_B": 3,
+        "REGION_C": 0,
+        "REGION_D": 1
+      },
+      "debtsAfter": {
+        "REGION_A": 3,
+        "REGION_B": 0,
+        "REGION_C": 1,
+        "REGION_D": 2
+      },
+      "aggregationWeights": {
+        "CLIENT_B": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 1323252,
+      "globalValidationMAE": 3.2975,
+      "globalValidationRMSE": 6.8097,
+      "globalValidationMAPE": 8.9,
+      "horizonValidationMAE": {
+        "5": 2.3382,
+        "15": 2.8984,
+        "30": 3.498,
+        "60": 4.4553
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4476,
+        "REGION_B": 3.7689,
+        "REGION_C": 3.3558,
+        "REGION_D": 3.5469
+      },
+      "isBestSoFar": true,
+      "durationSec": 23.63
+    },
+    {
+      "round": 7,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_A"
+      ],
+      "skippedClients": [
+        "REGION_D",
+        "REGION_C",
+        "REGION_B"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 3,
+          "utilityScore": 0.7719,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 0,
+          "utilityScore": 0.3354,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 1,
+          "utilityScore": 0.5402,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 2,
+          "utilityScore": 0.5876,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 3,
+        "REGION_B": 0,
+        "REGION_C": 1,
+        "REGION_D": 2
+      },
+      "debtsAfter": {
+        "REGION_A": 0,
+        "REGION_B": 1,
+        "REGION_C": 2,
+        "REGION_D": 3
+      },
+      "aggregationWeights": {
+        "CLIENT_A": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 1543794,
+      "globalValidationMAE": 3.3678,
+      "globalValidationRMSE": 6.7594,
+      "globalValidationMAPE": 9.75,
+      "horizonValidationMAE": {
+        "5": 2.3851,
+        "15": 2.9474,
+        "30": 3.564,
+        "60": 4.5745
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4067,
+        "REGION_B": 3.9752,
+        "REGION_C": 3.4014,
+        "REGION_D": 3.5951
+      },
+      "isBestSoFar": false,
+      "durationSec": 21.81
+    },
+    {
+      "round": 8,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_D"
+      ],
+      "skippedClients": [
+        "REGION_C",
+        "REGION_B",
+        "REGION_A"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 0,
+          "utilityScore": 0.3219,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 1,
+          "utilityScore": 0.4854,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 2,
+          "utilityScore": 0.6902,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 3,
+          "utilityScore": 0.7376,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 0,
+        "REGION_B": 1,
+        "REGION_C": 2,
+        "REGION_D": 3
+      },
+      "debtsAfter": {
+        "REGION_A": 1,
+        "REGION_B": 2,
+        "REGION_C": 3,
+        "REGION_D": 0
+      },
+      "aggregationWeights": {
+        "CLIENT_D": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 1764336,
+      "globalValidationMAE": 3.3025,
+      "globalValidationRMSE": 6.7327,
+      "globalValidationMAPE": 8.96,
+      "horizonValidationMAE": {
+        "5": 2.3544,
+        "15": 2.9007,
+        "30": 3.4916,
+        "60": 4.4632
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4545,
+        "REGION_B": 3.8066,
+        "REGION_C": 3.3469,
+        "REGION_D": 3.5252
+      },
+      "isBestSoFar": false,
+      "durationSec": 20.85
+    },
+    {
+      "round": 9,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_C"
+      ],
+      "skippedClients": [
+        "REGION_B",
+        "REGION_A",
+        "REGION_D"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 1,
+          "utilityScore": 0.4719,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 2,
+          "utilityScore": 0.6354,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 3,
+          "utilityScore": 0.8402,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 0,
+          "utilityScore": 0.2876,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 1,
+        "REGION_B": 2,
+        "REGION_C": 3,
+        "REGION_D": 0
+      },
+      "debtsAfter": {
+        "REGION_A": 2,
+        "REGION_B": 3,
+        "REGION_C": 0,
+        "REGION_D": 1
+      },
+      "aggregationWeights": {
+        "CLIENT_C": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 1984878,
+      "globalValidationMAE": 3.324,
+      "globalValidationRMSE": 6.7627,
+      "globalValidationMAPE": 9.24,
+      "horizonValidationMAE": {
+        "5": 2.3785,
+        "15": 2.9068,
+        "30": 3.5073,
+        "60": 4.5032
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.426,
+        "REGION_B": 3.8835,
+        "REGION_C": 3.3495,
+        "REGION_D": 3.5543
+      },
+      "isBestSoFar": false,
+      "durationSec": 22.63
+    },
+    {
+      "round": 10,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_B"
+      ],
+      "skippedClients": [
+        "REGION_A",
+        "REGION_D",
+        "REGION_C"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 2,
+          "utilityScore": 0.6219,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 3,
+          "utilityScore": 0.7854,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 0,
+          "utilityScore": 0.3902,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 1,
+          "utilityScore": 0.4376,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 2,
+        "REGION_B": 3,
+        "REGION_C": 0,
+        "REGION_D": 1
+      },
+      "debtsAfter": {
+        "REGION_A": 3,
+        "REGION_B": 0,
+        "REGION_C": 1,
+        "REGION_D": 2
+      },
+      "aggregationWeights": {
+        "CLIENT_B": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 2205420,
+      "globalValidationMAE": 3.2777,
+      "globalValidationRMSE": 6.8329,
+      "globalValidationMAPE": 8.82,
+      "horizonValidationMAE": {
+        "5": 2.3152,
+        "15": 2.8777,
+        "30": 3.4806,
+        "60": 4.437
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4296,
+        "REGION_B": 3.7484,
+        "REGION_C": 3.3321,
+        "REGION_D": 3.5309
+      },
+      "isBestSoFar": true,
+      "durationSec": 23.04
+    },
+    {
+      "round": 11,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_A"
+      ],
+      "skippedClients": [
+        "REGION_D",
+        "REGION_C",
+        "REGION_B"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 3,
+          "utilityScore": 0.7719,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 0,
+          "utilityScore": 0.3354,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 1,
+          "utilityScore": 0.5402,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 2,
+          "utilityScore": 0.5876,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 3,
+        "REGION_B": 0,
+        "REGION_C": 1,
+        "REGION_D": 2
+      },
+      "debtsAfter": {
+        "REGION_A": 0,
+        "REGION_B": 1,
+        "REGION_C": 2,
+        "REGION_D": 3
+      },
+      "aggregationWeights": {
+        "CLIENT_A": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 2425962,
+      "globalValidationMAE": 3.3448,
+      "globalValidationRMSE": 6.7268,
+      "globalValidationMAPE": 9.68,
+      "horizonValidationMAE": {
+        "5": 2.3746,
+        "15": 2.9167,
+        "30": 3.5147,
+        "60": 4.573
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.3899,
+        "REGION_B": 3.9617,
+        "REGION_C": 3.3642,
+        "REGION_D": 3.5712
+      },
+      "isBestSoFar": false,
+      "durationSec": 21.15
+    },
+    {
+      "round": 12,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_D"
+      ],
+      "skippedClients": [
+        "REGION_C",
+        "REGION_B",
+        "REGION_A"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 0,
+          "utilityScore": 0.3219,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 1,
+          "utilityScore": 0.4854,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 2,
+          "utilityScore": 0.6902,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 3,
+          "utilityScore": 0.7376,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 0,
+        "REGION_B": 1,
+        "REGION_C": 2,
+        "REGION_D": 3
+      },
+      "debtsAfter": {
+        "REGION_A": 1,
+        "REGION_B": 2,
+        "REGION_C": 3,
+        "REGION_D": 0
+      },
+      "aggregationWeights": {
+        "CLIENT_D": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 2646504,
+      "globalValidationMAE": 3.3057,
+      "globalValidationRMSE": 6.6785,
+      "globalValidationMAPE": 9.18,
+      "horizonValidationMAE": {
+        "5": 2.3203,
+        "15": 2.8838,
+        "30": 3.5004,
+        "60": 4.5184
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4365,
+        "REGION_B": 3.8551,
+        "REGION_C": 3.3361,
+        "REGION_D": 3.5112
+      },
+      "isBestSoFar": false,
+      "durationSec": 21.29
+    },
+    {
+      "round": 13,
+      "budget": "1/4",
+      "selectedClients": [
+        "REGION_C"
+      ],
+      "skippedClients": [
+        "REGION_B",
+        "REGION_A",
+        "REGION_D"
+      ],
+      "clientValues": [
+        {
+          "clientId": "REGION_A",
+          "regionName": "North-East",
+          "sensorCount": 48,
+          "sensorShareFactor": 0.2319,
+          "dataWeight": 0.2319,
+          "driftScore": 0.18,
+          "informationDebt": 1,
+          "utilityScore": 0.4719,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_B",
+          "regionName": "South-East",
+          "sensorCount": 57,
+          "sensorShareFactor": 0.2754,
+          "dataWeight": 0.2754,
+          "driftScore": 0.12,
+          "informationDebt": 2,
+          "utilityScore": 0.6354,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_C",
+          "regionName": "Central-West",
+          "sensorCount": 58,
+          "sensorShareFactor": 0.2802,
+          "dataWeight": 0.2802,
+          "driftScore": 0.22,
+          "informationDebt": 3,
+          "utilityScore": 0.8402,
+          "classification": "CALIBRATED_PROXY"
+        },
+        {
+          "clientId": "REGION_D",
+          "regionName": "North-West",
+          "sensorCount": 44,
+          "sensorShareFactor": 0.2126,
+          "dataWeight": 0.2126,
+          "driftScore": 0.15,
+          "informationDebt": 0,
+          "utilityScore": 0.2876,
+          "classification": "CALIBRATED_PROXY"
+        }
+      ],
+      "debtsBefore": {
+        "REGION_A": 1,
+        "REGION_B": 2,
+        "REGION_C": 3,
+        "REGION_D": 0
+      },
+      "debtsAfter": {
+        "REGION_A": 2,
+        "REGION_B": 3,
+        "REGION_C": 0,
+        "REGION_D": 1
+      },
+      "aggregationWeights": {
+        "CLIENT_C": 1.0
+      },
+      "downloadBytes": 110271,
+      "uploadBytes": 110271,
+      "roundTotalBytes": 220542,
+      "cumulativeBytes": 2867046,
+      "globalValidationMAE": 3.2761,
+      "globalValidationRMSE": 6.7178,
+      "globalValidationMAPE": 9.16,
+      "horizonValidationMAE": {
+        "5": 2.3237,
+        "15": 2.8761,
+        "30": 3.4637,
+        "60": 4.4409
+      },
+      "regionValidationMAE": {
+        "REGION_A": 2.4016,
+        "REGION_B": 3.8099,
+        "REGION_C": 3.3095,
+        "REGION_D": 3.5039
+      },
+      "isBestSoFar": true,
+      "durationSec": 21.76
+    }
+  ],
+  "runtimeSec": 301.96
+}

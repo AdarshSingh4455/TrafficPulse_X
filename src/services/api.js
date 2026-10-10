@@ -299,9 +299,61 @@ export async function fetchFederatedCommunication() {
   return await res.json();
 }
 
+// -------------------------------------------------------------
+// Phase 9.1 Communication Intelligence Foundation Endpoints
+// -------------------------------------------------------------
+
+export async function fetchPhase9Status() {
+  const res = await apiFetch(`${API_BASE}/communication/phase9/status`);
+  if (!res.ok) throw new Error(`Phase 9 Status Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchPhase9Selection(budget = "3/4") {
+  const res = await apiFetch(`${API_BASE}/communication/phase9/select?budget=${encodeURIComponent(budget)}`);
+  if (!res.ok) throw new Error(`Phase 9 Selection Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchPhase9ClientValues() {
+  const res = await apiFetch(`${API_BASE}/communication/phase9/client-values`);
+  if (!res.ok) throw new Error(`Phase 9 Client Values Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+// -------------------------------------------------------------
+// Phase 9.2 Controlled Selective FL Experiment Endpoints
+// -------------------------------------------------------------
+
+export async function fetchPhase9Experiments() {
+  const res = await apiFetch(`${API_BASE}/communication/phase9/experiments`);
+  if (!res.ok) throw new Error(`Phase 9 Experiments Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchPhase9Policy(policy) {
+  const res = await apiFetch(`${API_BASE}/communication/phase9/experiments/${encodeURIComponent(policy)}`);
+  if (!res.ok) throw new Error(`Phase 9 Policy Details Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchPhase9Tradeoff() {
+  const res = await apiFetch(`${API_BASE}/communication/phase9/tradeoff`);
+  if (!res.ok) throw new Error(`Phase 9 Tradeoff Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
+export async function fetchPhase9Rounds(policy) {
+  const res = await apiFetch(`${API_BASE}/communication/phase9/rounds/${encodeURIComponent(policy)}`);
+  if (!res.ok) throw new Error(`Phase 9 Rounds History Fetch Failed: ${res.status} ${res.statusText}`);
+  return await res.json();
+}
+
 // Aliases matching getFederated* naming requirement
 export const getFederatedStatus = fetchFederatedStatus;
 export const getFederatedClients = fetchFederatedClients;
 export const getFederatedRounds = fetchFederatedRounds;
 export const getFederatedMetrics = fetchFederatedMetrics;
 export const getFederatedCommunication = fetchFederatedCommunication;
+
+

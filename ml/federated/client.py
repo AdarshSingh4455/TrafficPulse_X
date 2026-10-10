@@ -103,7 +103,8 @@ class FederatedClient:
         self,
         batch_size: int = 64,
         lr: float = 0.001,
-        local_seed: int = 42
+        local_seed: int = 42,
+        max_batches: Optional[int] = None
     ) -> float:
         """
         Performs 1 local training epoch on client's regional train dataset split using Adam optimizer
@@ -120,8 +121,12 @@ class FederatedClient:
 
         total_loss = 0.0
         total_valid = 0
+        batch_count = 0
 
         for i in range(0, num_samples, batch_size):
+            if max_batches is not None and batch_count >= max_batches:
+                break
+            batch_count += 1
             batch_idx = indices[i: i + batch_size]
             bx = self.train_x[batch_idx]       # [B, 12, N, 1] normalized speed
             bx_mask = self.train_x_mask[batch_idx]

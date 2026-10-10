@@ -126,3 +126,39 @@ Communication is measured across two distinct network protocol boundaries:
 
 All API endpoints are hosted by a single FastAPI application instance (`backend/main.py`) running on port 8000.
 The React frontend routes all HTTP calls exclusively through `src/services/api.js`.
+
+---
+
+## 5. Phase 9 Selective Communication Engine Architecture
+
+Phase 9 introduces selective client participation under constrained communication budgets:
+
+```
++-------------------------------------------------------------------------------+
+|                      REGIONAL FL CLIENTS (A, B, C, D)                        |
++-------------------------------------------------------------------------------+
+        |                               |                               |
+        v                               v                               v
++-----------------------+     +-------------------+     +-----------------------+
+| Spatial Variance      |     | Model Divergence  |     | Information Debt      |
+| Regional Dynamics     |     | Weight Delta L2   |     | Counter (No Starve)   |
++-----------------------+     +-------------------+     +-----------------------+
+        \                               |                               /
+         -----------------------+-------+-------------------------------
+                                |
+                                v
++-------------------------------------------------------------------------------+
+| Client Communication Value (CCV) = w_var*Var + w_div*Div + w_debt*Debt        |
++-------------------------------------------------------------------------------+
+                                |
+                                v
++-------------------------------------------------------------------------------+
+| Budget Selector (4/4, 3/4, 2/4, 1/4) -> Top-K Participant Regional Updates    |
++-------------------------------------------------------------------------------+
+```
+
+- **Policy Selector**: `backend/communication_intelligence/policies.py`
+- **Service Layer**: `backend/communication_intelligence/service.py`
+- **Budget Tiers**: 4/4 (Baseline), 3/4 (25% reduction), 2/4 (50% reduction, Pareto-Optimal), 1/4 (75% reduction, Pareto-Optimal).
+- **Accounting**: 110,271 B serialized application payload per client per round; zero mock values.
+

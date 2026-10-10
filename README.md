@@ -9,7 +9,7 @@ TrafficPulse-X is an **Evidence-on-Demand Federated Traffic-Flow Prediction Plat
 ## 1. Project Objectives
 
 1. **Prediction Accuracy**: Multi-horizon spatio-temporal traffic speed forecasting (+5m to +60m) using Spatial Graph Convolutions and LSTM cells (`Graph+LSTM`). *(Implemented & Evaluated)*
-2. **Communication Efficiency & Accounting**: Application payload monitoring and selective edge evidence acquisition. *(Baseline Accounting Implemented; Optimization pending Phase 9)*
+2. **Communication Efficiency & Accounting**: Application payload monitoring and selective edge evidence acquisition. *(Baseline Accounting & Phase 9 Selective Communication Optimization COMPLETE & Evaluated)*
 
 ---
 
@@ -153,7 +153,16 @@ Evaluated over 6,832 test set samples:
 - **Level 1 Batch**: ~4.2 KB application payload proxy (`APPLICATION_PAYLOAD_PROXY`).
 - **Level 2 FL Client Update**: 26,596 FP32 parameters $\rightarrow$ 106,384 bytes raw tensor $\rightarrow$ 110,271 bytes serialized PyTorch state dict per update.
 - **13-Round Total**: 52 uploads (5,734,092 bytes) + 52 downloads (5,734,092 bytes) = 104 transfers = **11,468,184 bytes** (11.47 MB).
-- *Phase 9 Communication Optimization is marked as NOT_STARTED.*
+- **Phase 9 Selective Communication Optimization**: **COMPLETE & EVALUATED**
+  - **Matched Protocol**: `max_batches=30`, batch size 64, Adam lr 0.001, seed 42, 13 rounds across all selective policies and matched controlled 4/4 baseline.
+  - **Empirical Results**:
+    - `POLICY_CONTROLLED_4_OF_4`: 11,468,184 B (0.00% red.), 3.6473 mph Test MAE (Baseline, dominated by 2/4)
+    - `POLICY_CCV_3_OF_4`: 8,601,138 B (25.00% red.), 3.6530 mph Test MAE (Dominated by 2/4)
+    - `POLICY_CCV_2_OF_4`: 5,734,092 B (50.00% red.), 3.6448 mph Test MAE (**Pareto-Optimal, Best Balanced Trade-off**)
+    - `POLICY_CCV_1_OF_4`: 2,867,046 B (75.00% red.), 3.6699 mph Test MAE (**Pareto-Optimal, Max Efficiency**)
+    - `FROZEN_STAGE_8_FEDAVG_REFERENCE`: 11,468,184 B, 3.5322 mph Test MAE (*Historical frozen reference only*)
+  - **Pareto-Relevant Policies**: `POLICY_CCV_2_OF_4` and `POLICY_CCV_1_OF_4`.
+  - **Starvation Observation**: No starvation observed during the evaluated 13-round run.
 
 ---
 
@@ -199,8 +208,11 @@ npm run dev
 ## 12. Testing & Verification
 
 ```bash
-# Run backend pytest suite (270 passed expected)
-PYTHONPATH=. pytest backend -v
+# Run backend pytest suite (300 passed expected across all phases)
+python -m pytest backend -v
+
+# Run frontend lint check (0 errors required)
+npm run lint
 
 # Run frontend build check
 npm run build
@@ -231,5 +243,6 @@ npm run build
 ## 15. Project Status & Roadmap
 
 - **Phase 1 – Phase 8**: **COMPLETE & FROZEN**
-- **Phase 9 (Communication Intelligence)**: **NOT_STARTED**
+- **Phase 9 (Communication Intelligence)**: **COMPLETE & EVALUATED**
 - **Phase 10 (Final System & Experiments)**: **NOT_STARTED**
+

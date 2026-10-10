@@ -15,6 +15,7 @@ from backend.datasets.metr_la import (
     get_metr_la_snapshot,
     get_metr_la_ml_ready_status
 )
+from backend.communication_intelligence.service import get_comm_intel_service
 
 app = FastAPI(
     title="TrafficPulse-X API",
@@ -34,6 +35,7 @@ app.add_middleware(
 data_source_mgr = DataSourceManager()
 pred_service = get_prediction_service()
 fl_service = get_federated_service()
+comm_intel_service = get_comm_intel_service()
 
 
 class HeartbeatPayload(BaseModel):
@@ -383,5 +385,83 @@ def get_federated_communication():
         raise HTTPException(status_code=404, detail=str(fe))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to load federated communication: {str(e)}")
+
+
+# -------------------------------------------------------------
+# Phase 9.1 Communication Intelligence Foundation Endpoints
+# -------------------------------------------------------------
+
+@app.get("/api/communication/phase9/status")
+def get_phase9_status():
+    """Returns Phase 9 communication intelligence status and baseline specs."""
+    try:
+        return comm_intel_service.get_phase9_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load Phase 9 status: {str(e)}")
+
+
+@app.get("/api/communication/phase9/client-values")
+def get_phase9_client_values():
+    """Returns derived client communication utility scores and information debts."""
+    try:
+        return comm_intel_service.get_client_values()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load client values: {str(e)}")
+
+
+@app.get("/api/communication/phase9/select")
+def evaluate_phase9_selection(budget: str = "3/4"):
+    """Simulates client participation selection under specified budget constraint."""
+    try:
+        return comm_intel_service.evaluate_budget(budget_str=budget)
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to evaluate budget: {str(e)}")
+
+
+# -------------------------------------------------------------
+# Phase 9.2 Controlled Selective FL Experiment Endpoints
+# -------------------------------------------------------------
+
+@app.get("/api/communication/phase9/experiments")
+def get_phase9_experiments():
+    """Returns synthesized summary of all Phase 9.2 selective FL experiment policies."""
+    try:
+        return comm_intel_service.get_experiments_summary()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load experiment summary: {str(e)}")
+
+
+@app.get("/api/communication/phase9/experiments/{policy}")
+def get_phase9_policy_details(policy: str):
+    """Returns detailed evaluation artifact for a specific selective policy."""
+    try:
+        return comm_intel_service.get_policy_details(policy)
+    except FileNotFoundError as fe:
+        raise HTTPException(status_code=404, detail=str(fe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load policy details: {str(e)}")
+
+
+@app.get("/api/communication/phase9/tradeoff")
+def get_phase9_tradeoff():
+    """Returns Pareto-relevant communication-vs-accuracy trade-off analysis."""
+    try:
+        return comm_intel_service.get_tradeoff()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load tradeoff analysis: {str(e)}")
+
+
+@app.get("/api/communication/phase9/rounds/{policy}")
+def get_phase9_rounds_history(policy: str):
+    """Returns round-by-round selection history, CCV values, and information debts."""
+    try:
+        return comm_intel_service.get_rounds_history(policy)
+    except FileNotFoundError as fe:
+        raise HTTPException(status_code=404, detail=str(fe))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load rounds history: {str(e)}")
+
 
 
