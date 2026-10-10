@@ -174,19 +174,19 @@ export default function PerformanceChart() {
                           {data.isWinner && <Trophy className="w-3.5 h-3.5 text-amber-400" />}
                           <span>{data.name}</span>
                         </div>
-                        <div className="text-cyan-400 font-semibold">Test MAE: {data.mae.toFixed(4)} mph</div>
-                        {data.isWinner && <div className="text-amber-400 text-[10px] font-sans font-medium">★ Top Performing Architecture</div>}
+                        <div className="text-emerald-400 mt-1">MAE: {data.mae.toFixed(4)} mph</div>
+                        {data.isWinner && <div className="text-amber-400 text-[10px] mt-0.5">Top Performer</div>}
                       </div>
                     );
                   }
                   return null;
                 }}
               />
-              <Bar dataKey="mae" radius={[6, 6, 0, 0]}>
+              <Bar dataKey="mae" radius={[4, 4, 0, 0]}>
                 {currentList.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
-                    fill={entry.isWinner ? (isDark ? '#06b6d4' : '#0284c7') : (isDark ? '#334155' : '#cbd5e1')} 
+                    fill={entry.isWinner ? '#059669' : (isDark ? '#334155' : '#94a3b8')} 
                   />
                 ))}
               </Bar>
@@ -195,9 +195,9 @@ export default function PerformanceChart() {
         </div>
 
         {/* Winner Strip highlighting Overall & +60 split */}
-        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-[11px] grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-[11px] grid grid-cols-2 gap-2">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-500 flex-shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
             <span className="text-slate-600 dark:text-slate-400">
               Overall / +5 / +15 / +30: <strong className="text-slate-900 dark:text-white">Graph+LSTM</strong> (3.4378 mph)
             </span>
@@ -213,4 +213,3 @@ export default function PerformanceChart() {
     </SectionCard>
   );
 }
-

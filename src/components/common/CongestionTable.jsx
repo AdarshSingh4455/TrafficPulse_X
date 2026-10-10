@@ -42,7 +42,7 @@ export default function CongestionTable({ onViewOnMap, data }) {
     {
       header: "Speed (mph)",
       key: "currentSpeed",
-      render: (row) => row.currentSpeed || (row.currentFlow ? `${row.currentFlow} mph` : "22.5 mph"),
+      render: (row) => (row.currentSpeed !== undefined && row.currentSpeed !== null) ? `${row.currentSpeed} mph` : "N/A",
       className: "font-mono font-semibold text-slate-700 dark:text-slate-300 text-right pr-6"
     },
     {

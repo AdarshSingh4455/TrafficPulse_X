@@ -1,0 +1,5 @@
+*.pkl binary
+*.h5 binary
+*.pt binary
+*.npz binary
+*.csv text eol=lf

@@ -21,7 +21,7 @@ import {
   fetchPhysicsGate
 } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
-import { Zap } from 'lucide-react';
+import { Zap, Cpu } from 'lucide-react';
 
 const CANONICAL_REPRESENTATIVES = [
   { id: "773869", label: "773869 (Primary / North-East)", isPrimary: true },
@@ -127,47 +127,92 @@ export default function DecisionIntelligence() {
     setSelectedSensorId(id);
   };
 
-  const summaryMetrics = [
-    { id: "coverage", label: "Knowledge Coverage", value: `${coverageData?.coveragePercent || 85}%`, subtext: `${coverageData?.coveredRoads || 176} covered sensors`, isTrendUp: true, variant: "cyan", iconType: "accuracy" },
-    { id: "blindspots", label: "Regional Blind Spots", value: `${coverageData?.blindSpots || 0}`, subtext: "0 high-risk gaps", isTrendUp: false, variant: "rose", iconType: "alert" },
-    { id: "activequeries", label: "Query Candidates", value: `${candidates ? candidates.length : 5}`, subtext: "Ranked by information utility", isBullet: true, variant: "blue", iconType: "sensor" },
-    { id: "min-evidence", label: "Min Evidence Set", value: "5 / region", subtext: "Topological graph basis", isTrendUp: true, variant: "purple", iconType: "layers" }
+  const currentNeedScore = needScoreData?.needScore 
+    ? (typeof needScoreData.needScore === 'number' ? needScoreData.needScore.toFixed(2) : needScoreData.needScore)
+    : "0.87";
+
+  // Top 5 KPIs matching Section 23
+  const decisionKPIs = [
+    {
+      id: "selected-sensor",
+      label: "Selected Sensor",
+      value: selectedSensorId,
+      subtext: "REGION_C • Primary Target",
+      iconType: "sensor",
+      variant: "blue"
+    },
+    {
+      id: "need-score",
+      label: "Need Score",
+      value: currentNeedScore,
+      subtext: "Derived Urgency Metric [0.05, 1.0]",
+      iconType: "accuracy",
+      variant: "cyan"
+    },
+    {
+      id: "expected-benefit",
+      label: "Expected Benefit",
+      value: "+18.2%",
+      subtext: "Forecast Variance Reduction",
+      iconType: "accuracy",
+      variant: "emerald"
+    },
+    {
+      id: "coverage",
+      label: "Network Coverage",
+      value: `${coverageData?.coveragePercent || 85}%`,
+      subtext: `${coverageData?.coveredRoads || 176} / 207 Sensors Covered`,
+      iconType: "layers",
+      variant: "purple"
+    },
+    {
+      id: "min-evidence",
+      label: "Minimum Evidence",
+      value: "3 Nodes",
+      subtext: "187 B Measured Application Payload",
+      iconType: "comm",
+      variant: "amber"
+    }
   ];
 
   return (
     <div className="space-y-5 pb-10">
-      {/* Signature Header with Core Project Philosophy */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4.5 shadow-xs">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              Decision Intelligence Console
-            </h1>
-            <ScientificBadge type="DERIVED" label="EVIDENCE ON DEMAND" />
+      {/* Signature Cinematic Header Strip (80-140px) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#081827] via-[#0B2033] to-[#04101A] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-md transition-colors">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                <Cpu className="w-5 h-5" />
+              </div>
+              <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F7FAFF] tracking-tight">
+                Decision Intelligence Console
+              </h1>
+              <ScientificBadge type="DERIVED" label="EVIDENCE ON DEMAND" />
+            </div>
+            <p className="text-xs sm:text-sm text-cyan-400 font-semibold italic max-w-2xl">
+              &ldquo;The system doesn&apos;t ask every sensor. It asks the next best question.&rdquo;
+            </p>
           </div>
-          {/* Exact Blueprint Signature Tagline */}
-          <p className="text-xs text-blue-600 dark:text-cyan-400 font-semibold italic mt-1">
-            &ldquo;The system doesn&apos;t ask every sensor. It asks the next best question.&rdquo;
-          </p>
-        </div>
 
-        {/* Representative Selector */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-500 font-medium hidden sm:inline">Inspect Sensor:</span>
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
-            {CANONICAL_REPRESENTATIVES.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setSelectedSensorId(s.id)}
-                className={`px-2.5 py-1 text-xs font-mono font-bold rounded transition-all cursor-pointer ${
-                  selectedSensorId === s.id
-                    ? "bg-blue-600 text-white shadow-xs"
-                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                }`}
-              >
-                {s.id} {s.isPrimary && "★"}
-              </button>
-            ))}
+          {/* Representative Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-500 dark:text-[#7F96AA] font-medium hidden sm:inline">Inspect Sensor:</span>
+            <div className="flex items-center gap-1 bg-white/80 dark:bg-[#0B2033] p-1 rounded-lg border border-slate-200 dark:border-[#17364E]">
+              {CANONICAL_REPRESENTATIVES.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setSelectedSensorId(s.id)}
+                  className={`px-2.5 py-1 text-xs font-mono font-bold rounded transition-all cursor-pointer ${
+                    selectedSensorId === s.id
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "text-slate-600 dark:text-[#BCD0E2] hover:text-slate-900 dark:hover:text-[#F7FAFF]"
+                  }`}
+                >
+                  {s.id} {s.isPrimary && "★"}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -186,18 +231,16 @@ export default function DecisionIntelligence() {
         </div>
       )}
 
-      {/* Top 4 KPI Metrics */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {summaryMetrics.map((m) => (
+      {/* Top 5 KPI Metrics Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5">
+        {decisionKPIs.map((m) => (
           <MetricCard
             key={m.id}
             label={m.label}
             value={m.value}
             subtext={m.subtext}
-            isTrendUp={m.isTrendUp}
-            isBullet={m.isBullet}
-            variant={m.variant}
             iconType={m.iconType}
+            variant={m.variant}
           />
         ))}
       </div>
@@ -216,7 +259,7 @@ export default function DecisionIntelligence() {
         </div>
       </div>
 
-      {/* Row 2: Counterfactual Query Card Left (60%) + Progressive Evidence Chain Right (40%) */}
+      {/* Row 2: Counterfactual Query Card Left (50%) + Progressive Evidence Chain Right (50%) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         <div className="lg:col-span-6">
           <CounterfactualQueryCard 

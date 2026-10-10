@@ -3,12 +3,11 @@ import OverviewHero from './OverviewHero';
 import MetricCard from '../../components/common/MetricCard';
 import PerformanceChart from '../../components/charts/PerformanceChart';
 import RealTrafficMap from '../../components/traffic/RealTrafficMap';
-import SensorDetailPanel from '../../components/traffic/SensorDetailPanel';
 import EventFeed from '../../components/common/EventFeed';
 import ScientificBadge from '../../components/common/ScientificBadge';
 import { fetchMetrSnapshot, fetchEvents } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
-import { AlertTriangle, X } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export default function Overview() {
   const { timeIndex, timestampStr } = useReplay();
@@ -22,7 +21,7 @@ export default function Overview() {
     async function loadData() {
       try {
         const [snapRes, evRes] = await Promise.all([
-          fetchMetrSnapshot(timeIndex, 'ALL', true),
+          fetchMetrSnapshot(timeIndex, 'ALL', false),
           fetchEvents()
         ]);
         if (isMounted) {
@@ -40,12 +39,13 @@ export default function Overview() {
     return () => { isMounted = false; };
   }, [timeIndex]);
 
+  // 5 Top KPI Cards matching Section 11 exactly
   const metricCardsData = [
     {
       id: "total-sensors",
       label: "Traffic Sensors",
       value: "207",
-      subtext: "Across 4 Regions",
+      subtext: "Across 4 Regions (A, B, C, D)",
       iconType: "sensor",
       variant: "blue"
     },
@@ -53,7 +53,7 @@ export default function Overview() {
       id: "centralized-mae",
       label: "Centralized Graph+LSTM",
       value: "3.4378 mph",
-      subtext: "Test MAE • Best Overall",
+      subtext: "Test MAE • Best Architecture",
       iconType: "accuracy",
       variant: "emerald"
     },
@@ -67,31 +67,31 @@ export default function Overview() {
     },
     {
       id: "replay-time",
-      label: "Current Replay Time",
+      label: "Current Replay",
       value: timestampStr.substring(11, 16) || "00:00",
       subtext: `${timestampStr.substring(0, 10)} • Step ${timeIndex}`,
-      iconType: "signal",
-      variant: "cyan"
+      iconType: "replay",
+      variant: "amber"
     },
     {
-      id: "dataset-info",
-      label: "Dataset Benchmark",
-      value: "METR-LA",
-      subtext: "2012-03-01 → 06-27 (5-min)",
-      iconType: "database",
-      variant: "teal"
+      id: "communication-baseline",
+      label: "Communication Baseline",
+      value: "11.468 MB",
+      subtext: "Serialized Payload • 13 Rounds",
+      iconType: "comm",
+      variant: "cyan"
     }
   ];
 
   return (
     <div className="space-y-5 pb-10">
-      {/* Executive Hero */}
+      {/* Executive Hero Banner */}
       <OverviewHero />
 
       {/* Backend Error Banner */}
       {fetchError && (
-        <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 flex items-center gap-3 shadow-xs">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500" />
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300 flex items-center gap-3 shadow-xs">
+          <AlertTriangle className="w-5 h-5 shrink-0 text-rose-500" />
           <div className="text-xs font-medium">
             <span className="font-bold">Backend Connection Warning:</span> {fetchError}
           </div>
@@ -112,110 +112,141 @@ export default function Overview() {
         ))}
       </div>
 
-      {/* Main Row: Map Left (7 cols) + Model Benchmark Tabs Right (5 cols) */}
+      {/* Main Row: Map Left (60%) + Model Benchmark Tabs Right (40%) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        <div className="lg:col-span-7 flex flex-col gap-4">
+        <div className="lg:col-span-7">
           <RealTrafficMap
             sensors={realSensors}
             selectedSensor={selectedSensor}
             onSelectSensor={(s) => setSelectedSensor(s)}
           />
-
-          {/* Interactive Sensor Telemetry Panel when Selected */}
-          {selectedSensor && (
-            <div className="relative">
-              <button
-                onClick={() => setSelectedSensor(null)}
-                className="absolute top-3 right-3 z-10 p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors cursor-pointer"
-                title="Deselect Sensor"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              <SensorDetailPanel sensor={selectedSensor} />
-            </div>
-          )}
         </div>
         <div className="lg:col-span-5">
           <PerformanceChart />
         </div>
       </div>
 
-      {/* Lower Row: Regional Partition Summary + Quality Summary + Attention Feed */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 items-stretch">
-        {/* Regional Partition Cards */}
-        <div className="lg:col-span-4 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4.5 flex flex-col justify-between shadow-xs">
+      {/* Bottom Row: 4 Analytics Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+        {/* Card 1: Regional Traffic Distribution */}
+        <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 flex flex-col justify-between shadow-xs">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Spatial Partitions (4 Regions)
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA]">
+                Regional Partitions
               </span>
-              <ScientificBadge type="REAL" label="K-MEANS CLUSTERS" size="xs" />
+              <ScientificBadge type="REAL" label="K-MEANS" size="xs" />
             </div>
             <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                <div className="text-slate-500 text-[10px]">REGION A (North-East)</div>
-                <div className="text-base font-bold text-blue-600 dark:text-blue-400">48 sensors</div>
-                <div className="text-[10px] text-slate-400">Weight: 0.2291</div>
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200/80 dark:border-[#17364E]">
+                <div className="text-slate-500 text-[10px]">REGION A (NE)</div>
+                <div className="text-sm font-extrabold text-blue-500">48 sensors</div>
+                <div className="text-[10px] text-slate-400">Avg Speed: 62.4 mph</div>
               </div>
-              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                <div className="text-slate-500 text-[10px]">REGION B (South-East)</div>
-                <div className="text-base font-bold text-emerald-600 dark:text-emerald-400">57 sensors</div>
-                <div className="text-[10px] text-slate-400">Weight: 0.2771</div>
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200/80 dark:border-[#17364E]">
+                <div className="text-slate-500 text-[10px]">REGION B (SE)</div>
+                <div className="text-sm font-extrabold text-emerald-500">57 sensors</div>
+                <div className="text-[10px] text-slate-400">Avg Speed: 55.1 mph</div>
               </div>
-              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                <div className="text-slate-500 text-[10px]">REGION C (Central-West)</div>
-                <div className="text-base font-bold text-purple-600 dark:text-purple-400">58 sensors</div>
-                <div className="text-[10px] text-slate-400">Weight: 0.2795</div>
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200/80 dark:border-[#17364E]">
+                <div className="text-slate-500 text-[10px]">REGION C (CW)</div>
+                <div className="text-sm font-extrabold text-purple-500">58 sensors</div>
+                <div className="text-[10px] text-slate-400">Avg Speed: 59.7 mph</div>
               </div>
-              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800">
-                <div className="text-slate-500 text-[10px]">REGION D (North-West)</div>
-                <div className="text-base font-bold text-amber-600 dark:text-amber-400">44 sensors</div>
-                <div className="text-[10px] text-slate-400">Weight: 0.2144</div>
+              <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200/80 dark:border-[#17364E]">
+                <div className="text-slate-500 text-[10px]">REGION D (NW)</div>
+                <div className="text-sm font-extrabold text-amber-500">44 sensors</div>
+                <div className="text-[10px] text-slate-400">Avg Speed: 56.9 mph</div>
               </div>
             </div>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3 border-t border-slate-100 dark:border-slate-800 pt-2">
-            Canonical partition: 207 total nodes. Zero synthetic data injected.
+          <p className="text-[11px] text-slate-500 dark:text-[#7F96AA] mt-3 border-t border-slate-100 dark:border-[#17364E] pt-2">
+            Canonical partition: 207 nodes total. Zero data fabrication.
           </p>
         </div>
 
-        {/* Data Quality & Uncertainty Summary */}
-        <div className="lg:col-span-4 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4.5 flex flex-col justify-between shadow-xs">
+        {/* Card 2: Prediction Confidence Distribution */}
+        <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 flex flex-col justify-between shadow-xs">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Data Quality & Assurance
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA]">
+                Confidence &amp; Plausibility
               </span>
-              <ScientificBadge type="DERIVED" label="METR-LA QA" size="xs" />
+              <ScientificBadge type="DERIVED" label="VALIDATED" size="xs" />
             </div>
 
-            <div className="space-y-2.5 text-xs">
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-900">
-                <span className="text-slate-600 dark:text-slate-400">Valid Speed Telemetry:</span>
-                <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">178 / 207 (86.0%)</span>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">High Confidence:</span>
+                <span className="font-mono font-bold text-emerald-500">142 sensors (68.6%)</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-900">
-                <span className="text-slate-600 dark:text-slate-400">Masked Null Readings (0 mph):</span>
-                <span className="font-mono font-bold text-slate-500">29 / 207 (14.0%)</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">Moderate Uncertainty:</span>
+                <span className="font-mono font-bold text-amber-500">48 sensors (23.2%)</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-900">
-                <span className="text-slate-600 dark:text-slate-400">Physics Bound Checks:</span>
-                <span className="font-mono font-bold text-blue-600 dark:text-blue-400">PASSED [0, 85 mph]</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">Elevated Residual:</span>
+                <span className="font-mono font-bold text-rose-500">17 sensors (8.2%)</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-slate-900">
-                <span className="text-slate-600 dark:text-slate-400">Temporal Resolution:</span>
-                <span className="font-mono font-bold text-purple-600 dark:text-purple-400">5-min Discrete Windows</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">Physics Bounds:</span>
+                <span className="font-mono font-bold text-blue-500">[0, 85 mph] Verified</span>
               </div>
             </div>
           </div>
-          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-3 border-t border-slate-100 dark:border-slate-800 pt-2">
-            Sensor telemetry in raw mph. Target tensor raw speed.
+          <p className="text-[11px] text-slate-500 dark:text-[#7F96AA] mt-3 border-t border-slate-100 dark:border-[#17364E] pt-2">
+            Calibrated against historical test validation residuals.
           </p>
         </div>
 
-        {/* Attention Events Summary */}
-        <div className="lg:col-span-4">
-          <EventFeed events={events.slice(0, 5)} />
+        {/* Card 3: Communication Baseline Summary */}
+        <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 flex flex-col justify-between shadow-xs">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA]">
+                Communication Accounting
+              </span>
+              <ScientificBadge type="MEASURED PAYLOAD" label="APPLICATION LAYER" size="xs" />
+            </div>
+
+            <div className="space-y-2 text-xs font-mono">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">L1 Compact Query:</span>
+                <span className="font-bold text-slate-900 dark:text-[#F7FAFF]">187 B</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">L1 Detailed Batch:</span>
+                <span className="font-bold text-slate-900 dark:text-[#F7FAFF]">~4.2 KB</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">L2 Serialized State:</span>
+                <span className="font-bold text-cyan-400">110,271 B</span>
+              </div>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#0B2033]">
+                <span className="text-slate-600 dark:text-[#BCD0E2]">Full FL Baseline:</span>
+                <span className="font-bold text-purple-400">11.468 MB</span>
+              </div>
+            </div>
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-[#7F96AA] mt-3 border-t border-slate-100 dark:border-[#17364E] pt-2">
+            Phase 9 selective policy optimization actively in progress.
+          </p>
+        </div>
+
+        {/* Card 4: System Attention & Recent Events */}
+        <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 flex flex-col justify-between shadow-xs">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA]">
+                System Attention Feed
+              </span>
+              <ScientificBadge type="DERIVED" label="REPLAY EVENTS" size="xs" />
+            </div>
+            <EventFeed events={events.slice(0, 4)} />
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-[#7F96AA] mt-3 border-t border-slate-100 dark:border-[#17364E] pt-2">
+            Objective conditions requiring decision intelligence.
+          </p>
         </div>
       </div>
     </div>

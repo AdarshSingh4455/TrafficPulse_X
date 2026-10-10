@@ -97,10 +97,11 @@ export async function fetchNeedScore(sensorId = "773869") {
   if (data.factors && typeof data.factors === 'object' && !Array.isArray(data.factors)) {
     factorsList = Object.entries(data.factors).map(([k, val]) => {
       const isNeg = k === 'redundancyPenalty';
+      const numVal = typeof val === 'number' ? val : (parseFloat(val) || 0);
       return {
         name: factorNames[k] || k,
-        value: isNeg ? -Math.abs(val) : val,
-        weight: isNeg ? `-${Math.abs(val).toFixed(2)}` : `+${val.toFixed(2)}`
+        value: isNeg ? -Math.abs(numVal) : numVal,
+        weight: isNeg ? `-${Math.abs(numVal).toFixed(2)}` : `+${numVal.toFixed(2)}`
       };
     });
   } else if (Array.isArray(data.factors)) {
@@ -153,7 +154,7 @@ export async function fetchEvidenceChain(sensorId = "773869") {
 export async function executeQuery(sensorId) {
   const res = await apiFetch(`${API_BASE}/query/${sensorId}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
   });
   if (!res.ok) throw new Error(`Query Execution Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();
@@ -163,7 +164,7 @@ export async function sendHeartbeat(sensorId, telemetry = {}) {
   const res = await apiFetch(`${API_BASE}/sensors/${sensorId}/heartbeat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(telemetry)
+    body: JSON.stringify(telemetry),
   });
   if (!res.ok) throw new Error(`Heartbeat Failed for '${sensorId}': ${res.status} ${res.statusText}`);
   return await res.json();

@@ -781,12 +781,14 @@ class METRLADatasetInspector:
         os.makedirs(self.processed_dir, exist_ok=True)
 
         reg_path = os.path.join(self.processed_dir, "regions.json")
-        with open(reg_path, "w", encoding="utf-8") as f:
-            json.dump(regions_json, f, indent=2)
+        if not os.path.exists(reg_path):
+            with open(reg_path, "w", encoding="utf-8") as f:
+                json.dump(regions_json, f, indent=2)
 
         rep_path = os.path.join(self.processed_dir, "representative_sensors.json")
-        with open(rep_path, "w", encoding="utf-8") as f:
-            json.dump(representative_json, f, indent=2)
+        if not os.path.exists(rep_path):
+            with open(rep_path, "w", encoding="utf-8") as f:
+                json.dump(representative_json, f, indent=2)
 
         return regions_json, representative_json
 
@@ -1010,10 +1012,14 @@ class METRLADatasetInspector:
         self._save_metadata(metadata)
         self.generate_feature_support_matrix(ts_ok)
         if ts_ok:
-            try:
-                self.prepare_ml_ready_dataset()
-            except Exception:
-                pass
+            ml_ready_dir = os.path.join(self.processed_dir, "ml_ready")
+            train_npz = os.path.join(ml_ready_dir, "train.npz")
+            test_npz = os.path.join(ml_ready_dir, "test.npz")
+            if not (os.path.exists(train_npz) and os.path.exists(test_npz)):
+                try:
+                    self.prepare_ml_ready_dataset()
+                except Exception:
+                    pass
         return metadata
 
     def _save_metadata(self, metadata: Dict[str, Any]) -> None:

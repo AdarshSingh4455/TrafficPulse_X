@@ -11,7 +11,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from typing import Dict, Any
 
 from ml.graph.model import SpatialGCN, calculate_normalized_adjacency, count_parameters
 from ml.temporal.dataset import create_dataloader

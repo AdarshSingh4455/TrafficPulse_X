@@ -50,8 +50,18 @@ class DataSourceManager:
         self.graph = SensorGraph(self.raw_sensors, neighbors_map=self.neighbors_map)
         self.state_mgr = state_mod.SensorStateManager(self.raw_sensors)
 
+    def _get_metadata(self) -> Dict[str, Any]:
+        meta_path = os.path.join(self.processed_dir, "metadata.json")
+        if os.path.exists(meta_path):
+            try:
+                with open(meta_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return self.inspector.inspect_and_save()
+
     def get_health(self) -> Dict[str, Any]:
-        metr_summary = self.inspector.inspect_and_save()
+        metr_summary = self._get_metadata()
         real_avail = metr_summary.get("availability", "AVAILABLE")
 
         return {
@@ -64,7 +74,7 @@ class DataSourceManager:
         }
 
     def get_datasets_status(self) -> Dict[str, Any]:
-        metr_summary = self.inspector.inspect_and_save()
+        metr_summary = self._get_metadata()
         avail = metr_summary.get("availability", "AVAILABLE")
 
         return {

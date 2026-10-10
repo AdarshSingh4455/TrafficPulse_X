@@ -8,7 +8,8 @@ import {
   Award,
   ChevronDown,
   ChevronUp,
-  Cpu
+  Cpu,
+  TrendingUp
 } from 'lucide-react';
 import {
   LineChart,
@@ -17,16 +18,14 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   ReferenceLine
 } from 'recharts';
 
-import {
-  fetchForecast
-} from '../../services/api';
+import { fetchForecast } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
 import ScientificBadge from '../../components/common/ScientificBadge';
+import MetricCard from '../../components/common/MetricCard';
 
 const REPRESENTATIVE_SENSORS = [
   { id: '773869', name: '773869 (Primary / North-East)', region: 'REGION_A' },
@@ -89,59 +88,115 @@ export default function Prediction() {
     });
   }
 
+  // Prediction Top KPIs
+  const predictionKPIs = [
+    {
+      id: "mae",
+      label: "Overall MAE",
+      value: "3.4378 mph",
+      subtext: "Graph+LSTM • Best Architecture",
+      iconType: "accuracy",
+      variant: "emerald"
+    },
+    {
+      id: "rmse",
+      label: "Overall RMSE",
+      value: "6.8873 mph",
+      subtext: "Test Evaluation Baseline",
+      iconType: "accuracy",
+      variant: "blue"
+    },
+    {
+      id: "mape",
+      label: "Overall MAPE",
+      value: "9.57%",
+      subtext: "Relative Prediction Error",
+      iconType: "layers",
+      variant: "purple"
+    },
+    {
+      id: "target",
+      label: "Selected Sensor",
+      value: sensorId,
+      subtext: "REGION_A • 12-Step Input Window",
+      iconType: "sensor",
+      variant: "cyan"
+    }
+  ];
+
   return (
     <div className="space-y-5 pb-10">
-      {/* Top Header & Replay Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4.5 shadow-xs">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              Prediction Intelligence & Forecasts
-            </h1>
-            <ScientificBadge type="MODEL OUTPUT" label="Graph+LSTM" />
-          </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Runtime spatio-temporal traffic speed forecasting across four discrete target horizons (+5, +15, +30, +60 min).
-          </p>
-        </div>
-
-        {/* Target Sensor & Index Selectors */}
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
-            <Clock className="w-3.5 h-3.5 text-slate-500" />
-            <span className="text-slate-600 dark:text-slate-300 font-medium">Replay Step:</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-white">{effectiveTimeIndex}</span>
+      {/* Cinematic Header Strip (80-140px) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#081827] via-[#0B2033] to-[#04101A] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-md transition-colors">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F7FAFF] tracking-tight">
+                Prediction &amp; Forecasts
+              </h1>
+              <ScientificBadge type="MODEL OUTPUT" label="Graph+LSTM" />
+            </div>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#BCD0E2] font-medium max-w-2xl">
+              Multi-horizon traffic SPEED forecasting with calibrated uncertainty on METR-LA historical replay.
+            </p>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-xs">
-            <MapPin className="w-3.5 h-3.5 text-slate-500" />
-            <select
-              value={sensorId}
-              onChange={(e) => setSensorId(e.target.value)}
-              className="bg-transparent text-slate-900 dark:text-white font-medium focus:outline-none cursor-pointer"
+          {/* Top Filter & Selector Bar */}
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <div className="flex items-center gap-2 bg-white/80 dark:bg-[#0B2033] px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#17364E] text-xs">
+              <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="text-slate-500 dark:text-[#7F96AA]">Sensor:</span>
+              <select
+                value={sensorId}
+                onChange={(e) => setSensorId(e.target.value)}
+                className="bg-transparent text-slate-900 dark:text-[#F7FAFF] font-semibold focus:outline-none cursor-pointer"
+              >
+                {REPRESENTATIVE_SENSORS.map((s) => (
+                  <option key={s.id} value={s.id} className="dark:bg-[#081827]">
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2 bg-white/80 dark:bg-[#0B2033] px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#17364E] text-xs">
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
+              <span className="text-slate-500 dark:text-[#7F96AA]">Step:</span>
+              <span className="font-mono font-bold text-slate-900 dark:text-[#F7FAFF]">{effectiveTimeIndex}</span>
+            </div>
+
+            <button
+              onClick={loadData}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors disabled:opacity-50 shadow-xs"
             >
-              {REPRESENTATIVE_SENSORS.map((s) => (
-                <option key={s.id} value={s.id} className="dark:bg-slate-900">
-                  {s.name}
-                </option>
-              ))}
-            </select>
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+              <span>Re-evaluate</span>
+            </button>
           </div>
-
-          <button
-            onClick={loadData}
-            disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-            <span>Re-evaluate</span>
-          </button>
         </div>
+      </div>
+
+      {/* Top 4 KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {predictionKPIs.map((kpi) => (
+          <MetricCard
+            key={kpi.id}
+            label={kpi.label}
+            value={kpi.value}
+            subtext={kpi.subtext}
+            iconType={kpi.iconType}
+            variant={kpi.variant}
+          />
+        ))}
       </div>
 
       {/* Error State Banner */}
       {error && (
-        <div className="bg-amber-500/10 border border-amber-500/20 text-amber-800 dark:text-amber-300 rounded-xl p-3.5 flex items-center gap-3 text-xs">
+        <div className="bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 rounded-xl p-3.5 flex items-center gap-3 text-xs">
           <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
           <div>
             <p className="font-semibold">Prediction Intelligence Notice</p>
@@ -159,10 +214,10 @@ export default function Prediction() {
           return (
             <div
               key={pred.horizonLabel}
-              className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4 shadow-xs flex flex-col justify-between"
+              className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4 shadow-xs flex flex-col justify-between hover:border-slate-300 dark:hover:border-[#24506D] transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
+                <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-500/10 text-blue-700 dark:text-cyan-300 border border-blue-500/20 font-mono">
                   {pred.horizonLabel} Forecast
                 </span>
                 <div className="flex items-center gap-1.5">
@@ -181,23 +236,23 @@ export default function Prediction() {
 
               <div className="my-3 flex items-baseline justify-between">
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Predicted Speed</span>
-                  <span className="text-2xl font-black font-mono text-slate-900 dark:text-white">
+                  <span className="text-[10px] text-slate-400 dark:text-[#7F96AA] uppercase font-semibold block">Predicted Speed</span>
+                  <span className="text-2xl font-black font-mono text-slate-900 dark:text-[#F7FAFF] tabular-nums">
                     {pred.predictedSpeedMph} <span className="text-xs font-normal text-slate-500">mph</span>
                   </span>
                 </div>
 
                 {pred.actualSpeedMph !== null && (
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">Replay Target</span>
-                    <span className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                    <span className="text-[10px] text-slate-400 dark:text-[#7F96AA] uppercase font-semibold block">Replay Target</span>
+                    <span className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums">
                       {pred.actualSpeedMph} mph
                     </span>
                   </div>
                 )}
               </div>
 
-              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-[11px] font-mono flex items-center justify-between text-slate-500 dark:text-slate-400">
+              <div className="pt-2 border-t border-slate-100 dark:border-[#17364E] text-[11px] font-mono flex items-center justify-between text-slate-500 dark:text-[#BCD0E2]">
                 <span>Test MAE: <strong>{bench.testMae} mph</strong></span>
                 <span>Uncertainty: {bench.uncertaintyMph}</span>
               </div>
@@ -206,73 +261,83 @@ export default function Prediction() {
         })}
       </div>
 
-      {/* Main Row: Forecast Chart Left (60%) + 7-Model Benchmark Matrix Right (40%) */}
+      {/* Main Analytics: Trajectory Chart (Left 7) + 7-Model Benchmark Matrix (Right 5) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        {/* Forecast Timeline Chart */}
-        <div className="lg:col-span-7 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4.5 shadow-xs flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                Historical Context & Multi-Horizon Trajectory
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                12-step input window leading to +5, +15, +30, and +60 min predicted speed points
-              </p>
+        {/* Multi-Horizon Historical Trajectory Chart */}
+        <div className="lg:col-span-7 bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4.5 shadow-xs flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-[#F7FAFF] flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-cyan-400" />
+                  Traffic Speed Forecasting — Trajectory Sequence
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-[#7F96AA] mt-0.5">
+                  Past 12 steps (input window) &rarr; Current T0 &rarr; Future Horizons (+5, +15, +30, +60 min)
+                </p>
+              </div>
+              <ScientificBadge type="MODEL OUTPUT" label="TEST INFERENCE" size="xs" />
             </div>
-            <ScientificBadge type="MODEL OUTPUT" label="INFERENCE" size="xs" />
+
+            <div className="h-[260px] w-full pt-2">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData} margin={{ top: 10, right: 20, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#17364E" opacity={0.5} vertical={false} />
+                  <XAxis dataKey="step" stroke="#64748b" fontSize={11} tickLine={false} />
+                  <YAxis domain={['dataMin - 5', 'dataMax + 5']} stroke="#64748b" fontSize={11} tickLine={false} unit=" mph" />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="p-2.5 rounded-lg bg-[#04101A] border border-[#17364E] text-white text-xs font-mono shadow-xl space-y-1">
+                            <div className="font-bold text-slate-300">{label}</div>
+                            {payload.map((entry, idx) => (
+                              <div key={idx} style={{ color: entry.color }} className="flex items-center justify-between gap-3">
+                                <span>{entry.name}:</span>
+                                <strong>{entry.value !== null ? `${entry.value} mph` : 'N/A'}</strong>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                  <ReferenceLine x="T0 (Now)" stroke="#f59e0b" strokeDasharray="3 3" label={{ value: 'T0 (Now)', fill: '#f59e0b', fontSize: 10, position: 'top' }} />
+                  <Line
+                    type="monotone"
+                    dataKey="predicted"
+                    name="Predicted Speed (mph)"
+                    stroke="#2F8CFF"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: '#2F8CFF' }}
+                    connectNulls={true}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="actual"
+                    name="Actual Historical Speed (mph)"
+                    stroke="#2FD994"
+                    strokeWidth={2}
+                    strokeDasharray="4 4"
+                    dot={{ r: 4, fill: '#2FD994' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
-          <div className="h-64 w-full pt-2">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 10, right: 15, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.2} vertical={false} />
-                <XAxis dataKey="step" stroke="#94a3b8" fontSize={10} tickLine={false} />
-                <YAxis stroke="#94a3b8" fontSize={10} domain={['auto', 'auto']} tickLine={false} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#0f172a',
-                    borderColor: '#334155',
-                    borderRadius: '8px',
-                    color: '#fff',
-                    fontSize: '11px',
-                    fontFamily: 'monospace'
-                  }}
-                />
-                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
-                <ReferenceLine x="T0 (Now)" stroke="#ef4444" strokeDasharray="3 3" label={{ value: 'Now', position: 'top', fill: '#ef4444', fontSize: 10 }} />
-                <Line
-                  type="monotone"
-                  dataKey="predicted"
-                  name="Predicted Speed (mph)"
-                  stroke="#3b82f6"
-                  strokeWidth={2.5}
-                  dot={{ r: 4, fill: '#3b82f6' }}
-                  connectNulls={true}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="actual"
-                  name="Actual Historical Speed (mph)"
-                  stroke="#10b981"
-                  strokeWidth={2}
-                  strokeDasharray="4 4"
-                  dot={{ r: 4, fill: '#10b981' }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="text-[11px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+          <div className="text-[11px] text-slate-500 dark:text-[#7F96AA] pt-2 border-t border-slate-100 dark:border-[#17364E] flex items-center justify-between">
             <span>Input: Past 12 timesteps (60 min) normalized speed tensor</span>
             <span>Target: Raw speed in mph [N, 4, 207, 1]</span>
           </div>
         </div>
 
         {/* 7-Model Benchmark Matrix */}
-        <div className="lg:col-span-5 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4.5 shadow-xs flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4.5 shadow-xs flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-[#F7FAFF] flex items-center gap-1.5">
                 <Award className="w-4 h-4 text-amber-500" />
                 7-Model Benchmark Matrix
               </h3>
@@ -282,15 +347,15 @@ export default function Prediction() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400 font-mono text-[11px]">
+                  <tr className="border-b border-slate-200 dark:border-[#17364E] text-slate-400 font-mono text-[11px]">
                     <th className="py-2 font-medium">Model Architecture</th>
                     <th className="py-2 font-medium text-right">Overall MAE</th>
                     <th className="py-2 font-medium text-right">+60m MAE</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
-                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td className="py-2 text-slate-700 dark:text-slate-300">Last Value</td>
+                <tbody className="divide-y divide-slate-100 dark:divide-[#17364E]/60 font-mono">
+                  <tr className="hover:bg-slate-50 dark:hover:bg-[#0B2033]/50">
+                    <td className="py-2 text-slate-700 dark:text-[#BCD0E2]">Last Value</td>
                     <td className="py-2 text-right">3.9839 mph</td>
                     <td className="py-2 text-right text-slate-400">5.3987</td>
                   </tr>
@@ -304,23 +369,23 @@ export default function Prediction() {
                     <td className="py-2 text-right font-medium">4.1930 mph</td>
                     <td className="py-2 text-right font-bold text-amber-600 dark:text-amber-400">4.1934</td>
                   </tr>
-                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td className="py-2 text-slate-700 dark:text-slate-300">Linear Regression</td>
+                  <tr className="hover:bg-slate-50 dark:hover:bg-[#0B2033]/50">
+                    <td className="py-2 text-slate-700 dark:text-[#BCD0E2]">Linear Regression</td>
                     <td className="py-2 text-right">3.9763 mph</td>
                     <td className="py-2 text-right text-slate-400">5.5879</td>
                   </tr>
-                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td className="py-2 text-slate-700 dark:text-slate-300">GRU (Temporal)</td>
+                  <tr className="hover:bg-slate-50 dark:hover:bg-[#0B2033]/50">
+                    <td className="py-2 text-slate-700 dark:text-[#BCD0E2]">GRU (Temporal)</td>
                     <td className="py-2 text-right">3.5669 mph</td>
                     <td className="py-2 text-right text-slate-400">4.9284</td>
                   </tr>
-                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td className="py-2 text-slate-700 dark:text-slate-300">LSTM (Temporal)</td>
+                  <tr className="hover:bg-slate-50 dark:hover:bg-[#0B2033]/50">
+                    <td className="py-2 text-slate-700 dark:text-[#BCD0E2]">LSTM (Temporal)</td>
                     <td className="py-2 text-right">3.5613 mph</td>
                     <td className="py-2 text-right text-slate-400">4.9156</td>
                   </tr>
-                  <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/40">
-                    <td className="py-2 text-slate-700 dark:text-slate-300">Spatial GCN</td>
+                  <tr className="hover:bg-slate-50 dark:hover:bg-[#0B2033]/50">
+                    <td className="py-2 text-slate-700 dark:text-[#BCD0E2]">Spatial GCN</td>
                     <td className="py-2 text-right">5.4604 mph</td>
                     <td className="py-2 text-right text-slate-400">6.4201</td>
                   </tr>
@@ -332,36 +397,36 @@ export default function Prediction() {
                       </span>
                     </td>
                     <td className="py-2 text-right text-emerald-600 dark:text-emerald-400">3.4378 mph</td>
-                    <td className="py-2 text-right text-slate-700 dark:text-slate-300">4.7158</td>
+                    <td className="py-2 text-right text-slate-700 dark:text-[#BCD0E2]">4.7158</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] space-y-1 mt-3">
-            <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+          <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#0B2033] border border-slate-200 dark:border-[#17364E] text-[11px] space-y-1 mt-3 font-mono">
+            <div className="flex items-center justify-between text-slate-600 dark:text-[#BCD0E2]">
               <span>Overall Graph+LSTM Gain vs Last Value:</span>
-              <strong className="text-emerald-600 dark:text-emerald-400 font-mono">+13.7% accuracy</strong>
+              <strong className="text-emerald-600 dark:text-emerald-400">+13.7% accuracy</strong>
             </div>
-            <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
-              <span>+60m Winner:</span>
-              <strong className="text-amber-600 dark:text-amber-400 font-mono">Hist Avg (4.1934 mph)</strong>
+            <div className="flex items-center justify-between text-slate-600 dark:text-[#BCD0E2]">
+              <span>+60m Horizon Winner:</span>
+              <strong className="text-amber-500">Hist Avg (4.1934 mph)</strong>
             </div>
           </div>
         </div>
       </div>
 
       {/* Model Architecture Details Drawer (Expandable) */}
-      <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden shadow-xs">
+      <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl overflow-hidden shadow-xs">
         <button
           onClick={() => setShowModelDrawer(!showModelDrawer)}
-          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left"
+          className="w-full p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-[#0B2033]/60 transition-colors text-left"
         >
           <div className="flex items-center gap-2.5">
-            <Cpu className="w-4 h-4 text-blue-500" />
-            <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-              SpatialGraphLSTM Architecture & Checkpoint Provenance
+            <Cpu className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs font-bold text-slate-900 dark:text-[#F7FAFF] uppercase tracking-wider">
+              SpatialGraphLSTM Architecture &amp; Checkpoint Provenance
             </span>
             <span className="text-[11px] text-slate-400 font-mono">26,596 parameters</span>
           </div>
@@ -369,9 +434,9 @@ export default function Prediction() {
         </button>
 
         {showModelDrawer && (
-          <div className="p-4.5 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/50 space-y-4 text-xs font-mono">
+          <div className="p-4.5 border-t border-slate-200 dark:border-[#17364E] bg-slate-50/50 dark:bg-[#04101A] space-y-4 text-xs font-mono">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="p-3 rounded-lg bg-white dark:bg-[#0b1120] border border-slate-200 dark:border-slate-800 space-y-1">
+              <div className="p-3 rounded-lg bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] space-y-1">
                 <span className="text-slate-500 text-[10px] block">Model Weights Hash (SHA-256)</span>
                 <span className="text-[10px] text-blue-600 dark:text-cyan-400 break-all block">
                   702cb2bb9406aa36ec25639121377bf939acdb1906370997ccd792f70cf1f384
@@ -379,15 +444,15 @@ export default function Prediction() {
                 <span className="text-[10px] text-slate-400 block">File: graph_lstm_best.pt (111,119 B)</span>
               </div>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#0b1120] border border-slate-200 dark:border-slate-800 space-y-1">
-                <span className="text-slate-500 text-[10px] block">Graph Structure & Normalization</span>
+              <div className="p-3 rounded-lg bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] space-y-1">
+                <span className="text-slate-500 text-[10px] block">Graph Structure &amp; Normalization</span>
                 <span className="text-slate-800 dark:text-slate-200 font-semibold block">
                   Symmetrically Normalized A with self-loops
                 </span>
                 <span className="text-[10px] text-slate-400 block">D^(-1/2) * (A + I) * D^(-1/2)</span>
               </div>
 
-              <div className="p-3 rounded-lg bg-white dark:bg-[#0b1120] border border-slate-200 dark:border-slate-800 space-y-1">
+              <div className="p-3 rounded-lg bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] space-y-1">
                 <span className="text-slate-500 text-[10px] block">Network Layer Config</span>
                 <span className="text-slate-800 dark:text-slate-200 font-semibold block">
                   GCN (64-dim) &rarr; LSTM (64-dim) &rarr; Linear (4)
@@ -400,14 +465,14 @@ export default function Prediction() {
       </div>
 
       {/* Region Summary Breakdown */}
-      <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-xl p-4.5 shadow-xs">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3 flex items-center gap-2">
-          <Layers className="w-4 h-4 text-purple-500" />
+      <div className="bg-white dark:bg-[#081827] border border-slate-200 dark:border-[#17364E] rounded-xl p-4.5 shadow-xs">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-[#7F96AA] mb-3 flex items-center gap-2">
+          <Layers className="w-4 h-4 text-purple-400" />
           Graph+LSTM Regional Test Performance Summary
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-[#17364E] bg-slate-50 dark:bg-[#0B2033]">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-900 dark:text-white">REGION_A</span>
               <span className="text-[10px] text-slate-500">North-East (48 sensors)</span>
@@ -418,7 +483,7 @@ export default function Prediction() {
             <div className="mt-1 text-[11px] text-slate-400 font-mono">Lowest error across network</div>
           </div>
 
-          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-[#17364E] bg-slate-50 dark:bg-[#0B2033]">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-900 dark:text-white">REGION_B</span>
               <span className="text-[10px] text-slate-500">South-East (57 sensors)</span>
@@ -429,7 +494,7 @@ export default function Prediction() {
             <div className="mt-1 text-[11px] text-slate-400 font-mono">High-density corridor</div>
           </div>
 
-          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-[#17364E] bg-slate-50 dark:bg-[#0B2033]">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-900 dark:text-white">REGION_C</span>
               <span className="text-[10px] text-slate-500">Central-West (58 sensors)</span>
@@ -440,7 +505,7 @@ export default function Prediction() {
             <div className="mt-1 text-[11px] text-slate-400 font-mono">Arterial highway cluster</div>
           </div>
 
-          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+          <div className="p-3.5 rounded-lg border border-slate-200 dark:border-[#17364E] bg-slate-50 dark:bg-[#0B2033]">
             <div className="flex items-center justify-between text-xs">
               <span className="font-bold text-slate-900 dark:text-white">REGION_D</span>
               <span className="text-[10px] text-slate-500">North-West (44 sensors)</span>

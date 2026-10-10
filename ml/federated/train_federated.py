@@ -11,7 +11,7 @@ import time
 import json
 import torch
 import numpy as np
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, List, Tuple
 
 from ml.federated.prepare_clients import load_client_partitions, get_regional_subgraph
 from ml.federated.client import FederatedClient

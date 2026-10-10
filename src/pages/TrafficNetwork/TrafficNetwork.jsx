@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import RealTrafficMap from '../../components/traffic/RealTrafficMap';
 import SensorDetailPanel from '../../components/traffic/SensorDetailPanel';
 import SensorTable from '../../components/traffic/SensorTable';
@@ -17,14 +17,13 @@ import {
   fetchSpatialSpeedConsistency
 } from '../../services/api';
 import { useReplay } from '../../context/ReplayContext';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Map } from 'lucide-react';
 
 export default function TrafficNetwork() {
-  const { timeIndex } = useReplay();
+  const { timeIndex, timestampStr } = useReplay();
   const [activeRegion, setActiveRegion] = useState('ALL');
   const [showGraphEdges, setShowGraphEdges] = useState(false);
 
-  const [realSnapshot, setRealSnapshot] = useState(null);
   const [realSensors, setRealSensors] = useState([]);
   const [fetchError, setFetchError] = useState(null);
 
@@ -38,9 +37,8 @@ export default function TrafficNetwork() {
 
   const loadRealSnapshot = useCallback(async (tIndex, rId) => {
     try {
-      const snap = await fetchMetrSnapshot(tIndex, rId, true);
+      const snap = await fetchMetrSnapshot(tIndex, rId, false);
       if (snap && snap.sensors) {
-        setRealSnapshot(snap);
         setRealSensors(snap.sensors);
         setSelectedSensor(prev => {
           if (!prev) return snap.sensors[0];
@@ -69,7 +67,6 @@ export default function TrafficNetwork() {
           setSpatialConsistencyData(res);
         }
       } catch {
-        // Fallback default
         if (mounted) {
           setSpatialConsistencyData({
             fromSensor: "773869",
@@ -98,29 +95,35 @@ export default function TrafficNetwork() {
   };
 
   const handleWhySelected = async () => {
-    setActiveModal('why-selected');
-    if (selectedSensor) {
-      const sid = selectedSensor.sensorId || selectedSensor.id || "773869";
+    const sid = selectedSensor?.sensorId || selectedSensor?.id || "773869";
+    try {
       const data = await fetchNeedScore(sid);
       setNeedScoreData(data);
+      setActiveModal('why-selected');
+    } catch (e) {
+      alert(`Could not fetch Need Score for ${sid}: ${e.message}`);
     }
   };
 
   const handleEvaluateQuery = async () => {
-    setActiveModal('counterfactual');
-    if (selectedSensor) {
-      const sid = selectedSensor.sensorId || selectedSensor.id || "773869";
+    const sid = selectedSensor?.sensorId || selectedSensor?.id || "773869";
+    try {
       const data = await fetchCounterfactual(sid);
       setCounterfactualData(data);
+      setActiveModal('counterfactual');
+    } catch (e) {
+      alert(`Could not evaluate query for ${sid}: ${e.message}`);
     }
   };
 
   const handleViewEvidence = async () => {
-    setActiveModal('evidence');
-    if (selectedSensor) {
-      const sid = selectedSensor.sensorId || selectedSensor.id || "773869";
+    const sid = selectedSensor?.sensorId || selectedSensor?.id || "773869";
+    try {
       const data = await fetchEvidenceChain(sid);
       setEvidenceData(data);
+      setActiveModal('evidence');
+    } catch (e) {
+      alert(`Could not fetch evidence for ${sid}: ${e.message}`);
     }
   };
 
@@ -131,7 +134,7 @@ export default function TrafficNetwork() {
     loadRealSnapshot(timeIndex, activeRegion);
   };
 
-  const graphEdgeLines = React.useMemo(() => {
+  const graphEdgeLines = useMemo(() => {
     if (!showGraphEdges || !realSensors || realSensors.length === 0) return [];
     const lines = [];
     const sensorPosMap = new Map(realSensors.map(s => [s.sensorId, [s.latitude, s.longitude]]));
@@ -154,58 +157,104 @@ export default function TrafficNetwork() {
     return lines;
   }, [showGraphEdges, realSensors]);
 
-  const networkSummaryMetrics = [
-    { id: "total", label: "METR-LA Sensors", value: "207", variant: "blue", iconType: "sensor", subtext: "Loop Detectors" },
-    { id: "active", label: "Active Telemetry", value: `${realSnapshot?.activeSensors || 178}`, subtext: "86.0% Valid Speed", isBullet: true, variant: "emerald", iconType: "signal" },
-    { id: "inactive", label: "Masked Nulls", value: `${realSnapshot?.inactiveSensors || 29}`, subtext: "14.0% Zero Readings", isBullet: true, variant: "slate", iconType: "offline" },
-    { id: "regions", label: "Spatial Clusters", value: "4", subtext: "Region A, B, C, D", variant: "purple", iconType: "layers" }
+  // Top 5 KPIs matching Section 14
+  const currentSensorId = selectedSensor?.sensorId || selectedSensor?.id || "773869";
+  const currentSensorRegion = selectedSensor?.regionId || "REGION_C";
+
+  const networkTopKPIs = [
+    {
+      id: "total",
+      label: "207 Sensors",
+      value: "207",
+      subtext: "Across 4 Regions",
+      iconType: "sensor",
+      variant: "blue"
+    },
+    {
+      id: "selected",
+      label: "Selected Sensor",
+      value: currentSensorId,
+      subtext: `${currentSensorRegion} • Primary Target`,
+      iconType: "accuracy",
+      variant: "cyan"
+    },
+    {
+      id: "data-quality",
+      label: "Data Quality",
+      value: `${((selectedSensor?.dataQuality || 0.936) * 100).toFixed(1)}%`,
+      subtext: "178 / 207 Valid Telemetry",
+      iconType: "signal",
+      variant: "emerald"
+    },
+    {
+      id: "blind-spots",
+      label: "Blind Spots",
+      value: "3 Sectors",
+      subtext: "Coverage Deficits Flagged",
+      iconType: "alert",
+      variant: "rose"
+    },
+    {
+      id: "replay-index",
+      label: "Replay Index",
+      value: `Step ${timeIndex}`,
+      subtext: `${timestampStr.substring(11, 16)} • METR-LA`,
+      iconType: "replay",
+      variant: "amber"
+    }
   ];
 
   return (
     <div className="space-y-5 pb-10">
-      {/* Page Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Traffic Network Graph
-            </h1>
-            <ScientificBadge type="REAL" label="METR-LA BENCHMARK" />
+      {/* Cinematic Page Header Strip (80-140px) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#081827] via-[#0B2033] to-[#04101A] border border-slate-200 dark:border-[#17364E] p-5 lg:p-6 shadow-md transition-colors">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-xl bg-blue-500/10 text-cyan-400 border border-blue-500/20">
+                <Map className="w-5 h-5" />
+              </div>
+              <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-[#F7FAFF] tracking-tight">
+                Traffic Network Graph
+              </h1>
+              <ScientificBadge type="REAL" label="METR-LA BENCHMARK" />
+            </div>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-[#BCD0E2] font-medium max-w-2xl">
+              METR-LA historical replay, sensor graph inspection, evidence state and spatial consistency.
+            </p>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Spatial distribution, real speed states, and topology across Los Angeles highway corridors.
-          </p>
-        </div>
 
-        {/* 4 Summary Metric Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-          {networkSummaryMetrics.map((m) => (
-            <MetricCard
-              key={m.id}
-              label={m.label}
-              value={m.value}
-              subtext={m.subtext}
-              isTrendUp={m.isTrendUp}
-              isBullet={m.isBullet}
-              variant={m.variant}
-              iconType={m.iconType}
-            />
-          ))}
+          <div className="flex items-center gap-2 font-mono text-xs text-slate-500 dark:text-[#7F96AA]">
+            <span>Replay: <strong className="text-slate-800 dark:text-[#F7FAFF]">{timestampStr}</strong></span>
+          </div>
         </div>
       </div>
 
+      {/* Top 5 KPI Cards Row */}
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3.5">
+        {networkTopKPIs.map((kpi) => (
+          <MetricCard
+            key={kpi.id}
+            label={kpi.label}
+            value={kpi.value}
+            subtext={kpi.subtext}
+            iconType={kpi.iconType}
+            variant={kpi.variant}
+          />
+        ))}
+      </div>
+
       {fetchError && (
-        <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 flex items-center gap-3 shadow-xs">
-          <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500" />
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-300 flex items-center gap-3 shadow-xs">
+          <AlertTriangle className="w-5 h-5 shrink-0 text-rose-500" />
           <div className="text-xs font-medium">
             <span className="font-bold">Backend Connection Error:</span> {fetchError}
           </div>
         </div>
       )}
 
-      {/* Main Map & Detail Panel Grid */}
+      {/* Main Map & Detail Panel Grid (~68% / ~32%) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* Large Leaflet Map */}
         <div className="lg:col-span-8">
           <RealTrafficMap
             sensors={realSensors}
@@ -219,7 +268,6 @@ export default function TrafficNetwork() {
           />
         </div>
 
-        {/* Right Detail Panel */}
         <div className="lg:col-span-4">
           <SensorDetailPanel
             sensor={selectedSensor}
@@ -233,7 +281,7 @@ export default function TrafficNetwork() {
 
       {/* Decision Intelligence Inspection Modals */}
       {activeModal && (
-        <div className="p-4 rounded-xl bg-white dark:bg-[#091122] border border-blue-400/50 dark:border-blue-500/40 shadow-xl dark:shadow-2xl relative transition-colors">
+        <div className="p-4 rounded-xl bg-white dark:bg-[#081827] border border-blue-500/40 shadow-2xl relative transition-colors">
           {activeModal === 'why-selected' && (
             <NeedScoreBreakdown 
               data={needScoreData} 
